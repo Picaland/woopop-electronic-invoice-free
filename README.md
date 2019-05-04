@@ -8,7 +8,7 @@
 * **License:** GPLv2 or later
 * **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
-## Description
+## Description 
 
 Integrato con WooCommerce, aggiunge il necessario per un'ecommerce italiano, si occupa di salvare tutti i dati per la Fatturazione Elettronica e crea il PDF della fattura / nota di credito.
 Nella pagina di checkout vengono aggiunti i campi per selezionare il tipo di cliente, P.IVA, Codice Fiscale, Codice Univoco o Email PEC.
