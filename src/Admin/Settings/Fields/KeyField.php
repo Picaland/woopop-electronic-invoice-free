@@ -1,0 +1,103 @@
+<?php
+/**
+ * KeyFields.php
+ *
+ * @since      1.0.0
+ * @package    WcElectronInvoiceFree\Admin\Settings
+ * @author     alfiopiccione <alfio.piccione@gmail.com>
+ * @copyright  Copyright (c) 2018, alfiopiccione
+ * @license    http://opensource.org/licenses/gpl-2.0.php GPL v2
+ *
+ * Copyright (C) 2018 alfiopiccione <alfio.piccione@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+namespace WcElectronInvoiceFree\Admin\Settings\Fields;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+use WcElectronInvoiceFree\Admin\Settings\OptionFields;
+use WcElectronInvoiceFree\Admin\Settings\OptionPage;
+
+/**
+ * Class KeyField
+ *
+ * @since  1.0.0
+ * @author alfiopiccione <alfio.piccione@gmail.com>
+ */
+final class KeyField extends Text
+{
+    /**
+     * Key args
+     *
+     * @since 1.0.0
+     *
+     * @var array
+     */
+    public static $keyArgs;
+
+    /**
+     * Key option
+     *
+     * @since 1.0.0
+     *
+     * @var
+     */
+    private static $keyOptions;
+
+    /**
+     * KeyField constructor.
+     *
+     * @since 1.0.0
+     *
+     * @param              $args
+     * @param OptionFields $fields
+     * @param OptionPage   $page
+     */
+    public function __construct($args, OptionFields $fields, OptionPage $page)
+    {
+        self::$keyArgs    = $args;
+        self::$keyOptions = $fields;
+
+        parent::__construct($args, $fields, $page);
+    }
+
+    /**
+     * Secret Key
+     *
+     * @since 1.0.0
+     */
+    public static function secretKey()
+    {
+        $output       = '';
+        $secretApiKey = get_option('wc_el_inv-secret-api-key');
+
+        if ($secretApiKey &&
+            isset(self::$keyOptions->options['wc_el_inv-settings-key']) &&
+            '' !== self::$keyOptions->options['wc_el_inv-settings-key']
+        ) {
+            $value = $secretApiKey;
+        } else {
+            $value = esc_html__('No key');
+        }
+
+        $output .= sprintf('<code>%s</code>', $value);
+
+        echo $output;
+    }
+}

@@ -1,0 +1,589 @@
+/**
+ * Admin Style
+ */
+/* Icons menu */
+#toplevel_page_wc_el_inv-options-page a .wp-menu-image::before {
+  background:      url('../images/invoice.svg') no-repeat center center;
+  background-size: 100%;
+  content:         '';
+  position:        relative;
+  width:           30px;
+}
+#wp-admin-bar-wc_el_inv_options > a.ab-item:before {
+  background-image:    url('../images/invoice.svg') !important;
+  background-position: center center;
+  background-repeat:   no-repeat;
+  background-size:     100%;
+  content:             '';
+  position:            relative;
+  width:               30px;
+  height:              24px;
+}
+#wp-admin-bar-wc_el_inv_options.active > a.ab-item,
+#wp-admin-bar-wc_el_inv_options.active {
+  background: #46b450 !important;
+  color:      #fff !important;
+}
+#wp-admin-bar-wc_el_inv_options.not-active > a.ab-item,
+#wp-admin-bar-wc_el_inv_options.not-active {
+  background: #dc3232 !important;
+  color:      #fff !important;
+}
+/* Settings Tabs */
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header h2 {
+  line-height: 0.8;
+}
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header h2 .version {
+  font-size: 12px;
+}
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs {
+  display:        flex;
+  border-bottom:  1px solid #ccc;
+  margin:         1.5em 0 1em;
+  padding-top:    9px;
+  padding-bottom: 0;
+  line-height:    inherit;
+}
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item {
+  margin: 0;
+}
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a {
+  border:              1px solid #ccc;
+  border-bottom-color: rgb(204, 204, 204);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom:       none;
+  margin-left:         0.5em;
+  padding:             5px 12px;
+  font-size:           14px;
+  line-height:         24px;
+  font-weight:         600;
+  background:          #e5e5e5;
+  color:               #555;
+  text-decoration:     none;
+  white-space:         nowrap;
+}
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a.active {
+  border-bottom: 1px solid #f1f1f1;
+  background:    #f1f1f1;
+  color:         #000;
+}
+/* WooCommerce Tabs */
+#woocommerce-product-data ul.wc-tabs li.wc-inv-invoice_options a::before {
+  display: none;
+}
+#woocommerce-product-data ul.wc-tabs li.wc-inv-invoice_options a {
+  background: #0085ba;
+  color:      #fff;
+}
+#woocommerce-product-data ul.wc-tabs li.wc-inv-invoice_options:hover a,
+#woocommerce-product-data ul.wc-tabs li.wc-inv-invoice_options.active a {
+  background: #008ec2;
+}
+#woocommerce-product-data ul.wc-tabs li.wc-inv-invoice_options a::after {
+  background:      url('../images/invoice.svg') no-repeat center center;
+  background-size: 100%;
+  content:         '';
+  display:         inline-block;
+  position:        relative;
+  width:           22px;
+  height:          22px;
+  vertical-align:  middle;
+  float:           left;
+}
+/* Json list */
+.wc_el_inv__xml,
+.wc_el_inv__json {
+  background:    #fff;
+  border:        1px solid #ddd;
+  padding:       .5rem;
+  margin-bottom: 1em;
+}
+.wc_el_inv__xml-list--type,
+.wc_el_inv__json-list--type {
+  margin-bottom: .3em;
+}
+.wc_el_inv__xml-list,
+.wc_el_inv__json-list {
+  background: #fff;
+  border:     1px solid #ddd;
+  max-height: 350px;
+  overflow:   scroll;
+  margin:     0;
+}
+.wc_el_inv__xml-list {
+  max-height: 650px;
+}
+.wc_el_inv__xml-list li,
+.wc_el_inv__json-list li {
+  background:    #f6f6f6;
+  border-bottom: 1px solid #ccc;
+  margin:        0;
+  padding:       .5rem;
+}
+
+.wc_el_inv__json-list li.wc_el_inv__json-list--ids {
+  background: rgba(135, 207, 239, 0.5);
+}
+.wc_el_inv__json-list li.wc_el_inv__json-list--shop_order,
+.wc_el_inv__json-list li.wc_el_inv__json-list--product {
+  background: rgba(153, 239, 112, 0.5);
+}
+.wc_el_inv-mode {
+  font-weight: normal;
+}
+.wc_el_inv-mode.dev {
+  color: forestgreen;
+}
+.wc_el_inv__no-key strong {
+  text-transform: uppercase;
+}
+.wc_el_inv__no-key code,
+.wc_el_inv-mode.prod {
+  color: red;
+}
+/* actions */
+.wc_el_inv__actions {
+  align-content:   center;
+  align-items:     center;
+  display:         flex;
+  justify-content: left;
+  flex-direction:  row;
+}
+.wc_el_inv__actions > * {
+  margin-right: .5em;
+}
+.wc_el_inv__actions > *:last-of-type {
+  margin-right: 0;
+}
+.wc_el_inv__actions .wc_el_inv__actions--text {
+  flex: 1 0 65%;
+}
+.wc_el_inv__actions .wc_el_inv__actions--xml a .dashicons,
+.wc_el_inv__actions .wc_el_inv__actions--view a .dashicons {
+  vertical-align: middle;
+  font-size:      1rem;
+}
+/* WC Integration */
+.notice-error .dashicons,
+.wc_el_inv-form .notice-error .dashicons {
+  color: #dc3232;
+}
+.notice-success .dashicons,
+.wc_el_inv-form .notice-success .dashicons {
+  color: #46b450;
+}
+.wc_el_inv-form table.wc_el_inv-vat-rules {
+  border: 1px solid #ddd;
+}
+.wc_el_inv-form table.wc_el_inv-vat-rules thead {
+  background: #fff;
+}
+.wc_el_inv-form table.wc_el_inv-vat-rules tbody > :nth-child(2n+1) {
+  background-color: #f9f9f9;
+}
+.wc_el_inv-form table.wc_el_inv-vat-rules tbody > tr td strong.req {
+  color: red;
+}
+.wc_el_inv-form table.wc_el_inv-vat-rules tbody > tr td strong.not-req {
+  color: forestgreen;
+}
+.wc_el_inv-form table textarea {
+  width:      100%;
+  min-height: 120px;
+}
+/* List table */
+.toplevel_page_wc_el_inv-options-page .wrap .invoice_range strong {
+  background-color: yellow;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line {
+  display:        flex;
+  align-content:  center;
+  align-items:    flex-start;
+  flex-direction: column;
+  width:          70%;
+  float:          left;
+  border-top:     1px solid #ccc;
+  padding-top:    1rem;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .summary-data {
+  background:  #fff;
+  border:      1px solid #ccc;
+  padding:     1.8%;
+  width:       21%;
+  float:       left;
+  margin-left: 5.2%;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .summary-data h3 {
+  margin: 0 0 5px;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .summary-data p {
+  margin: 0;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .filter-selects {
+  flex: 1 0 auto;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label {
+  font-weight: 700;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line select {
+  font-weight: 400;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions {
+  margin-left:    5px;
+  border-bottom:  1px solid #ccc;
+  padding-bottom: 1rem;
+  width:          100%;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions span {
+  display:        inline-block;
+  vertical-align: bottom;
+  margin:         0 5px 0 0;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions span.actions-button a.filter {
+  padding:      0 10px 1px 5px;
+  margin-right: 20px;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions input {
+  height: 28px;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions .bulk-actions-label {
+  display:   inline-block;
+  max-width: 100%;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions a {
+  margin-left: 2px;
+  padding:     0 5px 1px;
+  line-height: 25px;
+  height:      25px;
+  display:     inline-table;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions a span.dashicons {
+  vertical-align: middle;
+  font-size:      1rem;
+  margin:         0;
+}
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label,
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label select {
+  display:   inline-block;
+  max-width: 120px;
+  width:     100%;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .check-column input {
+  display: block !important;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-id {
+  width: 20%;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions {
+  width:      15%;
+  text-align: right;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions a {
+  margin-left:   2px;
+  margin-bottom: 2px;
+  padding:       0 5px 1px;
+  line-height:   2;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-invoice_sent i.mark-yes {
+  background:    #87ca5f;
+  border-radius: 100%;
+  color:         #fff;
+  text-align:    center;
+  line-height:   1.1;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-invoice_sent i.mark-warning:before {
+  content:       "!";
+  background:    #e2c03e;
+  border-radius: 100%;
+  color:         #fff;
+  text-align:    center;
+  width:         100%;
+  height:        100%;
+  display:       block;
+  z-index:       -1;
+  font-weight:   700;
+  line-height:   15px;
+  font-size:     18px;
+}
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions a .dashicons {
+  vertical-align: middle;
+  font-size:      1rem;
+}
+/* Actions bulk */
+.toplevel_page_wc_el_inv-options-page .actions-sent-bulk h4 {
+  margin-bottom: 0;
+}
+.toplevel_page_wc_el_inv-options-page .actions-sent-bulk #mark_as_sent-bulk-undo,
+.toplevel_page_wc_el_inv-options-page .actions-sent-bulk #mark_as_sent-bulk-sent {
+  font-size:    0.8rem;
+  font-weight:  700;
+  margin-right: 0.5em;
+}
+.toplevel_page_wc_el_inv-options-page .actions-sent-bulk #mark_as_sent-bulk-undo .dashicons,
+.toplevel_page_wc_el_inv-options-page .actions-sent-bulk #mark_as_sent-bulk-sent .dashicons {
+  vertical-align: middle;
+}
+/* Edit invoice number */
+[id*='close_refund_invoice_next_number-'],
+[id*='edit_refund_invoice_next_number-'],
+#close_invoice_next_number,
+#edit_invoice_next_number {
+  display:         inline-block;
+  text-decoration: none;
+  color:           #666;
+}
+#save_invoice_next_number {
+  position: relative;
+}
+/* Order general option */
+.wc_el_inv__general-order {
+  display: inline-block;
+  padding: 0 2% 0 0;
+  width:   100%;
+}
+.wc_el_inv__refund-invoice .actions,
+.wc_el_inv__general-order .actions {
+  display:        flex;
+  align-items:    center;
+  align-content:  center;
+  flex-direction: initial;
+}
+.wc_el_inv__refund-invoice .actions a,
+.wc_el_inv__general-order .actions a {
+  display:         flex;
+  height:          100%;
+  align-items:     center;
+  align-content:   center;
+  justify-content: center;
+  padding:         4px 10px;
+  margin-right:    2px;
+}
+.wc_el_inv__refund-invoice {
+  background: rgba(255, 253, 202, 0.2);
+}
+.wc_el_inv__general-order h3 {
+  padding-top: .5rem;
+}
+.wc_el_inv__refund-invoice td h3 {
+  font-size: 14px;
+  margin:    0;
+}
+.wc_el_inv__refund-invoice td h3 a,
+.wc_el_inv__general-order h3 a {
+  float: right;
+}
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_number_invoice-"] {
+  width: 150px;
+}
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_date_invoice-"] {
+  float:   none !important;
+  display: inline-block;
+  width:   150px;
+}
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_hours_invoice-"],
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_minutes_invoice-"] {
+  float:   none !important;
+  display: inline-block;
+  width:   60px;
+}
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_date_invoice-"] input,
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_hours_invoice-"] input,
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields [class*="refund_minutes_invoice-"] input {
+  width: 100%;
+}
+.wc_el_inv__general-order .order_number_invoice_field {
+  width: 100% !important;
+}
+.wc_el_inv__general-order .order_number_invoice_field #order_number_invoice {
+  width: 50% !important;
+}
+.wc_el_inv__general-order.invoice-date > p {
+  margin: 9px 0 0;
+}
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields .hours,
+.wc_el_inv__refund-invoice .wc_el_inv__refund-invoice--hidden-fields .minutes,
+.wc_el_inv__general-order.invoice-date .hours,
+.wc_el_inv__general-order.invoice-date .minutes {
+  margin: 0 1%;
+}
+.wc_el_inv__refund-invoice--hidden-fields p,
+.wc_el_inv__general-order--hidden-fields p {
+  margin: 0 !important;
+}
+.wc_el_inv__refund-invoice .form-field,
+.wc_el_inv__general-order.invoice-date .form-field {
+  float:   none !important;
+  display: inline-block;
+}
+.wc_el_inv__general-order.invoice-date .form-field.order_hours_invoice_field,
+.wc_el_inv__general-order.invoice-date .form-field.order_minutes_invoice_field {
+  width: 65px !important;
+}
+.wc_el_inv__refund-invoice--hidden-fields,
+.wc_el_inv__general-order--hidden-fields {
+  display: none;
+}
+/* Option page */
+label[for="wc_el_inv-settings-invoice_disable_cf"],
+label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] {
+  color: #b73312 !important;
+}
+label[for="wc_el_inv-settings-invoice_disable_cf"] + br + small,
+label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
+  color:       #b73312 !important;
+  font-weight: 700;
+}
+/* button color */
+.mark_as_sent,
+.button-save {
+  background:      #87ca5f !important;
+  border-color:    #5ea136 #71ba3c #71ba3c !important;
+  box-shadow:      0 1px 0 #71ba3c !important;
+  color:           #fff !important;
+  text-decoration: none !important;
+  text-shadow:     0 -1px 1px #71ba3c, 1px 0 1px #71ba3c, 0 1px 1px #71ba3c, -1px 0 1px #71ba3c !important;
+}
+.button-pdf {
+  background:      #b73312 !important;
+  border-color:    #ca3a14 #bb3112 #bb3112 !important;
+  box-shadow:      0 1px 0 #bb3112 !important;
+  color:           #fff !important;
+  text-decoration: none !important;
+  text-shadow:     0 -1px 1px #bb3112, 1px 0 1px #bb3112, 0 1px 1px #bb3112, -1px 0 1px #bb3112 !important;
+}
+.mark_undo {
+  background:      #e2c03e !important;
+  border-color:    #ccab39 #e1bf3b #e1bf3b !important;
+  box-shadow:      0 1px 0 #a08428 !important;
+  color:           #333 !important;
+  text-decoration: none !important;
+  text-shadow:     0 -1px 1px #f1cf3d, 1px 0 1px #f1cf3d, 0 1px 1px #f1cf3d, -1px 0 1px #f1cf3d !important;
+}
+/* Order data */
+.order_data_column_container .order_data_column #_billing_sdi_type,
+.order_data_column_container .order_data_column #_billing_tax_code {
+  text-transform: uppercase !important;
+}
+/* Order read only info */
+#woocommerce-order-items .wc-order-data-row p#readonly-info {
+  line-height: 1.2 !important;
+  font-size:   12px !important;
+  margin-top:  5px;
+  display:     block;
+  float:       left;
+  color:       red;
+}
+/* banner premium */
+.banner-premium {
+  background:     #fff;
+  margin:         10px 20px 0 2px;
+  display:        flex;
+  flex-direction: row;
+  align-content:  center;
+  align-items:    center;
+  border:         2px dashed #f59325;
+  font-size:      90%;
+  overflow:       hidden;
+  position:       relative;
+  z-index:        10;
+}
+.banner-premium::after {
+  background: #fff url("../images/img-banner.jpg") no-repeat scroll center 30px;
+  content:    "";
+  position:   absolute;
+  width:      460px;
+  display:    block;
+  right:      0;
+  height:     251px;
+  z-index:    -1;
+}
+.banner-premium h1 {
+  color:       #21485c;
+  line-height: 1.1;
+}
+.banner-premium h1 span {
+  color: #f59325;
+}
+.banner-premium .banner-logo {
+  padding:    1.5rem 0.5rem;
+  text-align: center;
+}
+.banner-premium .banner-logo img {
+  max-width: 90%;
+}
+.banner-premium .banner-text {
+  background: #fff;
+  padding:    0 10px;
+}
+
+.banner-premium ul.banner-premium--list {
+  line-height: 1.1 !important;
+}
+.banner-premium .button {
+  background:   #f59325;
+  border-color: #f59325;
+  color:        #fff;
+}
+/* Media query */
+@media screen and (max-width: 1068px ) {
+  .toplevel_page_wc_el_inv-options-page .wrap #wp-list-table-invoice-form {
+    display:        flex;
+    flex-direction: column;
+    flex-wrap:      wrap;
+  }
+  .toplevel_page_wc_el_inv-options-page .wrap .filter-line {
+    width: 100%;
+  }
+  .toplevel_page_wc_el_inv-options-page .wrap .summary-data {
+    order:  -1;
+    margin: 1rem 0 !important;
+    width:  96.5%;
+  }
+}
+@media screen and (min-width: 830px) and (max-width: 1200px) {
+  .banner-premium .banner-logo {
+    display: none;
+  }
+}
+@media screen and (max-width: 782px ) {
+  .banner-premium {
+    display: block;
+  }
+  .banner-premium .banner-text {
+    padding: 0 1.5rem;
+  }
+  .toplevel_page_wc_el_inv-options-page .wp-list-table .column-id {
+    width: 100%;
+  }
+  .toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions {
+    width:      auto;
+    text-align: left;
+  }
+  .toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs {
+    display: table;
+    border:  0;
+    width:   100%;
+  }
+  .toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs li {
+    display: inline-flex;
+  }
+  .toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs li a {
+    border: 1px solid #ccc !important;
+    margin: 2px;
+  }
+}
+@media screen and (max-width: 520px ) {
+  .wc_el_inv__actions {
+    display: inline-block;
+    width:   100%;
+  }
+  .wc_el_inv__actions .wc_el_inv__actions--text {
+    margin-bottom: .5em;
+    margin-right:  0;
+  }
+  .wc_el_inv__actions .wc_el_inv__actions--xml,
+  .wc_el_inv__actions .wc_el_inv__actions--view {
+    float: left;
+  }
+}

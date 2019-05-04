@@ -1,0 +1,1174 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooPop Electronic Invoice\n"
+"POT-Creation-Date: 2019-04-17 17:47+0200\n"
+"PO-Revision-Date: 2019-05-04 12:07+0200\n"
+"Last-Translator: Alfio <alfio.piccione@gmail.com>\n"
+"Language-Team: \n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.4\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c;"
+"_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;esc_attr__;esc_attr_e;"
+"esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SearchPathExcluded-3: assets\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: inc/localizeScripts.php:45 inc/localizeScripts.php:65
+#: src/Admin/Settings/OptionFields.php:124
+msgid "required"
+msgstr "richiesto"
+
+#: inc/localizeScripts.php:46 inc/localizeScripts.php:66
+#: src/Admin/Settings/OptionFields.php:125
+msgid "not required"
+msgstr "non richiesto"
+
+#: inc/localizeScripts.php:54 inc/wc/billingFields.php:88
+msgid "Certified e-mail (PEC) or the unique code"
+msgstr "PEC o Codice Destinatario"
+
+#: inc/localizeScripts.php:55 inc/wc/billingFields.php:91
+msgid "E-mail (PEC) or the unique code"
+msgstr "PEC o Codice Destinatario"
+
+#: inc/localizeScripts.php:56 inc/wc/billingFields.php:89
+msgid "Please enter your certified e-mail (PEC) or the unique code"
+msgstr "Inserisci la tua PEC o il Codice Destinatario"
+
+#: inc/localizeScripts.php:67
+msgid "Edit"
+msgstr "Modifica"
+
+#: inc/localizeScripts.php:68
+msgid "Save"
+msgstr "Salva"
+
+#: inc/localizeScripts.php:70
+msgid ""
+"WARNING: You are about to set the \"SENT to invoice\" status, do you want to "
+"confirm?"
+msgstr ""
+"ATTENZIONE: stai per impostare lo stato \"INVIATO alla fattura\", vuoi "
+"confermare?"
+
+#: inc/localizeScripts.php:74
+msgid ""
+"WARNING: You are about to set the \"NOT SENT to invoice\" status, do you "
+"want to confirm?"
+msgstr ""
+"ATTENZIONE: stai per impostare lo stato \"NON INVIATO per la fattura”, vuoi "
+"confermare?"
+
+#: inc/localizeScripts.php:78
+msgid "First you must select one or more checkbox"
+msgstr "Per prima cosa devi selezionare una o più caselle di controllo"
+
+#: inc/localizeScripts.php:82
+msgid "Refund disabled: first you need to send the generated credit note"
+msgstr "Rimborso disabilitato: prima devi inviare la nota di credito generata"
+
+#: inc/localizeScripts.php:86
+msgid ""
+"Before sending the invoice you cannot make a refund, on the total but only "
+"on the lines of the order"
+msgstr ""
+"Prima di inviare la fattura non è possibile effettuare un rimborso, sul "
+"totale ma solo sulle righe dell'ordine"
+
+#: inc/settings/pageSettingsFields.php:46
+msgid "Invoice settings"
+msgstr "Impostazioni Fattura"
+
+#: inc/settings/pageSettingsFields.php:52
+msgid "Prefix invoice number"
+msgstr "Prefisso numero fattura"
+
+#: inc/settings/pageSettingsFields.php:65
+msgid "Number of digits (enter 4 to display 13 as 0013)"
+msgstr "Numero di zeri (inserisci 4 per visualizzare 13 come 0013)"
+
+#: inc/settings/pageSettingsFields.php:72
+msgid "Recommended 4 (you can leave it blank)"
+msgstr "Consigliato 4 (puoi lasciarlo vuoto)"
+
+#: inc/settings/pageSettingsFields.php:86
+msgid "Number of the next invoice"
+msgstr "Numero della prossima fattura"
+
+#: inc/settings/pageSettingsFields.php:93
+msgid "Enter a number from which to start generating the invoice numbering"
+msgstr ""
+"Inserisci un numero da cui partire generare la numerazione delle fatture"
+
+#: inc/settings/pageSettingsFields.php:109
+msgid "Suffix invoice number"
+msgstr "Suffisso numero fattura"
+
+#: inc/settings/pageSettingsFields.php:122
+msgid "Disable PEC/SDI"
+msgstr "Disabilita PEC/Codice Univoco"
+
+#: inc/settings/pageSettingsFields.php:127
+msgid "Disable Pec / Unique Code field in (checkout / my-account)"
+msgstr "Disattiva il campo Pec / Codice univoco dal (checkout / mio-account)"
+
+#: inc/settings/pageSettingsFields.php:130
+msgid ""
+"Disable the Pec / Unique Code field in the checkout (the recipient code will "
+"be set to \"0000000\")"
+msgstr ""
+"Disabilitare il campo Pec / Codice univoco nel checkout (il codice "
+"destinatario sarà impostato con \"0000000\")"
+
+#: inc/settings/pageSettingsFields.php:141
+msgid "Disable Fiscal Code"
+msgstr "Disabilita Codice fiscale"
+
+#: inc/settings/pageSettingsFields.php:146
+msgid "Disable the tax code field in (checkout / my-account)"
+msgstr "Disattiva il campo del codice fiscale in (checkout / mio-account)"
+
+#: inc/settings/pageSettingsFields.php:149
+msgid ""
+"Disable the tax code from the checkout and from my-account (only for "
+"companies and freelancers)"
+msgstr ""
+"Disabilitare il codice fiscale nel checkout e nel mio account (solo per "
+"aziende e liberi professionisti)"
+
+#: inc/settings/pageSettingsFields.php:160
+msgid "Vies Check"
+msgstr "Controllo Vies"
+
+#: inc/settings/pageSettingsFields.php:169
+msgid "My Orders invoice"
+msgstr "Fattura nella lista ordini"
+
+#: inc/settings/pageSettingsFields.php:174
+#: inc/settings/pageSettingsFields.php:190
+#: inc/settings/pageSettingsFields.php:206
+msgid "Check to activate"
+msgstr "Spunta per attivare"
+
+#: inc/settings/pageSettingsFields.php:175
+msgid ""
+"Activate to view the link to download the pdf in the list of orders in my "
+"account"
+msgstr ""
+"Attiva per visualizzare il link per scaricare il pdf nella lista degli "
+"ordini in my account"
+
+#: inc/settings/pageSettingsFields.php:185
+msgid "Email invoice"
+msgstr "Fattura via Email"
+
+#: inc/settings/pageSettingsFields.php:191
+msgid ""
+"Active the sending of the invoice in PDF format via e-mail upon completion "
+"of the order"
+msgstr ""
+"Attiva l'invio della fattura in formato PDF via e-mail al completamento "
+"dell'ordine"
+
+#: inc/settings/pageSettingsFields.php:201
+msgid "Invoice HTML"
+msgstr "Fattura HTML"
+
+#: inc/settings/pageSettingsFields.php:207
+msgid "View the invoice (pdf) in HTML"
+msgstr "Visualizza la fattura (pdf) in HTML"
+
+#: inc/settings/pageSettingsFields.php:217
+msgid "Invoice PDF Logo"
+msgstr "Logo per fattura PDF"
+
+#: inc/settings/pageSettingsFields.php:223
+msgid "Enter the url of the logo for the invoice"
+msgstr "Inserisci l'url del logo per la fattura"
+
+#: inc/settings/pageSettingsFields.php:232
+msgid "Invoice pdf footer text"
+msgstr "Testo per il footer della fatture PDF"
+
+#: inc/settings/pageSettingsFields.php:237
+msgid "Enter the text for the PDF invoice footer."
+msgstr "Immettere il testo per il footer della fattura PDF."
+
+#: inc/settings/pageSettingsFields.php:249
+msgid "General WooCommerce integration settings"
+msgstr "Impostazioni generali di integrazione con WooCommerce"
+
+#: inc/settings/pageSettingsFields.php:255
+msgid "VAT number and tax code, always required"
+msgstr "P.IVA e Codice Fiscale, sempre richiesti"
+
+#: inc/settings/pageSettingsFields.php:261
+msgid ""
+"Choose if you want the VAT / Tax Code playing field is never optional. \n"
+"                    If it is NOT always required, follow these rules:"
+msgstr ""
+"Scegli se vuoi che il campo P.IVA / codice fiscale non sia mai opzionale. \n"
+"Se NON è sempre richiesto, segui queste regole:"
+
+#: inc/settings/pageSettingsFields.php:264
+msgid "Required"
+msgstr "Richiesto"
+
+#: inc/settings/pageSettingsFields.php:265
+msgid "Not required (IT always required)"
+msgstr "Non richiesto (IT sempre richiesto)"
+
+#: inc/settings/pageSettingsFields.php:282
+msgid ""
+"(1) Hide the VAT number and tax code field if the billing address is not in "
+"the European Union?"
+msgstr ""
+"(1) Nascondi il campo IVA e codice IVA se l'indirizzo di fatturazione non è "
+"nell'Unione Europea?"
+
+#: inc/settings/pageSettingsFields.php:288
+msgid ""
+"Choose if you want to hide the VAT number or tax code field when the billing "
+"address is not in the European Union"
+msgstr ""
+"Scegliere se si desidera nascondere il campo IVA o il campo codice fiscale "
+"quando l'indirizzo di fatturazione non è nell'Unione europea"
+
+#: inc/settings/pageSettingsFields.php:291
+msgid "Always show the VAT number / tax code field"
+msgstr "Mostra sempre il campo IVA / codice fiscale"
+
+#: inc/settings/pageSettingsFields.php:292
+msgid ""
+"Hide the VAT number and tax code when the customer billing address is "
+"outside the European Union"
+msgstr ""
+"Nascondi il numero di partita IVA e il codice fiscale quando l'indirizzo di "
+"fatturazione del cliente è al di fuori dell'Unione Europea"
+
+#: inc/settings/pageSettingsFields.php:308
+msgid "Json Order list"
+msgstr "Elenco ordini Json"
+
+#: inc/settings/pageSettingsFields.php:325
+msgid "Json Product list"
+msgstr "Elenco Prodotti Json"
+
+#: inc/settings/pageSettingsFields.php:342
+msgid "Xml for the electron invoice"
+msgstr "Xml per la fattura elettronica"
+
+#: inc/settings/pageSettingsTabs.php:31 src/Admin/Settings/OptionPage.php:231
+msgid "WooCommerce Integration"
+msgstr "Integrazione WooCommerce"
+
+#: inc/settings/pageSettingsTabs.php:37
+#: src/Admin/Settings/Fields/XmlOrdersList.php:138
+#: src/Admin/Settings/OptionPage.php:237 src/Pdf/CreatePdf.php:199
+msgid "Invoice"
+msgstr "Fattura"
+
+#: inc/settings/pageSettingsTabs.php:43 src/Admin/Settings/OptionPage.php:243
+msgid "Json Order"
+msgstr "Ordini Json"
+
+#: inc/settings/pageSettingsTabs.php:49 src/Admin/Settings/OptionPage.php:249
+msgid "Json Product"
+msgstr "Prodotti Json"
+
+#: inc/settings/pageSettingsTabs.php:55 src/Admin/Settings/OptionPage.php:255
+msgid "Xml Invoice"
+msgstr "Fatture Xml"
+
+#: inc/wc/billingFields.php:71 inc/wc/billingFields.php:73
+msgid "Customer type"
+msgstr "Tipo di cliente"
+
+#: inc/wc/billingFields.php:72
+msgid "Please select Customer type"
+msgstr "Si prega di selezionare il tipo di cliente"
+
+#: inc/wc/billingFields.php:76 src/Admin/XmlOrderListTable.php:391
+#: src/WooCommerce/Fields/InvoiceFields.php:780
+msgid "Company"
+msgstr "Azienda"
+
+#: inc/wc/billingFields.php:77 src/Admin/XmlOrderListTable.php:394
+#: src/WooCommerce/Fields/InvoiceFields.php:783
+msgid "Freelance"
+msgstr "Persona fisica titolare di Partita IVA"
+
+#: inc/wc/billingFields.php:78 src/Admin/XmlOrderListTable.php:397
+msgid "Private"
+msgstr "Privato"
+
+#: inc/wc/billingFields.php:101 inc/wc/billingFields.php:103
+#: src/Admin/XmlOrderListTable.php:904
+msgid "VAT number"
+msgstr "P.IVA"
+
+#: inc/wc/billingFields.php:102 src/WooCommerce/Fields/InvoiceFields.php:1159
+msgid "Please enter your VAT number"
+msgstr "per favore inserisci il numero di P.iva"
+
+#: inc/wc/billingFields.php:113 inc/wc/billingFields.php:115
+#: src/Admin/XmlOrderListTable.php:905
+msgid "Tax Code"
+msgstr "Codice Fiscale"
+
+#: inc/wc/billingFields.php:114 src/WooCommerce/Fields/InvoiceFields.php:1155
+#: src/WooCommerce/Fields/InvoiceFields.php:1172
+msgid "Please enter your Tax Code"
+msgstr "per favore inserisci il tuo codice fiscale"
+
+#: inc/wc/generalInvoiceFields.php:33
+msgid "General Options Invoice"
+msgstr "Opzioni Generali Fattura"
+
+#: inc/wc/generalInvoiceFields.php:36
+msgid ""
+"This is where your business is located. Tax rates and shipping rates will "
+"use this address."
+msgstr ""
+"Questo è dove si trova la tua attività. Le aliquote fiscali e le tariffe di "
+"spedizione useranno questo indirizzo."
+
+#: inc/wc/generalInvoiceFields.php:44
+msgid "(*) Name"
+msgstr "(*) Nome"
+
+#: inc/wc/generalInvoiceFields.php:45
+msgid "Please enter your name"
+msgstr "per favore inserisci il tuo nome"
+
+#: inc/wc/generalInvoiceFields.php:46
+msgid "Your Name"
+msgstr "Il tuo nome"
+
+#: inc/wc/generalInvoiceFields.php:53
+msgid "(*) Surname"
+msgstr "(*) Cognome"
+
+#: inc/wc/generalInvoiceFields.php:54
+msgid "Please enter your surname"
+msgstr "per favore inserisci il tuo cognome"
+
+#: inc/wc/generalInvoiceFields.php:55
+msgid "Your Surname"
+msgstr "il tuo cognome"
+
+#: inc/wc/generalInvoiceFields.php:62
+msgid "(*) Company Name"
+msgstr "(*) Nome Azienda"
+
+#: inc/wc/generalInvoiceFields.php:63
+msgid "Please enter your company name"
+msgstr "per favore inserisci il nome azienda"
+
+#: inc/wc/generalInvoiceFields.php:64
+msgid "Your Company Name"
+msgstr "il nome azienda"
+
+#: inc/wc/generalInvoiceFields.php:71
+msgid "(*) VAT number"
+msgstr "(*) Numero P.IVA"
+
+#: inc/wc/generalInvoiceFields.php:72
+msgid "Please enter your vat code"
+msgstr "per favore inserisci il numero di P.iva"
+
+#: inc/wc/generalInvoiceFields.php:73
+msgid "Your vat number"
+msgstr "il numero di P.iva"
+
+#: inc/wc/generalInvoiceFields.php:80
+msgid "(*) Tax Regine"
+msgstr "(*) Regime fiscale"
+
+#: inc/wc/generalInvoiceFields.php:81
+msgid "Please select your tax regime"
+msgstr "Si prega di selezionare il regime fiscale"
+
+#: inc/wc/generalInvoiceFields.php:90
+msgid "Phone number"
+msgstr "Numero di telefono"
+
+#: inc/wc/generalInvoiceFields.php:91
+msgid "Please enter your phone number"
+msgstr "per favore, inserisca il suo numero di telefono"
+
+#: inc/wc/generalInvoiceFields.php:92
+msgid "Your phone number"
+msgstr "Il tuo numero di telefono"
+
+#: inc/wc/generalInvoiceFields.php:99
+msgid "Email address"
+msgstr "Indirizzo email"
+
+#: inc/wc/generalInvoiceFields.php:100
+msgid "Please enter your email"
+msgstr "per favore inserisci la tua email"
+
+#: inc/wc/generalInvoiceFields.php:101
+msgid "Your email"
+msgstr "la tua email"
+
+#: inc/wc/taxRegime.php:30
+msgid "Ordinario"
+msgstr ""
+
+#: inc/wc/taxRegime.php:31
+msgid "Contribuenti minimi (art.1, c.96-117, L. 244/07)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:32
+msgid "Nuove iniziative produttive (art.13, L. 388/00)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:33
+msgid "Agricoltura e attività connesse e pesca (artt.34 e 34-bis, DPR 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:34
+msgid "Vendita sali e tabacchi (art.74, c.1, DPR. 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:35
+msgid "Commercio fiammiferi (art.74, c.1, DPR 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:36
+msgid "Editoria (art.74, c.1, DPR 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:37
+msgid "Gestione servizi telefonia pubblica (art.74, c.1, DPR 633/72) "
+msgstr ""
+
+#: inc/wc/taxRegime.php:38
+msgid ""
+"Rivendita documenti di trasporto pubblico e di sosta (art.74, c.1, DPR 633/72"
+msgstr ""
+
+#: inc/wc/taxRegime.php:39
+msgid ""
+"Intrattenimenti, giochi e altre attività di cui alla tariffa allegata al DPR "
+"640/72 (art.74, c.6, DPR 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:40
+msgid "Agenzie viaggi e turismo (art.74-ter, DPR 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:41
+msgid "Agriturismo (art.5, c.2, L. 413/91)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:42
+msgid "Vendite a domicilio (art.25-bis, c.6, DPR 600/73)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:43
+msgid ""
+"Rivendita beni usati, oggetti d’arte, d’antiquariato o da collezione "
+"(art.36, DL 41/95)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:44
+msgid ""
+"Agenzie di vendite all’asta di oggetti d’arte, antiquariato o da collezione "
+"(art.40-bis, DL 41/95"
+msgstr ""
+
+#: inc/wc/taxRegime.php:45
+msgid "IVA per cassa P.A. (art.6, c.5, DPR 633/72)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:46
+msgid "IVA per cassa (art. 32-bis, DL 83/2012)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:47
+msgid "Regime forfettario (art.1, c.54-89, L. 190/2014)"
+msgstr ""
+
+#: inc/wc/taxRegime.php:48
+msgid "Altro"
+msgstr ""
+
+#: src/Admin/Settings/Fields/KeyField.php:92
+msgid "No key"
+msgstr "Nessuna chiave"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:128
+msgid "Users:"
+msgstr "Utenti:"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:130
+#: src/Admin/Settings/Fields/XmlOrdersList.php:146
+msgid "All"
+msgstr "Tutti"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:139
+#: src/Admin/XmlOrderListTable.php:222
+#: src/WooCommerce/Fields/InvoiceFields.php:622
+msgid "Refund"
+msgstr "Rimborso"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:144 views/pdf/addresses.php:28
+msgid "Type:"
+msgstr "Tipo:"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:161
+msgid "Actions Bulk"
+msgstr "Azioni massive"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:164
+msgid "Mark no Sent"
+msgstr "Segna come non inviato"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:167
+#: src/Admin/XmlOrderListTable.php:127
+#: src/WooCommerce/Fields/InvoiceFields.php:346
+msgid "Mark as Sent"
+msgstr "Segna come Inviato"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:211
+msgid ""
+"Filter by date: (Matches on orders created during or in between the seconds)"
+msgstr ""
+"Filtra per data: (Corrisponde agli ordini creati durante o tra le date)"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:216
+msgid "From: "
+msgstr "Dal:"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:220
+msgid "To: "
+msgstr "Al:"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:230
+msgid "Filter"
+msgstr "Filtra"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:236
+msgid "Get all Xml"
+msgstr "tutti gli xml"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:243
+msgid "View all Xml"
+msgstr "vedi tutti gli xml"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:250
+msgid "Save all Xml"
+msgstr "salva tutti gli xml"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:270
+msgid "No order found!"
+msgstr "Nessun ordine trovato!"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:281
+msgid ""
+"The display of all xml is disabled. first filter orders by user and / or "
+"dates."
+msgstr ""
+"la visualizzazione di tutti gli xml è disabilitata. prima filtra gli ordini "
+"per utente e/o date."
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:318
+msgid "You are viewing invoices after the"
+msgstr "Stai visualizzando le fatture dopo il"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:320
+msgid "until"
+msgstr "fino al"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:336
+msgid "Summary"
+msgstr "Riepilogo"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:339
+#: views/pdf/order-totals.php:37
+msgid "Totals:"
+msgstr "Totali:"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:340
+msgid "Sent:"
+msgstr "Inviate:"
+
+#: src/Admin/Settings/Fields/XmlOrdersList.php:341
+msgid "No Sent:"
+msgstr "Non inviate:"
+
+#: src/Admin/Settings/OptionFields.php:112
+msgid "General options for enabling APIs"
+msgstr "Opzioni generali per l'abilitazione delle API"
+
+#: src/Admin/Settings/OptionFields.php:130
+msgid "Customer Country"
+msgstr "Paese del cliente"
+
+#: src/Admin/Settings/OptionFields.php:131
+msgid "The user selects: Company or Freelance"
+msgstr "L'utente seleziona: Azienda o Persona Fisica titolare di P.IVA"
+
+#: src/Admin/Settings/OptionFields.php:132
+msgid "The user selects: Private"
+msgstr "L'utente seleziona: Privato"
+
+#: src/Admin/Settings/OptionFields.php:137
+msgid "IT"
+msgstr "IT"
+
+#: src/Admin/Settings/OptionFields.php:138
+#, php-format
+msgid "VAT number or Tax Code and E-mail (PEC) or the web-service code: %1$s"
+msgstr ""
+"Partita IVA o Codice Fiscale ed E-mail (PEC) o Codice Destinatario: %1$s"
+
+#: src/Admin/Settings/OptionFields.php:142
+msgid "(Tax Code)"
+msgstr "(Codice Fiscale)"
+
+#: src/Admin/Settings/OptionFields.php:145
+msgid "UE"
+msgstr ""
+
+#: src/Admin/Settings/OptionFields.php:146
+#, php-format
+msgid "VAT number or Tax Code: %1$s"
+msgstr "Partita IVA o codice fiscale: %1$s"
+
+#: src/Admin/Settings/OptionFields.php:153
+msgid "Extra UE"
+msgstr ""
+
+#: src/Admin/Settings/OptionFields.php:154
+msgid "View (1)"
+msgstr "Vedi (1)"
+
+#: src/Admin/Settings/OptionFields.php:155
+#, php-format
+msgid "VAT number or Tax Code: %2$s"
+msgstr "Partita IVA o codice fiscale: %2$s"
+
+#: src/Admin/Settings/OptionPage.php:190 src/Admin/Settings/OptionPage.php:575
+msgid "Electronic Invoice - Settings"
+msgstr "Fattura elettronica - Impostazioni"
+
+#: src/Admin/Settings/OptionPage.php:191
+msgid "Electr. Invoice"
+msgstr "Elettr. Fattura"
+
+#: src/Admin/Settings/OptionPage.php:596
+msgid "Save data"
+msgstr "Salva i dati"
+
+#: src/Admin/XmlOrderListTable.php:135
+#: src/WooCommerce/Fields/InvoiceFields.php:354
+msgid "Get Xml"
+msgstr "xml"
+
+#: src/Admin/XmlOrderListTable.php:143
+#: src/WooCommerce/Fields/InvoiceFields.php:362
+msgid "View Xml"
+msgstr "vedi xml"
+
+#: src/Admin/XmlOrderListTable.php:151
+#: src/WooCommerce/Fields/InvoiceFields.php:370
+msgid "Save Xml"
+msgstr "salva xml"
+
+#: src/Admin/XmlOrderListTable.php:162
+#: src/WooCommerce/Fields/InvoiceFields.php:317
+#: src/WooCommerce/Fields/InvoiceFields.php:381
+msgid "View PDF"
+msgstr "Vedi PDF"
+
+#: src/Admin/XmlOrderListTable.php:187
+msgid "Edit customer"
+msgstr "Modifica cliente"
+
+#: src/Admin/XmlOrderListTable.php:219
+msgid "Order"
+msgstr "Ordine"
+
+#: src/Admin/XmlOrderListTable.php:241
+msgid "Edit order"
+msgstr "Modifica ordine"
+
+#: src/Admin/XmlOrderListTable.php:247
+msgid "Edit refund"
+msgstr "Modifica rimborso"
+
+#: src/Admin/XmlOrderListTable.php:252
+msgid "Processing"
+msgstr "In Lavorazione"
+
+#: src/Admin/XmlOrderListTable.php:256
+msgid "Completed"
+msgstr "Completato"
+
+#: src/Admin/XmlOrderListTable.php:260 src/Pdf/CreatePdf.php:389
+#: views/pdf/details.php:250
+msgid "Refunded"
+msgstr "Rimborsato"
+
+#: src/Admin/XmlOrderListTable.php:272
+msgid "of"
+msgstr "del"
+
+#: src/Admin/XmlOrderListTable.php:280
+msgid "Order title DateTime error: "
+msgstr ""
+
+#: src/Admin/XmlOrderListTable.php:296
+msgid "Error: no total order"
+msgstr ""
+
+#: src/Admin/XmlOrderListTable.php:386
+msgid "* No UE customer *"
+msgstr "* Cliente non UE *"
+
+#: src/Admin/XmlOrderListTable.php:400
+msgid ""
+"(*) No data, set the data from the user profile before generating the xml "
+"invoice"
+msgstr ""
+"(*) Nessun dato, impostare i dati dal profilo utente prima di generare la "
+"fattura xml"
+
+#: src/Admin/XmlOrderListTable.php:431
+msgid "No UE customer"
+msgstr "Cliente non UE"
+
+#: src/Admin/XmlOrderListTable.php:435
+msgid "(*) No data"
+msgstr "(*) Nessun dato"
+
+#: src/Admin/XmlOrderListTable.php:860
+msgid "No orders found: "
+msgstr "Nessun ordine trovato:"
+
+#: src/Admin/XmlOrderListTable.php:899
+msgid "Order number"
+msgstr "Numero ordine"
+
+#: src/Admin/XmlOrderListTable.php:900
+msgid "Order Total"
+msgstr "Totale"
+
+#: src/Admin/XmlOrderListTable.php:901
+msgid "Number"
+msgstr "Numero"
+
+#: src/Admin/XmlOrderListTable.php:902
+msgid "Customer"
+msgstr "Cliente"
+
+#: src/Admin/XmlOrderListTable.php:903
+msgid "Customer Type"
+msgstr "Tipo cliente"
+
+#: src/Admin/XmlOrderListTable.php:906
+msgid "SDI or PEC"
+msgstr "Cod. Destinatario o PEC"
+
+#: src/Admin/XmlOrderListTable.php:907
+msgid "Sent"
+msgstr "Inviate"
+
+#: src/Admin/XmlOrderListTable.php:908
+msgid "Actions"
+msgstr "Azioni"
+
+#: src/Functions/Utils.php:333
+msgid ""
+"WooPop -> (Electronic Invoice) has been deactivated. The plugin require: "
+"WooCommerce"
+msgstr ""
+"WooPop -> (Electronic Invoice) è stato disattivato. Il plugin richiede: "
+"WooCommerce"
+
+#: src/Init.php:85 src/Init.php:97 src/Loader.php:130 src/Loader.php:142
+msgid "Cheatin&#8217; huh?"
+msgstr "Vuoi imbrogliare eh?"
+
+#: src/Pdf/CreatePdf.php:194
+msgid "Receipt"
+msgstr "Ricevuta"
+
+#: src/Pdf/CreatePdf.php:202
+msgid "Credit note"
+msgstr "Nota di credito"
+
+#: src/Pdf/CreatePdf.php:252 src/Pdf/CreatePdf.php:278
+msgid "Error DateTime in dateCompleted: "
+msgstr ""
+
+#: src/Pdf/CreatePdf.php:309
+msgid "Cash money"
+msgstr "Contanti"
+
+#: src/Pdf/CreatePdf.php:311 src/Pdf/CreatePdf.php:313
+msgid "Bank check"
+msgstr "Assegno"
+
+#: src/Pdf/CreatePdf.php:315
+msgid "Bank transfer"
+msgstr "Bonifico"
+
+#: src/Pdf/CreatePdf.php:317
+msgid "Credit Card"
+msgstr "Carta di credito"
+
+#: src/Pdf/CreatePdf.php:727
+msgid "Error in completed order attachments - message:"
+msgstr ""
+
+#: src/Pdf/CreatePdf.php:862
+msgid ""
+"ERROR: you can not view the PDF for security and privacy issues. to view it "
+"you must be logged in"
+msgstr ""
+"ERRORE: non puoi visualizzare il PDF per questioni di sicurezza e privacy. "
+"per visualizzarlo devi essere loggato"
+
+#: src/WooCommerce/Fields/GeneralFields.php:425
+msgid "Please enter your valid VAT number"
+msgstr "Si prega di inserire il numero di partita IVA valido"
+
+#: src/WooCommerce/Fields/GeneralFields.php:430
+#: src/WooCommerce/Fields/InvoiceFields.php:1068
+#: src/WooCommerce/Fields/InvoiceFields.php:1103
+#: src/WooCommerce/Fields/InvoiceFields.php:1165
+#, php-format
+msgid "VAT number %1$s is not correct"
+msgstr "La partita IVA %1$s non è corretta"
+
+#: src/WooCommerce/Fields/GeneralFields.php:441
+msgid "Please enter your Company Name"
+msgstr "Per favore digita il nome della tua azienda"
+
+#: src/WooCommerce/Fields/GeneralFields.php:447
+msgid "Please enter your Name"
+msgstr "Per favore inserisci il tuo nome"
+
+#: src/WooCommerce/Fields/GeneralFields.php:453
+msgid "Please enter your Surname"
+msgstr "Per favore inserisci il tuo cognome"
+
+#: src/WooCommerce/Fields/GeneralFields.php:460
+msgid "Please enter your Email address"
+msgstr "Per favore inserisci il tuo indirizzo email"
+
+#: src/WooCommerce/Fields/GeneralFields.php:466
+msgid "Please enter your Phone number"
+msgstr "Per favore inserisci il tuo numero di telefono"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:445
+msgid "Order Mark DateTime error: "
+msgstr ""
+
+#: src/WooCommerce/Fields/InvoiceFields.php:477
+#: src/WooCommerce/Fields/InvoiceFields.php:490 views/pdf/addresses.php:107
+msgid "Invoice data"
+msgstr "Dati fattura"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:488
+#: src/WooCommerce/Fields/InvoiceFields.php:497
+#: src/WooCommerce/Fields/InvoiceFields.php:636
+msgid "Invoice number"
+msgstr "Numero fattura"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:511
+#: src/WooCommerce/Fields/InvoiceFields.php:647
+msgid "Invoice Date"
+msgstr "Data Fattura"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:626
+msgid "Refund number"
+msgstr "Numero rimborso"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:628
+msgid "Refund data"
+msgstr "Dati rimbordo"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:721
+msgid "* Payment method"
+msgstr "* Metodo di pagamento"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:731
+msgid "Set payment method"
+msgstr "Imposta il metodo di pagamento"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:732
+msgid "cash"
+msgstr "contanti"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:733
+msgid "check"
+msgstr "assegno"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:734
+msgid "circular check"
+msgstr "assegno circolare"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:735
+msgid "transfer"
+msgstr "bonifico"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:736
+msgid "payment card"
+msgstr "carta di credito"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:786
+msgid "Private person"
+msgstr "Persona privata"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1053
+#, php-format
+msgid ""
+"The VAT code entered \"%s\" is already associated with an account. please "
+"log in \n"
+"                            with the correct account or enter another VAT "
+"number"
+msgstr ""
+"La P.IVA inserita \"%s\" è già associata ad un'account. si prega di loggarsi "
+"con l'account corretto o inserire un'altra P.IVA"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1079
+#: src/WooCommerce/Fields/InvoiceFields.php:1091
+#: src/WooCommerce/Fields/InvoiceFields.php:1114
+#, php-format
+msgid "TAX code %1$s is not correct"
+msgstr "Il Codice Fiscale %1$s non è corretto"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1133
+#, php-format
+msgid "E-mail (PEC) or Web-Service code %1$s is not correct"
+msgstr "La PEC o il Codice Destinatario  %1$s non sono corretti"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1193
+#, php-format
+msgid "Tax Identification Number %1$s is not correct"
+msgstr "Il numero del codice fiscale  %1$s non è corretto"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1214
+msgid "CUSTOMER TYPE"
+msgstr "TIPO CLIENTE"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1217
+msgid "SDI OR PEC TYPE"
+msgstr "TIPO SDI o PEC"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1220
+msgid "VAT NUMBER"
+msgstr "NUMERO P.IVA"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1223
+msgid "TAX CODE"
+msgstr "CODICE FISCALE"
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1232
+#, php-format
+msgid "Please enter \"%1$s\" value."
+msgstr "SI prega di inserire il valore per \"%1$s\""
+
+#: views/pdf/addresses.php:29
+msgid "Refund ID:"
+msgstr "ID Rimborso:"
+
+#: views/pdf/addresses.php:30
+msgid "Invoice N:"
+msgstr "Fattura N:"
+
+#: views/pdf/addresses.php:31
+msgid "Invoice date:"
+msgstr "Fattura data:"
+
+#: views/pdf/addresses.php:32
+msgid "Order N:"
+msgstr "Ordine N:"
+
+#: views/pdf/addresses.php:33
+msgid "Order date:"
+msgstr "Ordine data:"
+
+#: views/pdf/addresses.php:34
+msgid "Payment method:"
+msgstr "Metodo di pagamento"
+
+#: views/pdf/addresses.php:37
+msgid "First name"
+msgstr "Nome"
+
+#: views/pdf/addresses.php:38
+msgid "Last name"
+msgstr "Cognome"
+
+#: views/pdf/addresses.php:39
+msgid "Address 1"
+msgstr "Indirizzo 1"
+
+#: views/pdf/addresses.php:40
+msgid "City"
+msgstr "Città"
+
+#: views/pdf/addresses.php:41
+msgid "State"
+msgstr "Provincia"
+
+#: views/pdf/addresses.php:42 views/pdf/addresses.php:43
+msgid "Postcode"
+msgstr "Codice Postale"
+
+#: views/pdf/addresses.php:44
+msgid "Country"
+msgstr "Stato"
+
+#: views/pdf/addresses.php:45
+msgid "Phone"
+msgstr "Telefono"
+
+#: views/pdf/addresses.php:50
+msgid "Billing"
+msgstr "Fatturazione"
+
+#: views/pdf/addresses.php:63
+msgid "VAT"
+msgstr "P.IVA"
+
+#: views/pdf/addresses.php:68
+msgid "Tax code"
+msgstr "Codice Fiscale"
+
+#: views/pdf/addresses.php:73
+msgid "Email PEC"
+msgstr ""
+
+#: views/pdf/addresses.php:77
+msgid "Web-service code"
+msgstr "Codice Destinatario"
+
+#: views/pdf/addresses.php:89 views/pdf/details.php:193
+#: views/pdf/details.php:253
+msgid "Shipping"
+msgstr "Spedizione"
+
+#: views/pdf/details.php:44
+msgid "Description"
+msgstr "Descrizione"
+
+#: views/pdf/details.php:47
+msgid "Quantity"
+msgstr "Quantità"
+
+#: views/pdf/details.php:50 views/pdf/summary.php:38
+msgid "Tax rate"
+msgstr "Aliquota"
+
+#: views/pdf/details.php:53
+msgid "Price unit"
+msgstr "Prezzo unitario"
+
+#: views/pdf/details.php:56
+msgid "Discount"
+msgstr "Sconto"
+
+#: views/pdf/details.php:59
+msgid "Price"
+msgstr "Prezzo"
+
+#: views/pdf/details.php:130 views/pdf/details.php:336
+msgid "Description:"
+msgstr "Descrizione:"
+
+#: views/pdf/details.php:133
+msgid "Sku:"
+msgstr "Sku:"
+
+#: views/pdf/details.php:152 views/pdf/details.php:210
+#: views/pdf/details.php:280
+msgid "tax:"
+msgstr "imposta:"
+
+#: views/pdf/details.php:330
+msgid "Flat-rate refund"
+msgstr "Rimborso forfettario"
+
+#: views/pdf/footer.php:39
+msgid ""
+"This document does not constitute a valid invoice for the purposes of the "
+"DpR 633 26/10/1972 and subsequent amendments. The final invoice will be "
+"issued upon payment of the fee (article 6, paragraph 3, DpR 633/72)."
+msgstr ""
+"Il presente documento non costituisce fattura valida ai fini del DpR 633 "
+"26/10/1972 e successive modifiche. La fattura definitiva verrà emessa "
+"all’atto del pagamento del corrispettivo (articolo 6, comma 3, DpR 633/72)."
+
+#: views/pdf/head.php:32
+msgid "Name:"
+msgstr "Nome:"
+
+#: views/pdf/head.php:33
+msgid "Surname:"
+msgstr "Cognome:"
+
+#: views/pdf/head.php:34
+msgid "Company:"
+msgstr "Azienda:"
+
+#: views/pdf/head.php:35
+msgid "VAT:"
+msgstr "IVA:"
+
+#: views/pdf/head.php:36
+msgid "Cod Regime:"
+msgstr "Cod. Regime Fiscale:"
+
+#: views/pdf/head.php:37
+msgid "Address:"
+msgstr "Indirizzo:"
+
+#: views/pdf/head.php:38
+msgid "Phone:"
+msgstr "Telefono:"
+
+#: views/pdf/head.php:39
+msgid "Email:"
+msgstr "Email:"
+
+#: views/pdf/order-totals.php:43
+msgid "Total Tax:"
+msgstr "Imposta totale:"
+
+#: views/pdf/order-totals.php:50
+msgid "Total:"
+msgstr "Totale:"
+
+#: views/pdf/summary.php:34
+msgid "VAT SUMMARY"
+msgstr "CASTELLETTO IVA"
+
+#: views/pdf/summary.php:39
+msgid "Total amount"
+msgstr "Totale imponibile/importo"
+
+#: views/pdf/summary.php:40
+msgid "Total taxable"
+msgstr "Totale imposta"
+
+#: views/pdfTemplate.php:61
+msgid "INVOICE"
+msgstr "FATTURA"
+
+#: views/pdfTemplate.php:92
+msgid "Customer Notes"
+msgstr "Note Cliente:"
