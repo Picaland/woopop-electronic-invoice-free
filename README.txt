@@ -2,8 +2,8 @@
 Contributors: Picaland
 Tags: piva, codice fiscale, codice univoco, fattura pdf, fattura elettronica, fattura xml, woocommerce
 Requires at least: 4.6
-Tested up to: 5.1.1
-Stable tag: 1.0.0
+Tested up to: 5.2
+Stable tag: 1.1.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -65,6 +65,12 @@ Php: >= 5.6
 WordPress: >= 4.6
 
 == Changelog ==
+
+= 1.1.0 - 08/05/2019 =
+
+* Add: Receipt PDF template
+* Add: Option to choose the type of document (invoice or receipt) in the checkout
+* Tweak: Order/invoice list table layout
 
 = 1.0.0 =
 * Initial release
