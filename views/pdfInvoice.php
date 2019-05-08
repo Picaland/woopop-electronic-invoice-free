@@ -62,7 +62,10 @@ $fileName = \WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields::getGeneralI
             <!-- head -->
             <?php $this->pdfHead($data); ?>
 
-            <?php echo sprintf('<h1 style="font-size:18px;">%s</h1>', esc_html__('INVOICE', WC_EL_INV_FREE_TEXTDOMAIN)); ?>
+            <!-- doc type -->
+            <?php echo sprintf('<h1 style="font-size:18px;">%s</h1>',
+                esc_html__($this->docType($data), WC_EL_INV_FREE_TEXTDOMAIN)
+            ); ?>
 
             <?php do_action('wc_el_inv-after_document_label_pdf', $this->pdf, $data); ?>
 

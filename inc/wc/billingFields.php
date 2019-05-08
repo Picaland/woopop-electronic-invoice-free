@@ -30,17 +30,20 @@ $euVat       = $countries->get_european_union_countries('eu_vat');
 $userCountry = get_user_meta(get_current_user_id(), 'billing_country', true);
 
 // Sdi required
-$sdi         = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'billing_sdi_type', FILTER_SANITIZE_STRING);
-$country     = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'billing_country', FILTER_SANITIZE_STRING);
-$action      = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'action', FILTER_SANITIZE_STRING);
-$sdiRequired = 'edit_address' !== $action &&
-               in_array($userCountry, $euVat, true) &&
-               ('IT' === $userCountry || 'IT' === $sdi) ? true : false;
+$sdi           = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'billing_sdi_type', FILTER_SANITIZE_STRING);
+$country       = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'billing_country', FILTER_SANITIZE_STRING);
+$choiceDocType = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'billing_choice_type', FILTER_SANITIZE_STRING);
+$action        = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'action', FILTER_SANITIZE_STRING);
+$sdiRequired   = 'edit_address' !== $action &&
+                 in_array($userCountry, $euVat, true) &&
+                 ('IT' === $userCountry || 'IT' === $sdi) ? true : false;
 
 // Disable Pec Unique code option
 $disablePecSdi = $page->getOptions('invoice_disable_pec_sdi');
 // Disable Tax code option
 $disableTaxCode = $page->getOptions('invoice_disable_cf');
+// Choice type
+$choiceType = $page->getOptions('invoice_choice_type');
 
 // Option required
 $requiredOption = 'required' === $page->getOptions('invoice_required') ? true : false;
@@ -60,7 +63,27 @@ if (false === $requiredOption && 'IT' !== $userCountry || 'IT' !== $country) {
     $requiredVat = false;
 }
 
+if ('receipt' === $choiceDocType) {
+    $requiredOption = $sdiRequired = $requiredVat = $requiredTaxCode = false;
+}
+
 $fields = apply_filters('wc_el_inv-billing_fields', array(
+    'billing_choice_type'  => array(
+        'id'          => 'billing_choice_type',
+        'type'        => 'select',
+        'class'       => array(
+            'wc_el_inv-type-field',
+            'form-row-wide',
+        ),
+        'label'       => esc_html__('Choose the type of document', WC_EL_INV_FREE_TEXTDOMAIN),
+        'description' => '',
+        'required'    => false,
+        'default'     => 'invoice',
+        'options'     => array(
+            'invoice' => esc_html_x('Invoice', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN),
+            'receipt' => esc_html_x('Receipt', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN),
+        ),
+    ),
     'billing_invoice_type' => array(
         'id'          => 'billing_invoice_type',
         'type'        => 'select',
@@ -116,6 +139,11 @@ $fields = apply_filters('wc_el_inv-billing_fields', array(
         'required'    => $requiredTaxCode,
     ),
 ));
+
+// Remove Choice type select
+if ('on' !== $choiceType && ! is_admin()) {
+    unset($fields['billing_choice_type']);
+}
 
 // Disable "billing_sdi_type" field only in front
 if ('on' === $disablePecSdi && ! is_admin()) {

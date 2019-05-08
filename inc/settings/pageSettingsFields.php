@@ -121,6 +121,22 @@ switch ($section) {
             'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
             'field_section'  => 'setting_section_invoice',
         );
+        $this->fieldsArgs[] = array(
+            'field_id'       => 'invoice_choice_type_options_fields',
+            'field_title'    => esc_html__('Invoice or Receipt', WC_EL_INV_FREE_TEXTDOMAIN),
+            'field_callback' => array(
+                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                    'id'          => 'wc_el_inv-settings-invoice_choice_type',
+                    'name'        => 'wc_el_inv-settings-invoice_choice_type',
+                    'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
+                    'description' => esc_html__('Activate the select for choosing the type of document (invoice or receipt)',
+                        WC_EL_INV_FREE_TEXTDOMAIN),
+                ), $this, $page),
+                'field',
+            ),
+            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+            'field_section'  => 'setting_section_invoice',
+        );
         $this->fieldsArgs[]                      = array(
             'field_id'       => 'invoice_disable_pec_sdi_options_fields',
             'field_title'    => esc_html__('Disable PEC/SDI', WC_EL_INV_FREE_TEXTDOMAIN),

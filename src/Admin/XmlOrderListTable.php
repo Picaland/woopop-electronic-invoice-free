@@ -120,10 +120,10 @@ class XmlOrderListTable extends \WP_List_Table
      */
     private function actions($id, $item)
     {
-        $output = '';
+        $output  = '';
         $nonce   = wp_create_nonce('wc_el_inv_invoice_pdf');
         $pdfArgs = "?format=pdf&nonce={$nonce}";
-        $url = site_url() . '/' . Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/';
+        $url     = site_url() . '/' . Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/';
 
         $output .= sprintf(
             '<a id="mark_as_sent-%1$s" class="mark_trigger disabled mark_as_sent button button-secondary" href="javascript:;" title="%1$s %2$s">' .
@@ -162,7 +162,7 @@ class XmlOrderListTable extends \WP_List_Table
             '<span class="dashicons dashicons-media-text"></span></a>',
             'target="_blank"',
             esc_url($url . $id),
-            $pdfArgs,
+            $pdfArgs . "&choice_type={$item['choice_type']}",
             esc_html__('View PDF', WC_EL_INV_FREE_TEXTDOMAIN)
         );
 
@@ -270,7 +270,9 @@ class XmlOrderListTable extends \WP_List_Table
                     break;
             }
 
-            return sprintf('<strong>%s</strong> - %s %s %s <br><strong>%s </strong><span %s>%s</span> %s',
+            return sprintf('<strong>%s:</strong> %s<br><strong>%s</strong> - %s %s %s <br><strong>%s </strong><span %s>%s</span> %s',
+                esc_html__('Customer', WC_EL_INV_FREE_TEXTDOMAIN),
+                $this->orderCustomer($item),
                 esc_html("#" . $item['id']),
                 "{$type}",
                 esc_html__('of', WC_EL_INV_FREE_TEXTDOMAIN),
@@ -410,6 +412,43 @@ class XmlOrderListTable extends \WP_List_Table
     }
 
     /**
+     * Choice Type
+     *
+     * @param $item
+     *
+     * @return string
+     */
+    private function choiceType($item)
+    {
+        switch ($item['choice_type']) {
+            case 'receipt':
+                $type = sprintf('<span style="color:dodgerblue;" class="dashicons dashicons-media-default" title="%s"></span>',
+                    esc_html_x('Receipt', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN)
+                );
+                break;
+            case 'invoice':
+            case '':
+                if ('shop_order' === $item['order_type']) {
+                    $type = sprintf('<span style="color:green;" class="dashicons dashicons-media-text" title="%s"></span>',
+                        esc_html_x('Invoice', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN)
+                    );
+                } else {
+                    $type = sprintf('<span style="color:red;" class="dashicons dashicons-media-text" title="%s"></span>',
+                        esc_html_x('Refund', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN)
+                    );
+                }
+                break;
+            default:
+                $type = sprintf('<span style="color:green;" class="dashicons dashicons-media-text" title="%s"></span>',
+                    esc_html_x('Invoice', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN)
+                );
+                break;
+        }
+
+        return $type;
+    }
+
+    /**
      * Custom VAT or SDI
      *
      * @since 1.0.0
@@ -458,13 +497,13 @@ class XmlOrderListTable extends \WP_List_Table
 
         switch ($item['invoice_sent']) {
             case 'sent':
-                return '<i class="mark-yes dashicons dashicons-yes" title="'.WC_EL_INV_PREMIUM.'"></i>';
+                return '<i class="mark-yes dashicons dashicons-yes" title="' . WC_EL_INV_PREMIUM . '"></i>';
                 break;
             case 'no_sent':
-                return '<i class="mark-warning dashicons dashicons-warning" title="'.WC_EL_INV_PREMIUM.'"></i>';
+                return '<i class="mark-warning dashicons dashicons-warning" title="' . WC_EL_INV_PREMIUM . '"></i>';
                 break;
             default:
-                return '<i class="mark-warning dashicons dashicons-warning" title="'.WC_EL_INV_PREMIUM.'"></i>';
+                return '<i class="mark-warning dashicons dashicons-warning" title="' . WC_EL_INV_PREMIUM . '"></i>';
                 break;
         }
     }
@@ -512,6 +551,7 @@ class XmlOrderListTable extends \WP_List_Table
             'tax_code'     => $order->get_meta('_billing_tax_code'),
             'invoice_type' => $order->get_meta('_billing_invoice_type'),
             'sdi_type'     => $order->get_meta('_billing_sdi_type'),
+            'choice_type'  => $order->get_meta('_billing_choice_type'),
         );
 
         // Order Invoice number.
@@ -588,6 +628,7 @@ class XmlOrderListTable extends \WP_List_Table
             'tax_code'     => $parentOrder->get_meta('_billing_tax_code'),
             'invoice_type' => $parentOrder->get_meta('_billing_invoice_type'),
             'sdi_type'     => $parentOrder->get_meta('_billing_sdi_type'),
+            'choice_type'  => $parentOrder->get_meta('_billing_choice_type'),
         );
         $refundedData = array(
             'remaining_amount'        => $parentOrder->get_remaining_refund_amount(),
@@ -679,7 +720,7 @@ class XmlOrderListTable extends \WP_List_Table
 
             $before = $now->getTimestamp();
             $now->modify("-1 month");
-            $after                 = $now->getTimestamp();
+            $after                = $now->getTimestamp();
             $args['date_created'] = "{$after}...{$before}";
         } catch (\Exception $e) {
         }
@@ -718,6 +759,20 @@ class XmlOrderListTable extends \WP_List_Table
 
         $query = new \WC_Order_Query($args);
 
+        /**
+         * Add filter for get receipt order
+         */
+        add_filter('woocommerce_order_data_store_cpt_get_orders_query', function ($query, $queryVars) use ($type) {
+            if ('receipt' === $type && empty($queryVars['_billing_choice_type'])) {
+                $query['meta_query'][] = array(
+                    'key'   => '_billing_choice_type',
+                    'value' => esc_attr($type),
+                );
+            }
+
+            return $query;
+        }, 10, 2);
+
         $ordersData = array();
 
         // Set order for list
@@ -730,6 +785,15 @@ class XmlOrderListTable extends \WP_List_Table
                     $data      = $order->get_data();
                     $checkSent = get_post_meta($order->get_id(), '_invoice_sent', true);
                     $checkSent = isset($checkSent) && 'sent' === $checkSent ? true : false;
+
+                    // Remove receipt if filter type is't receipt
+                    if ($type && isset($type) && '' !== $type && 'receipt' !== $type) {
+                        // Get meta order choice type
+                        $meta = $order->get_meta('_billing_choice_type');
+                        if ('receipt' === $meta) {
+                            unset($orders[$index]);
+                        }
+                    }
 
                     if (! $checkSent &&
                         floatval($order->get_total()) === floatval($order->get_total_refunded())
@@ -890,14 +954,12 @@ class XmlOrderListTable extends \WP_List_Table
     public function get_columns()
     {
         $columns = array(
-            'id'             => esc_html__('Order number', WC_EL_INV_FREE_TEXTDOMAIN),
+            'id'             => esc_html__('Order', WC_EL_INV_FREE_TEXTDOMAIN),
             'total'          => esc_html__('Order Total', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice_number' => esc_html__('Number', WC_EL_INV_FREE_TEXTDOMAIN),
-            'customer_id'    => esc_html__('Customer', WC_EL_INV_FREE_TEXTDOMAIN),
+            'choice_type'    => esc_html__('Document', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice_type'   => esc_html__('Customer Type', WC_EL_INV_FREE_TEXTDOMAIN),
-            'vat_number'     => esc_html__('VAT number', WC_EL_INV_FREE_TEXTDOMAIN),
-            'tax_code'       => esc_html__('Tax Code', WC_EL_INV_FREE_TEXTDOMAIN),
-            'sdi_type'       => esc_html__('SDI or PEC', WC_EL_INV_FREE_TEXTDOMAIN),
+            'data_entered'   => esc_html__('Data entered', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice_sent'   => esc_html__('Sent', WC_EL_INV_FREE_TEXTDOMAIN),
             'actions'        => esc_html__('Actions', WC_EL_INV_FREE_TEXTDOMAIN),
         );
@@ -915,11 +977,8 @@ class XmlOrderListTable extends \WP_List_Table
         $sortableColumns = array(
             'id'           => array('id', false),
             'total'        => array('total', false),
-            'customer_id'  => array('customer_id', true),
+            'choice_type'  => array('choice_type', true),
             'invoice_type' => array('invoice_type', true),
-            'vat_number'   => array('vat_number', true),
-            'tax_code'     => array('tax_code', true),
-            'sdi_type'     => array('sdi_type', true),
             'invoice_sent' => array('invoice_sent', true),
         );
 
@@ -966,15 +1025,27 @@ class XmlOrderListTable extends \WP_List_Table
             case 'invoice_number':
                 return isset($item[$columnName]) ? $this->invoiceNumber($item[$columnName]) : '';
                 break;
-            case 'customer_id':
-                return $this->orderCustomer($item);
-                break;
             case 'invoice_type':
                 return $this->customerType($item);
-            case 'tax_code':
-            case 'vat_number':
-            case 'sdi_type':
-                return $this->customerVatOrSdi($item, $columnName);
+                break;
+            case 'choice_type':
+                return isset($item[$columnName]) ? $this->choiceType($item) : '';
+                break;
+            case 'data_entered':
+                $data = sprintf('<strong>%s:</strong> %s<br>',
+                    esc_html__('VAT number', WC_EL_INV_FREE_TEXTDOMAIN),
+                    $this->customerVatOrSdi($item, 'tax_code')
+                );
+                $data .= sprintf('<strong>%s:</strong> %s<br>',
+                    esc_html__('Tax Code', WC_EL_INV_FREE_TEXTDOMAIN),
+                    $this->customerVatOrSdi($item, 'vat_number')
+                );
+                $data .= sprintf('<strong>%s:</strong> %s',
+                    esc_html__('SDI or PEC', WC_EL_INV_FREE_TEXTDOMAIN),
+                    $this->customerVatOrSdi($item, 'sdi_type')
+                );
+
+                return $data;
                 break;
             case 'invoice_sent':
                 return $this->sentInvoice($item);

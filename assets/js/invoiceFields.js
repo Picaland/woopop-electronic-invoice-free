@@ -50,6 +50,21 @@
                     minimumResultsForSearch: Infinity
                 }
             );
+
+            var choiceType = document.getElementById('billing_choice_type');
+            if (!choiceType) {
+                return false;
+            }
+
+            if ($(choiceType).data('select2')) {
+                return false;
+            }
+
+            $(choiceType).select2(
+                {
+                    minimumResultsForSearch: Infinity
+                }
+            );
         }
 
         /**
@@ -171,6 +186,7 @@
         function switchTypeNoIT(type, ev)
         {
             var country = document.getElementById('billing_country');
+            var choiceTypeField = document.getElementById('billing_choice_type_field');
             var invoiceTypeField = document.getElementById('billing_invoice_type_field');
             var sdi = document.getElementById('billing_sdi_type');
             var sdiField = document.getElementById('billing_sdi_type_field');
@@ -221,6 +237,9 @@
             if ('show' !== wc_el_inv_invoice.hide_outside_ue &&
                 -1 === wc_el_inv_invoice.eu_vat_country.indexOf(country.value)
             ) {
+                if (choiceTypeField) {
+                    choiceTypeField.style.display = 'none';
+                }
                 invoiceTypeField.style.display = 'none';
                 // TAX
                 taxCodeField.style.display = 'none';
@@ -322,6 +341,7 @@
         function switchType(type, ev)
         {
             var country = document.getElementById('billing_country');
+            var choiceTypeField = document.getElementById('billing_choice_type_field');
             var invoiceTypeField = document.getElementById('billing_invoice_type_field');
             var sdi = document.getElementById('billing_sdi_type');
             var sdiField = document.getElementById('billing_sdi_type_field');
@@ -370,6 +390,9 @@
             }
 
             // Initialize display fields
+            if (choiceTypeField) {
+                choiceTypeField.style.display = 'block';
+            }
             invoiceTypeField.style.display = 'block';
             taxCodeField.style.display = 'block';
             vatField.style.display = 'block';
@@ -462,6 +485,76 @@
             }
         }
 
+        /**
+         * Choice type
+         * @param ev
+         */
+        function choiceType(ev)
+        {
+            var choiceType = document.getElementById('billing_choice_type');
+            if (!choiceType) {
+                return;
+            }
+
+            // Remove optional text
+            var choiceTypeLabel = document.querySelector('#billing_choice_type_field > label span.optional');
+            choiceTypeLabel.remove();
+
+            if ('load' === ev.type) {
+                toggleFieldsDisplay(choiceType.options[choiceType.selectedIndex].value, ev);
+            }
+
+            $(choiceType).on('change', function (evt) {
+                toggleFieldsDisplay(this.value, evt);
+            });
+
+        }
+
+        /**
+         * Toggle Display fields
+         *
+         * @param type
+         * @param ev
+         */
+        function toggleFieldsDisplay(type, ev)
+        {
+            var invoiceType = document.getElementById('billing_invoice_type');
+            var invoiceTypeField = document.getElementById('billing_invoice_type_field');
+            var sdiField = document.getElementById('billing_sdi_type_field');
+            var vatField = document.getElementById('billing_vat_number_field');
+            var taxCodeField = document.getElementById('billing_tax_code_field');
+            var sdi = document.getElementById('billing_sdi_type');
+            var vat = document.getElementById('billing_vat_number');
+            var taxCode = document.getElementById('billing_tax_code');
+
+            switch (type) {
+                case'invoice':
+                    if (invoiceType) {
+                        switchType(invoiceType.options[invoiceType.selectedIndex].value, ev);
+                    }
+                    break;
+                case'receipt':
+                    // It serves as a discriminant to generate the receipt
+                    // fake data to validate the fields
+                    if (vat) {
+                        vat.value = '11111111111';
+                        vatField.style.display = 'none';
+                    }
+                    if (sdi) {
+                        sdi.value = '1111111';
+                        sdiField.style.display = 'none';
+                    }
+                    if (taxCode) {
+                        taxCode.value = 'XXXXXX00L00L000X';
+                        taxCodeField.style.display = 'none';
+                    }
+                    invoiceTypeField.style.display = 'none';
+                    break;
+                default:
+                    break;
+            }
+        }
+
         // Set required fields
         setRequired();
 
@@ -485,7 +578,7 @@
 
             // Switch country
             switchCountry(country.value, invoiceType.value, ev);
-
+            choiceType(ev);
             initSelect2();
             cloneValueVat();
         })

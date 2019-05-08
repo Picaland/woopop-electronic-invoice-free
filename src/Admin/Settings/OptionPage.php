@@ -280,10 +280,12 @@ final class OptionPage extends OptionFields
             if ('' === $singleKey) {
                 return (array)$options;
             } else {
-                if (isset($options[self::$optionKey . $singleKey]) && ! $allowedHtml) {
-                    return \WcElectronInvoiceFree\Functions\sanitize($options[self::$optionKey . $singleKey]);
-                } else {
-                    return $options[self::$optionKey . $singleKey];
+                if (isset($options[self::$optionKey . $singleKey])) {
+                    if (! $allowedHtml) {
+                        return \WcElectronInvoiceFree\Functions\sanitize($options[self::$optionKey . $singleKey]);
+                    } else {
+                        return $options[self::$optionKey . $singleKey];
+                    }
                 }
             }
         }

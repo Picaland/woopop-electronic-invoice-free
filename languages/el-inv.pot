@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WooPop Electronic Invoice\n"
-"POT-Creation-Date: 2019-04-17 17:46+0200\n"
+"POT-Creation-Date: 2019-05-08 13:28+0200\n"
 "PO-Revision-Date: 2017-01-08 19:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -20,296 +20,324 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: inc/localizeScripts.php:45 inc/localizeScripts.php:65
-#: src/Admin/Settings/OptionFields.php:124
+#: inc/localizeScripts.php:49 inc/localizeScripts.php:69
+#: src/Admin/Settings/OptionFields.php:128
 msgid "required"
 msgstr ""
 
-#: inc/localizeScripts.php:46 inc/localizeScripts.php:66
-#: src/Admin/Settings/OptionFields.php:125
+#: inc/localizeScripts.php:50 inc/localizeScripts.php:70
+#: src/Admin/Settings/OptionFields.php:129
 msgid "not required"
 msgstr ""
 
-#: inc/localizeScripts.php:54 inc/wc/billingFields.php:88
+#: inc/localizeScripts.php:58 inc/wc/billingFields.php:111
 msgid "Certified e-mail (PEC) or the unique code"
 msgstr ""
 
-#: inc/localizeScripts.php:55 inc/wc/billingFields.php:91
+#: inc/localizeScripts.php:59 inc/wc/billingFields.php:114
 msgid "E-mail (PEC) or the unique code"
 msgstr ""
 
-#: inc/localizeScripts.php:56 inc/wc/billingFields.php:89
+#: inc/localizeScripts.php:60 inc/wc/billingFields.php:112
 msgid "Please enter your certified e-mail (PEC) or the unique code"
 msgstr ""
 
-#: inc/localizeScripts.php:67
+#: inc/localizeScripts.php:71
 msgid "Edit"
 msgstr ""
 
-#: inc/localizeScripts.php:68
+#: inc/localizeScripts.php:72
 msgid "Save"
 msgstr ""
 
-#: inc/localizeScripts.php:70
+#: inc/localizeScripts.php:74
 msgid ""
 "WARNING: You are about to set the \"SENT to invoice\" status, do you "
 "want to confirm?"
 msgstr ""
 
-#: inc/localizeScripts.php:74
+#: inc/localizeScripts.php:78
 msgid ""
 "WARNING: You are about to set the \"NOT SENT to invoice\" status, do "
 "you want to confirm?"
 msgstr ""
 
-#: inc/localizeScripts.php:78
+#: inc/localizeScripts.php:82
 msgid "First you must select one or more checkbox"
 msgstr ""
 
-#: inc/localizeScripts.php:82
+#: inc/localizeScripts.php:86
 msgid "Refund disabled: first you need to send the generated credit note"
 msgstr ""
 
-#: inc/localizeScripts.php:86
+#: inc/localizeScripts.php:90
 msgid ""
 "Before sending the invoice you cannot make a refund, on the total but "
 "only on the lines of the order"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:46
+#: inc/settings/pageSettingsFields.php:50
 msgid "Invoice settings"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:52
+#: inc/settings/pageSettingsFields.php:56
 msgid "Prefix invoice number"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:65
+#: inc/settings/pageSettingsFields.php:69
 msgid "Number of digits (enter 4 to display 13 as 0013)"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:72
+#: inc/settings/pageSettingsFields.php:76
 msgid "Recommended 4 (you can leave it blank)"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:86
+#: inc/settings/pageSettingsFields.php:90
 msgid "Number of the next invoice"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:93
+#: inc/settings/pageSettingsFields.php:97
 msgid ""
 "Enter a number from which to start generating the invoice numbering"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:109
+#: inc/settings/pageSettingsFields.php:113
 msgid "Suffix invoice number"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:122
+#: inc/settings/pageSettingsFields.php:126
+msgid "Invoice or Receipt"
+msgstr ""
+
+#: inc/settings/pageSettingsFields.php:131
+#: inc/settings/pageSettingsFields.php:194
+#: inc/settings/pageSettingsFields.php:210
+#: inc/settings/pageSettingsFields.php:226
+msgid "Check to activate"
+msgstr ""
+
+#: inc/settings/pageSettingsFields.php:132
+msgid ""
+"Activate the select for choosing the type of document (invoice or "
+"receipt)"
+msgstr ""
+
+#: inc/settings/pageSettingsFields.php:142
 msgid "Disable PEC/SDI"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:127
+#: inc/settings/pageSettingsFields.php:147
 msgid "Disable Pec / Unique Code field in (checkout / my-account)"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:130
+#: inc/settings/pageSettingsFields.php:150
 msgid ""
 "Disable the Pec / Unique Code field in the checkout (the recipient "
 "code will be set to \"0000000\")"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:141
+#: inc/settings/pageSettingsFields.php:161
 msgid "Disable Fiscal Code"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:146
+#: inc/settings/pageSettingsFields.php:166
 msgid "Disable the tax code field in (checkout / my-account)"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:149
+#: inc/settings/pageSettingsFields.php:169
 msgid ""
 "Disable the tax code from the checkout and from my-account (only for "
 "companies and freelancers)"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:160
+#: inc/settings/pageSettingsFields.php:180
 msgid "Vies Check"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:169
+#: inc/settings/pageSettingsFields.php:189
 msgid "My Orders invoice"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:174
-#: inc/settings/pageSettingsFields.php:190
-#: inc/settings/pageSettingsFields.php:206
-msgid "Check to activate"
-msgstr ""
-
-#: inc/settings/pageSettingsFields.php:175
+#: inc/settings/pageSettingsFields.php:195
 msgid ""
 "Activate to view the link to download the pdf in the list of orders in "
 "my account"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:185
+#: inc/settings/pageSettingsFields.php:205
 msgid "Email invoice"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:191
+#: inc/settings/pageSettingsFields.php:211
 msgid ""
 "Active the sending of the invoice in PDF format via e-mail upon "
 "completion of the order"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:201
+#: inc/settings/pageSettingsFields.php:221
 msgid "Invoice HTML"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:207
+#: inc/settings/pageSettingsFields.php:227
 msgid "View the invoice (pdf) in HTML"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:217
+#: inc/settings/pageSettingsFields.php:237
 msgid "Invoice PDF Logo"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:223
+#: inc/settings/pageSettingsFields.php:243
 msgid "Enter the url of the logo for the invoice"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:232
+#: inc/settings/pageSettingsFields.php:252
 msgid "Invoice pdf footer text"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:237
+#: inc/settings/pageSettingsFields.php:257
 msgid "Enter the text for the PDF invoice footer."
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:249
+#: inc/settings/pageSettingsFields.php:269
 msgid "General WooCommerce integration settings"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:255
+#: inc/settings/pageSettingsFields.php:275
 msgid "VAT number and tax code, always required"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:261
+#: inc/settings/pageSettingsFields.php:281
 msgid ""
 "Choose if you want the VAT / Tax Code playing field is never "
 "optional. \n"
 "                    If it is NOT always required, follow these rules:"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:264
+#: inc/settings/pageSettingsFields.php:284
 msgid "Required"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:265
+#: inc/settings/pageSettingsFields.php:285
 msgid "Not required (IT always required)"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:282
+#: inc/settings/pageSettingsFields.php:302
 msgid ""
 "(1) Hide the VAT number and tax code field if the billing address is "
 "not in the European Union?"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:288
+#: inc/settings/pageSettingsFields.php:308
 msgid ""
 "Choose if you want to hide the VAT number or tax code field when the "
 "billing address is not in the European Union"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:291
+#: inc/settings/pageSettingsFields.php:311
 msgid "Always show the VAT number / tax code field"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:292
+#: inc/settings/pageSettingsFields.php:312
 msgid ""
 "Hide the VAT number and tax code when the customer billing address is "
 "outside the European Union"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:308
+#: inc/settings/pageSettingsFields.php:328
 msgid "Json Order list"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:325
+#: inc/settings/pageSettingsFields.php:345
 msgid "Json Product list"
 msgstr ""
 
-#: inc/settings/pageSettingsFields.php:342
+#: inc/settings/pageSettingsFields.php:362
 msgid "Xml for the electron invoice"
 msgstr ""
 
-#: inc/settings/pageSettingsTabs.php:31
-#: src/Admin/Settings/OptionPage.php:231
+#: inc/settings/pageSettingsTabs.php:35
+#: src/Admin/Settings/OptionPage.php:235
 msgid "WooCommerce Integration"
 msgstr ""
 
-#: inc/settings/pageSettingsTabs.php:37
-#: src/Admin/Settings/Fields/XmlOrdersList.php:138
-#: src/Admin/Settings/OptionPage.php:237 src/Pdf/CreatePdf.php:199
+#: inc/settings/pageSettingsTabs.php:41
+#: src/Admin/Settings/Fields/XmlOrdersList.php:143
+#: src/Admin/Settings/OptionPage.php:241 src/Pdf/CreatePdf.php:204
 msgid "Invoice"
 msgstr ""
 
-#: inc/settings/pageSettingsTabs.php:43
-#: src/Admin/Settings/OptionPage.php:243
+#: inc/settings/pageSettingsTabs.php:47
+#: src/Admin/Settings/OptionPage.php:247
 msgid "Json Order"
 msgstr ""
 
-#: inc/settings/pageSettingsTabs.php:49
-#: src/Admin/Settings/OptionPage.php:249
+#: inc/settings/pageSettingsTabs.php:53
+#: src/Admin/Settings/OptionPage.php:253
 msgid "Json Product"
 msgstr ""
 
-#: inc/settings/pageSettingsTabs.php:55
-#: src/Admin/Settings/OptionPage.php:255
+#: inc/settings/pageSettingsTabs.php:59
+#: src/Admin/Settings/OptionPage.php:259
 msgid "Xml Invoice"
 msgstr ""
 
-#: inc/wc/billingFields.php:71 inc/wc/billingFields.php:73
+#: inc/wc/billingFields.php:78
+msgid "Choose the type of document"
+msgstr ""
+
+#: inc/wc/billingFields.php:83 src/Admin/XmlOrderListTable.php:433
+#: src/Admin/XmlOrderListTable.php:443
+#: src/WooCommerce/Fields/InvoiceFields.php:809
+msgctxt "invoice_choice"
+msgid "Invoice"
+msgstr ""
+
+#: inc/wc/billingFields.php:84 src/Admin/XmlOrderListTable.php:426
+#: src/WooCommerce/Fields/InvoiceFields.php:812
+msgctxt "invoice_choice"
+msgid "Receipt"
+msgstr ""
+
+#: inc/wc/billingFields.php:94 inc/wc/billingFields.php:96
 msgid "Customer type"
 msgstr ""
 
-#: inc/wc/billingFields.php:72
+#: inc/wc/billingFields.php:95
 msgid "Please select Customer type"
 msgstr ""
 
-#: inc/wc/billingFields.php:76 src/Admin/XmlOrderListTable.php:391
-#: src/WooCommerce/Fields/InvoiceFields.php:780
+#: inc/wc/billingFields.php:99 src/Admin/XmlOrderListTable.php:397
+#: src/WooCommerce/Fields/InvoiceFields.php:800
 msgid "Company"
 msgstr ""
 
-#: inc/wc/billingFields.php:77 src/Admin/XmlOrderListTable.php:394
-#: src/WooCommerce/Fields/InvoiceFields.php:783
+#: inc/wc/billingFields.php:100 src/Admin/XmlOrderListTable.php:400
+#: src/WooCommerce/Fields/InvoiceFields.php:803
 msgid "Freelance"
 msgstr ""
 
-#: inc/wc/billingFields.php:78 src/Admin/XmlOrderListTable.php:397
+#: inc/wc/billingFields.php:101 src/Admin/XmlOrderListTable.php:403
 msgid "Private"
 msgstr ""
 
-#: inc/wc/billingFields.php:101 inc/wc/billingFields.php:103
-#: src/Admin/XmlOrderListTable.php:904
+#: inc/wc/billingFields.php:124 inc/wc/billingFields.php:126
+#: src/Admin/XmlOrderListTable.php:1079
 msgid "VAT number"
 msgstr ""
 
-#: inc/wc/billingFields.php:102
-#: src/WooCommerce/Fields/InvoiceFields.php:1159
+#: inc/wc/billingFields.php:125
+#: src/WooCommerce/Fields/InvoiceFields.php:1201
 msgid "Please enter your VAT number"
 msgstr ""
 
-#: inc/wc/billingFields.php:113 inc/wc/billingFields.php:115
-#: src/Admin/XmlOrderListTable.php:905
+#: inc/wc/billingFields.php:136 inc/wc/billingFields.php:138
+#: src/Admin/XmlOrderListTable.php:1083
 msgid "Tax Code"
 msgstr ""
 
-#: inc/wc/billingFields.php:114
-#: src/WooCommerce/Fields/InvoiceFields.php:1155
-#: src/WooCommerce/Fields/InvoiceFields.php:1172
+#: inc/wc/billingFields.php:137
+#: src/WooCommerce/Fields/InvoiceFields.php:1197
+#: src/WooCommerce/Fields/InvoiceFields.php:1214
 msgid "Please enter your Tax Code"
 msgstr ""
 
@@ -488,432 +516,445 @@ msgstr ""
 msgid "Altro"
 msgstr ""
 
-#: src/Admin/Settings/Fields/KeyField.php:92
+#: src/Admin/Settings/Fields/KeyField.php:96
 msgid "No key"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:128
+#: src/Admin/Settings/Fields/XmlOrdersList.php:132
 msgid "Users:"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:130
-#: src/Admin/Settings/Fields/XmlOrdersList.php:146
+#: src/Admin/Settings/Fields/XmlOrdersList.php:134
+#: src/Admin/Settings/Fields/XmlOrdersList.php:150
 msgid "All"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:139
-#: src/Admin/XmlOrderListTable.php:222
-#: src/WooCommerce/Fields/InvoiceFields.php:622
+#: src/Admin/Settings/Fields/XmlOrdersList.php:144
+#: src/Admin/XmlOrderListTable.php:226
+#: src/WooCommerce/Fields/InvoiceFields.php:642
 msgid "Refund"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:144
-#: views/pdf/addresses.php:28
+#: src/Admin/Settings/Fields/XmlOrdersList.php:148
+#: views/pdf/addresses.php:32
 msgid "Type:"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:161
+#: src/Admin/Settings/Fields/XmlOrdersList.php:167
 msgid "Actions Bulk"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:164
+#: src/Admin/Settings/Fields/XmlOrdersList.php:170
 msgid "Mark no Sent"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:167
-#: src/Admin/XmlOrderListTable.php:127
-#: src/WooCommerce/Fields/InvoiceFields.php:346
+#: src/Admin/Settings/Fields/XmlOrdersList.php:173
+#: src/Admin/XmlOrderListTable.php:131
+#: src/WooCommerce/Fields/InvoiceFields.php:366
 msgid "Mark as Sent"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:211
+#: src/Admin/Settings/Fields/XmlOrdersList.php:217
 msgid ""
 "Filter by date: (Matches on orders created during or in between the "
 "seconds)"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:216
+#: src/Admin/Settings/Fields/XmlOrdersList.php:222
 msgid "From: "
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:220
+#: src/Admin/Settings/Fields/XmlOrdersList.php:226
 msgid "To: "
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:230
+#: src/Admin/Settings/Fields/XmlOrdersList.php:236
 msgid "Filter"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:236
+#: src/Admin/Settings/Fields/XmlOrdersList.php:242
 msgid "Get all Xml"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:243
+#: src/Admin/Settings/Fields/XmlOrdersList.php:249
 msgid "View all Xml"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:250
+#: src/Admin/Settings/Fields/XmlOrdersList.php:256
 msgid "Save all Xml"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:270
+#: src/Admin/Settings/Fields/XmlOrdersList.php:276
 msgid "No order found!"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:281
+#: src/Admin/Settings/Fields/XmlOrdersList.php:287
 msgid ""
 "The display of all xml is disabled. first filter orders by user and / "
 "or dates."
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:318
+#: src/Admin/Settings/Fields/XmlOrdersList.php:324
 msgid "You are viewing invoices after the"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:320
+#: src/Admin/Settings/Fields/XmlOrdersList.php:326
 msgid "until"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:336
+#: src/Admin/Settings/Fields/XmlOrdersList.php:342
 msgid "Summary"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:339
-#: views/pdf/order-totals.php:37
+#: src/Admin/Settings/Fields/XmlOrdersList.php:345
+#: views/pdf/order-totals.php:41
 msgid "Totals:"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:340
+#: src/Admin/Settings/Fields/XmlOrdersList.php:346
 msgid "Sent:"
 msgstr ""
 
-#: src/Admin/Settings/Fields/XmlOrdersList.php:341
+#: src/Admin/Settings/Fields/XmlOrdersList.php:347
 msgid "No Sent:"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:112
+#: src/Admin/Settings/OptionFields.php:116
 msgid "General options for enabling APIs"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:130
+#: src/Admin/Settings/OptionFields.php:134
 msgid "Customer Country"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:131
+#: src/Admin/Settings/OptionFields.php:135
 msgid "The user selects: Company or Freelance"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:132
+#: src/Admin/Settings/OptionFields.php:136
 msgid "The user selects: Private"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:137
+#: src/Admin/Settings/OptionFields.php:141
 msgid "IT"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:138
+#: src/Admin/Settings/OptionFields.php:142
 #, php-format
 msgid ""
 "VAT number or Tax Code and E-mail (PEC) or the web-service code: %1$s"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:142
+#: src/Admin/Settings/OptionFields.php:146
 msgid "(Tax Code)"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:145
+#: src/Admin/Settings/OptionFields.php:149
 msgid "UE"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:146
+#: src/Admin/Settings/OptionFields.php:150
 #, php-format
 msgid "VAT number or Tax Code: %1$s"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:153
+#: src/Admin/Settings/OptionFields.php:157
 msgid "Extra UE"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:154
+#: src/Admin/Settings/OptionFields.php:158
 msgid "View (1)"
 msgstr ""
 
-#: src/Admin/Settings/OptionFields.php:155
+#: src/Admin/Settings/OptionFields.php:159
 #, php-format
 msgid "VAT number or Tax Code: %2$s"
 msgstr ""
 
-#: src/Admin/Settings/OptionPage.php:190
-#: src/Admin/Settings/OptionPage.php:575
+#: src/Admin/Settings/OptionPage.php:194
+#: src/Admin/Settings/OptionPage.php:579
 msgid "Electronic Invoice - Settings"
 msgstr ""
 
-#: src/Admin/Settings/OptionPage.php:191
+#: src/Admin/Settings/OptionPage.php:195
 msgid "Electr. Invoice"
 msgstr ""
 
-#: src/Admin/Settings/OptionPage.php:596
+#: src/Admin/Settings/OptionPage.php:600
 msgid "Save data"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:135
-#: src/WooCommerce/Fields/InvoiceFields.php:354
+#: src/Admin/XmlOrderListTable.php:139
+#: src/WooCommerce/Fields/InvoiceFields.php:374
 msgid "Get Xml"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:143
-#: src/WooCommerce/Fields/InvoiceFields.php:362
+#: src/Admin/XmlOrderListTable.php:147
+#: src/WooCommerce/Fields/InvoiceFields.php:382
 msgid "View Xml"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:151
-#: src/WooCommerce/Fields/InvoiceFields.php:370
+#: src/Admin/XmlOrderListTable.php:155
+#: src/WooCommerce/Fields/InvoiceFields.php:390
 msgid "Save Xml"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:162
-#: src/WooCommerce/Fields/InvoiceFields.php:317
-#: src/WooCommerce/Fields/InvoiceFields.php:381
+#: src/Admin/XmlOrderListTable.php:166
+#: src/WooCommerce/Fields/InvoiceFields.php:336
+#: src/WooCommerce/Fields/InvoiceFields.php:401
 msgid "View PDF"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:187
+#: src/Admin/XmlOrderListTable.php:191
 msgid "Edit customer"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:219
+#: src/Admin/XmlOrderListTable.php:223
+#: src/Admin/XmlOrderListTable.php:957
 msgid "Order"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:241
+#: src/Admin/XmlOrderListTable.php:245
 msgid "Edit order"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:247
+#: src/Admin/XmlOrderListTable.php:251
 msgid "Edit refund"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:252
+#: src/Admin/XmlOrderListTable.php:256
 msgid "Processing"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:256
+#: src/Admin/XmlOrderListTable.php:260
 msgid "Completed"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:260 src/Pdf/CreatePdf.php:389
-#: views/pdf/details.php:250
+#: src/Admin/XmlOrderListTable.php:264 src/Pdf/CreatePdf.php:394
+#: views/pdf/details.php:254
 msgid "Refunded"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:272
+#: src/Admin/XmlOrderListTable.php:274
+msgid "Customer"
+msgstr ""
+
+#: src/Admin/XmlOrderListTable.php:278
 msgid "of"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:280
+#: src/Admin/XmlOrderListTable.php:286
 msgid "Order title DateTime error: "
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:296
+#: src/Admin/XmlOrderListTable.php:302
 msgid "Error: no total order"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:386
+#: src/Admin/XmlOrderListTable.php:392
 msgid "* No UE customer *"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:400
+#: src/Admin/XmlOrderListTable.php:406
 msgid ""
 "(*) No data, set the data from the user profile before generating the "
 "xml invoice"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:431
+#: src/Admin/XmlOrderListTable.php:437
+msgctxt "invoice_choice"
+msgid "Refund"
+msgstr ""
+
+#: src/Admin/XmlOrderListTable.php:474
 msgid "No UE customer"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:435
+#: src/Admin/XmlOrderListTable.php:478
 msgid "(*) No data"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:860
+#: src/Admin/XmlOrderListTable.php:918
 msgid "No orders found: "
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:899
-msgid "Order number"
-msgstr ""
-
-#: src/Admin/XmlOrderListTable.php:900
+#: src/Admin/XmlOrderListTable.php:958
 msgid "Order Total"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:901
+#: src/Admin/XmlOrderListTable.php:959
 msgid "Number"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:902
-msgid "Customer"
+#: src/Admin/XmlOrderListTable.php:960
+msgid "Document"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:903
+#: src/Admin/XmlOrderListTable.php:961
 msgid "Customer Type"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:906
-msgid "SDI or PEC"
+#: src/Admin/XmlOrderListTable.php:962
+msgid "Data entered"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:907
+#: src/Admin/XmlOrderListTable.php:963
 msgid "Sent"
 msgstr ""
 
-#: src/Admin/XmlOrderListTable.php:908
+#: src/Admin/XmlOrderListTable.php:964
 msgid "Actions"
 msgstr ""
 
-#: src/Functions/Utils.php:333
+#: src/Admin/XmlOrderListTable.php:1087
+msgid "SDI or PEC"
+msgstr ""
+
+#: src/Functions/Utils.php:341
 msgid ""
 "WooPop -> (Electronic Invoice) has been deactivated. The plugin "
 "require: WooCommerce"
 msgstr ""
 
-#: src/Init.php:85 src/Init.php:97 src/Loader.php:130 src/Loader.php:142
+#: src/Init.php:87 src/Init.php:99 src/Loader.php:132 src/Loader.php:144
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:194
+#: src/Pdf/CreatePdf.php:199
 msgid "Receipt"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:202
+#: src/Pdf/CreatePdf.php:207
 msgid "Credit note"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:252 src/Pdf/CreatePdf.php:278
+#: src/Pdf/CreatePdf.php:257 src/Pdf/CreatePdf.php:283
 msgid "Error DateTime in dateCompleted: "
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:309
+#: src/Pdf/CreatePdf.php:314
 msgid "Cash money"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:311 src/Pdf/CreatePdf.php:313
+#: src/Pdf/CreatePdf.php:316 src/Pdf/CreatePdf.php:318
 msgid "Bank check"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:315
+#: src/Pdf/CreatePdf.php:320
 msgid "Bank transfer"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:317
+#: src/Pdf/CreatePdf.php:322
 msgid "Credit Card"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:727
+#: src/Pdf/CreatePdf.php:743
 msgid "Error in completed order attachments - message:"
 msgstr ""
 
-#: src/Pdf/CreatePdf.php:862
+#: src/Pdf/CreatePdf.php:887
 msgid ""
 "ERROR: you can not view the PDF for security and privacy issues. to "
 "view it you must be logged in"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:425
+#: src/WooCommerce/Fields/GeneralFields.php:429
 msgid "Please enter your valid VAT number"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:430
-#: src/WooCommerce/Fields/InvoiceFields.php:1068
-#: src/WooCommerce/Fields/InvoiceFields.php:1103
-#: src/WooCommerce/Fields/InvoiceFields.php:1165
+#: src/WooCommerce/Fields/GeneralFields.php:434
+#: src/WooCommerce/Fields/InvoiceFields.php:1110
+#: src/WooCommerce/Fields/InvoiceFields.php:1145
+#: src/WooCommerce/Fields/InvoiceFields.php:1207
 #, php-format
 msgid "VAT number %1$s is not correct"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:441
+#: src/WooCommerce/Fields/GeneralFields.php:445
 msgid "Please enter your Company Name"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:447
+#: src/WooCommerce/Fields/GeneralFields.php:451
 msgid "Please enter your Name"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:453
+#: src/WooCommerce/Fields/GeneralFields.php:457
 msgid "Please enter your Surname"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:460
+#: src/WooCommerce/Fields/GeneralFields.php:464
 msgid "Please enter your Email address"
 msgstr ""
 
-#: src/WooCommerce/Fields/GeneralFields.php:466
+#: src/WooCommerce/Fields/GeneralFields.php:470
 msgid "Please enter your Phone number"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:445
+#: src/WooCommerce/Fields/InvoiceFields.php:465
 msgid "Order Mark DateTime error: "
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:477
-#: src/WooCommerce/Fields/InvoiceFields.php:490
-#: views/pdf/addresses.php:107
+#: src/WooCommerce/Fields/InvoiceFields.php:497
+#: src/WooCommerce/Fields/InvoiceFields.php:510
 msgid "Invoice data"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:488
-#: src/WooCommerce/Fields/InvoiceFields.php:497
-#: src/WooCommerce/Fields/InvoiceFields.php:636
+#: src/WooCommerce/Fields/InvoiceFields.php:508
+#: src/WooCommerce/Fields/InvoiceFields.php:517
+#: src/WooCommerce/Fields/InvoiceFields.php:656
 msgid "Invoice number"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:511
-#: src/WooCommerce/Fields/InvoiceFields.php:647
+#: src/WooCommerce/Fields/InvoiceFields.php:531
+#: src/WooCommerce/Fields/InvoiceFields.php:667
 msgid "Invoice Date"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:626
+#: src/WooCommerce/Fields/InvoiceFields.php:646
 msgid "Refund number"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:628
+#: src/WooCommerce/Fields/InvoiceFields.php:648
 msgid "Refund data"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:721
+#: src/WooCommerce/Fields/InvoiceFields.php:741
 msgid "* Payment method"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:731
+#: src/WooCommerce/Fields/InvoiceFields.php:751
 msgid "Set payment method"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:732
+#: src/WooCommerce/Fields/InvoiceFields.php:752
 msgid "cash"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:733
+#: src/WooCommerce/Fields/InvoiceFields.php:753
 msgid "check"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:734
+#: src/WooCommerce/Fields/InvoiceFields.php:754
 msgid "circular check"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:735
+#: src/WooCommerce/Fields/InvoiceFields.php:755
 msgid "transfer"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:736
+#: src/WooCommerce/Fields/InvoiceFields.php:756
 msgid "payment card"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:786
+#: src/WooCommerce/Fields/InvoiceFields.php:806
 msgid "Private person"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1053
+#: src/WooCommerce/Fields/InvoiceFields.php:831
+msgid "Type of document"
+msgstr ""
+
+#: src/WooCommerce/Fields/InvoiceFields.php:1095
 #, php-format
 msgid ""
 "The VAT code entered \"%s\" is already associated with an account. "
@@ -922,167 +963,162 @@ msgid ""
 "VAT number"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1079
-#: src/WooCommerce/Fields/InvoiceFields.php:1091
-#: src/WooCommerce/Fields/InvoiceFields.php:1114
+#: src/WooCommerce/Fields/InvoiceFields.php:1121
+#: src/WooCommerce/Fields/InvoiceFields.php:1133
+#: src/WooCommerce/Fields/InvoiceFields.php:1156
 #, php-format
 msgid "TAX code %1$s is not correct"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1133
+#: src/WooCommerce/Fields/InvoiceFields.php:1175
 #, php-format
 msgid "E-mail (PEC) or Web-Service code %1$s is not correct"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1193
+#: src/WooCommerce/Fields/InvoiceFields.php:1235
 #, php-format
 msgid "Tax Identification Number %1$s is not correct"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1214
+#: src/WooCommerce/Fields/InvoiceFields.php:1256
 msgid "CUSTOMER TYPE"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1217
+#: src/WooCommerce/Fields/InvoiceFields.php:1259
 msgid "SDI OR PEC TYPE"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1220
+#: src/WooCommerce/Fields/InvoiceFields.php:1262
 msgid "VAT NUMBER"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1223
+#: src/WooCommerce/Fields/InvoiceFields.php:1265
 msgid "TAX CODE"
 msgstr ""
 
-#: src/WooCommerce/Fields/InvoiceFields.php:1232
+#: src/WooCommerce/Fields/InvoiceFields.php:1274
 #, php-format
 msgid "Please enter \"%1$s\" value."
 msgstr ""
 
-#: views/pdf/addresses.php:29
+#: views/pdf/addresses.php:33
 msgid "Refund ID:"
 msgstr ""
 
-#: views/pdf/addresses.php:30
-msgid "Invoice N:"
-msgstr ""
-
-#: views/pdf/addresses.php:31
-msgid "Invoice date:"
-msgstr ""
-
-#: views/pdf/addresses.php:32
-msgid "Order N:"
-msgstr ""
-
-#: views/pdf/addresses.php:33
-msgid "Order date:"
-msgstr ""
-
 #: views/pdf/addresses.php:34
-msgid "Payment method:"
+msgid "Number:"
+msgstr ""
+
+#: views/pdf/addresses.php:35
+msgid "Date:"
+msgstr ""
+
+#: views/pdf/addresses.php:36
+msgid "Order:"
 msgstr ""
 
 #: views/pdf/addresses.php:37
-msgid "First name"
+msgid "Order date:"
 msgstr ""
 
 #: views/pdf/addresses.php:38
-msgid "Last name"
-msgstr ""
-
-#: views/pdf/addresses.php:39
-msgid "Address 1"
-msgstr ""
-
-#: views/pdf/addresses.php:40
-msgid "City"
+msgid "Payment method:"
 msgstr ""
 
 #: views/pdf/addresses.php:41
-msgid "State"
+msgid "First name"
 msgstr ""
 
-#: views/pdf/addresses.php:42 views/pdf/addresses.php:43
-msgid "Postcode"
+#: views/pdf/addresses.php:42
+msgid "Last name"
+msgstr ""
+
+#: views/pdf/addresses.php:43
+msgid "Address 1"
 msgstr ""
 
 #: views/pdf/addresses.php:44
-msgid "Country"
+msgid "City"
 msgstr ""
 
 #: views/pdf/addresses.php:45
+msgid "State"
+msgstr ""
+
+#: views/pdf/addresses.php:46 views/pdf/addresses.php:47
+msgid "Postcode"
+msgstr ""
+
+#: views/pdf/addresses.php:48
+msgid "Country"
+msgstr ""
+
+#: views/pdf/addresses.php:49
 msgid "Phone"
 msgstr ""
 
-#: views/pdf/addresses.php:50
-msgid "Billing"
-msgstr ""
-
-#: views/pdf/addresses.php:63
+#: views/pdf/addresses.php:65
 msgid "VAT"
 msgstr ""
 
-#: views/pdf/addresses.php:68
+#: views/pdf/addresses.php:70
 msgid "Tax code"
 msgstr ""
 
-#: views/pdf/addresses.php:73
+#: views/pdf/addresses.php:75
 msgid "Email PEC"
 msgstr ""
 
-#: views/pdf/addresses.php:77
+#: views/pdf/addresses.php:79
 msgid "Web-service code"
 msgstr ""
 
-#: views/pdf/addresses.php:89 views/pdf/details.php:193
-#: views/pdf/details.php:253
-msgid "Shipping"
-msgstr ""
-
-#: views/pdf/details.php:44
+#: views/pdf/details.php:48
 msgid "Description"
 msgstr ""
 
-#: views/pdf/details.php:47
+#: views/pdf/details.php:51
 msgid "Quantity"
 msgstr ""
 
-#: views/pdf/details.php:50 views/pdf/summary.php:38
+#: views/pdf/details.php:54 views/pdf/summary.php:42
 msgid "Tax rate"
 msgstr ""
 
-#: views/pdf/details.php:53
+#: views/pdf/details.php:57
 msgid "Price unit"
 msgstr ""
 
-#: views/pdf/details.php:56
+#: views/pdf/details.php:60
 msgid "Discount"
 msgstr ""
 
-#: views/pdf/details.php:59
+#: views/pdf/details.php:63
 msgid "Price"
 msgstr ""
 
-#: views/pdf/details.php:130 views/pdf/details.php:336
+#: views/pdf/details.php:134 views/pdf/details.php:340
 msgid "Description:"
 msgstr ""
 
-#: views/pdf/details.php:133
+#: views/pdf/details.php:137
 msgid "Sku:"
 msgstr ""
 
-#: views/pdf/details.php:152 views/pdf/details.php:210
-#: views/pdf/details.php:280
+#: views/pdf/details.php:156 views/pdf/details.php:214
+#: views/pdf/details.php:284
 msgid "tax:"
 msgstr ""
 
-#: views/pdf/details.php:330
+#: views/pdf/details.php:197 views/pdf/details.php:257
+msgid "Shipping"
+msgstr ""
+
+#: views/pdf/details.php:334
 msgid "Flat-rate refund"
 msgstr ""
 
-#: views/pdf/footer.php:39
+#: views/pdf/footer.php:43
 msgid ""
 "This document does not constitute a valid invoice for the purposes of "
 "the DpR 633 26/10/1972 and subsequent amendments. The final invoice "
@@ -1090,62 +1126,58 @@ msgid ""
 "633/72)."
 msgstr ""
 
-#: views/pdf/head.php:32
+#: views/pdf/head.php:36
 msgid "Name:"
 msgstr ""
 
-#: views/pdf/head.php:33
+#: views/pdf/head.php:37
 msgid "Surname:"
 msgstr ""
 
-#: views/pdf/head.php:34
+#: views/pdf/head.php:38
 msgid "Company:"
 msgstr ""
 
-#: views/pdf/head.php:35
+#: views/pdf/head.php:39
 msgid "VAT:"
 msgstr ""
 
-#: views/pdf/head.php:36
+#: views/pdf/head.php:40
 msgid "Cod Regime:"
 msgstr ""
 
-#: views/pdf/head.php:37
+#: views/pdf/head.php:41
 msgid "Address:"
 msgstr ""
 
-#: views/pdf/head.php:38
+#: views/pdf/head.php:42
 msgid "Phone:"
 msgstr ""
 
-#: views/pdf/head.php:39
+#: views/pdf/head.php:43
 msgid "Email:"
 msgstr ""
 
-#: views/pdf/order-totals.php:43
+#: views/pdf/order-totals.php:47
 msgid "Total Tax:"
 msgstr ""
 
-#: views/pdf/order-totals.php:50
+#: views/pdf/order-totals.php:54
 msgid "Total:"
 msgstr ""
 
-#: views/pdf/summary.php:34
+#: views/pdf/summary.php:37
 msgid "VAT SUMMARY"
 msgstr ""
 
-#: views/pdf/summary.php:39
+#: views/pdf/summary.php:43
 msgid "Total amount"
 msgstr ""
 
-#: views/pdf/summary.php:40
+#: views/pdf/summary.php:44
 msgid "Total taxable"
 msgstr ""
 
-#: views/pdfTemplate.php:61
-msgid "INVOICE"
-msgstr ""
-
-#: views/pdfTemplate.php:92
+#: views/pdfInvoice.php:99 views/pdfReceipt.php:97
 msgid "Customer Notes"
 msgstr ""

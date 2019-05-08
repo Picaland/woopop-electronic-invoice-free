@@ -272,6 +272,14 @@ final class InvoiceFields
      */
     public function editBillingFieldsFilter($fields)
     {
+        $order                = wc_get_order();
+        $choiceType           = $order->get_meta('_billing_choice_type');
+        $removeValueIfReceipt = array(
+            'sdi_type',
+            'vat_number',
+            'tax_code',
+        );
+
         if (! empty($this->fields)) {
             foreach ($this->fields as $key => $field) {
                 $key = str_replace('billing_', '', $key);
@@ -281,6 +289,11 @@ final class InvoiceFields
                 $field['show']          = false;
                 $field['id']            = "_billing_{$key}";
                 $field['name']          = "_billing_{$key}";
+
+                // Remove value if receipt is current choice
+                if ('receipt' === $choiceType && in_array($key, $removeValueIfReceipt)) {
+                    $field['value'] = '';
+                }
 
                 $fields[$key] = $field;
             }
@@ -341,10 +354,11 @@ final class InvoiceFields
      */
     public static function actions($id, $order)
     {
-        $output  = '';
-        $nonce   = wp_create_nonce('wc_el_inv_invoice_pdf');
-        $pdfArgs = "?format=pdf&nonce={$nonce}";
-        $url     = site_url() . '/' . Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/';
+        $output     = '';
+        $nonce      = wp_create_nonce('wc_el_inv_invoice_pdf');
+        $pdfArgs    = "?format=pdf&nonce={$nonce}";
+        $url        = site_url() . '/' . Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/';
+        $choiceType = $order->get_meta('_billing_choice_type');
 
         $output .= sprintf(
             '<a id="mark_as_sent-%1$s" class="mark_trigger disabled mark_as_sent button button-secondary" href="javascript:;" title="%1$s %2$s">' .
@@ -383,7 +397,7 @@ final class InvoiceFields
             '<span class="dashicons dashicons-media-text"></span></a>',
             'target="_blank"',
             esc_url($url . $id),
-            $pdfArgs,
+            $pdfArgs . "&choice_type={$choiceType}",
             esc_html__('View PDF', WC_EL_INV_FREE_TEXTDOMAIN)
         );
 
@@ -791,8 +805,30 @@ final class InvoiceFields
                     case 'private':
                         $meta = esc_html__('Private person', WC_EL_INV_FREE_TEXTDOMAIN);
                         break;
+                    case 'invoice':
+                        $meta = esc_html_x('Invoice', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN);
+                        break;
+                    case 'receipt':
+                        $meta = esc_html_x('Receipt', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN);
+                        break;
                     default:
                         break;
+                }
+
+                // Remove value if receipt is current choice
+                $choiceType           = $order->get_meta('_billing_choice_type');
+                $removeValueIfReceipt = array(
+                    'sdi_type',
+                    'vat_number',
+                    'tax_code',
+                );
+                if ('receipt' === $choiceType && in_array($key, $removeValueIfReceipt)) {
+                    $meta = '';
+                }
+
+                // Set label for choice type
+                if ('choice_type' === $key) {
+                    $field['label'] = esc_html__('Type of document', WC_EL_INV_FREE_TEXTDOMAIN);
                 }
 
                 $output .= sprintf('<p><strong>%s:</strong><br>%s</p>',

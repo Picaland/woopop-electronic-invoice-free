@@ -200,6 +200,7 @@ class BuildXml extends BuildQuery
             'tax_code'     => $order->get_meta('_billing_tax_code'),
             'invoice_type' => $order->get_meta('_billing_invoice_type'),
             'sdi_type'     => $order->get_meta('_billing_sdi_type'),
+            'choice_type'  => $order->get_meta('_billing_choice_type'),
         );
 
         $refundedData = array(
@@ -287,6 +288,7 @@ class BuildXml extends BuildQuery
             'tax_code'     => $parentOrder->get_meta('_billing_tax_code'),
             'invoice_type' => $parentOrder->get_meta('_billing_invoice_type'),
             'sdi_type'     => $parentOrder->get_meta('_billing_sdi_type'),
+            'choice_type'  => $parentOrder->get_meta('_billing_choice_type'),
         );
         // Parent billing data.
         $billingParentData = array(
@@ -422,6 +424,7 @@ class BuildXml extends BuildQuery
             'tax_code'     => $query->get_meta('_billing_tax_code'),
             'invoice_type' => $query->get_meta('_billing_invoice_type'),
             'sdi_type'     => $query->get_meta('_billing_sdi_type'),
+            'choice_type'  => $query->get_meta('_billing_choice_type'),
         );
 
         $refundedData = array(
@@ -513,6 +516,7 @@ class BuildXml extends BuildQuery
             'tax_code'     => $parentOrder->get_meta('_billing_tax_code'),
             'invoice_type' => $parentOrder->get_meta('_billing_invoice_type'),
             'sdi_type'     => $parentOrder->get_meta('_billing_sdi_type'),
+            'choice_type'  => $parentOrder->get_meta('_billing_choice_type'),
         );
         // Parent billing data.
         $billingParentData = array(

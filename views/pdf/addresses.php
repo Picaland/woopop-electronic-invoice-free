@@ -31,9 +31,9 @@ if (! defined('ABSPATH')) {
 
 $invoiceTypeLabel         = esc_html__('Type:', WC_EL_INV_FREE_TEXTDOMAIN);
 $invoiceTypeID            = esc_html__('Refund ID:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceNumberLabel       = esc_html__('Invoice N:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceDateLabel         = esc_html__('Invoice date:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceOrderNumberLabel  = esc_html__('Order N:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceNumberLabel       = esc_html__('Number:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceDateLabel         = esc_html__('Date:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceOrderNumberLabel  = esc_html__('Order:', WC_EL_INV_FREE_TEXTDOMAIN);
 $invoiceOrderDateLabel    = esc_html__('Order date:', WC_EL_INV_FREE_TEXTDOMAIN);
 $invoiceOrderPaymentLabel = esc_html__('Payment method:', WC_EL_INV_FREE_TEXTDOMAIN);
 
@@ -50,12 +50,10 @@ esc_html__('Phone', WC_EL_INV_FREE_TEXTDOMAIN);
 ?>
 <table class="order-data-addresses" width="100%">
     <tr>
-        <td width="33%" class="address billing-address" valign="top" style="padding:0 10px 0 0">
-            <?php echo sprintf('<h5>%s</h5>', esc_html__('Billing', WC_EL_INV_FREE_TEXTDOMAIN)); ?>
-            <div style="vert-align:top;font-size:12px;">
-                <?php
-                if (! empty($data->billing)) {
-                    foreach ($data->billing as $key => $billing) {
+        <?php if (! empty($data->billing) && 'receipt' !== $data->choice_type) : ?>
+            <td width="33%" class="address billing-address" valign="top" style="padding:0 10px 0 0">
+                <div style="vert-align:top;font-size:12px;">
+                    <?php foreach ($data->billing as $key => $billing) {
                         if (isset($data->billing[$key]) && '' !== $data->billing[$key]) {
                             echo sprintf('%s: %s<br>',
                                 esc_html__(ucfirst(str_replace('_', ' ', $key)), WC_EL_INV_FREE_TEXTDOMAIN),
@@ -80,17 +78,14 @@ esc_html__('Phone', WC_EL_INV_FREE_TEXTDOMAIN);
                     if ($this->codeOrPec($data, 'code')) {
                         echo sprintf('%s: %s<br>', esc_html__('Web-service code', WC_EL_INV_FREE_TEXTDOMAIN),
                             $this->codeOrPec($data, 'code'));
-                    }
-                } else {
-                    echo sprintf('%s<br>', 'N/A');
-                } ?>
-            </div>
-        </td>
+                    } ?>
+                </div>
+            </td>
+        <?php endif; ?>
         <?php
         $shipping = isset($data->shipping) ? array_filter($data->shipping) : array();
         if (! empty($shipping)) : ?>
             <td width="33%" class="address shipping-address" valign="top" style="padding:0 10px 0 0">
-                <?php echo sprintf('<h5>%s</h5>', esc_html__('Shipping', WC_EL_INV_FREE_TEXTDOMAIN)); ?>
                 <div style="vert-align:top;font-size:12px;">
                     <?php
                     if (! empty($data->shipping)) {
@@ -108,7 +103,6 @@ esc_html__('Phone', WC_EL_INV_FREE_TEXTDOMAIN);
             </td>
         <?php endif; ?>
         <td width="33%" class="invoice invoice-data" valign="top" style="padding:0 10px 0 0">
-            <?php echo sprintf('<h5>%s</h5>', esc_html__('Invoice data', WC_EL_INV_FREE_TEXTDOMAIN)); ?>
             <div style="vert-align:top;font-size:12px;">
                 <?php echo $invoiceTypeLabel . ' ' . $this->docType($data); ?><br>
                 <?php if ('shop_order_refund' === $data->order_type): ?>

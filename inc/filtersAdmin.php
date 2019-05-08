@@ -32,7 +32,6 @@ if (! defined('ABSPATH')) {
 $billingFields = include_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/wc/billingFields.php');
 $generalFields = include_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/wc/generalInvoiceFields.php');
 
-//$wcTabs            = new \WcElectronInvoiceFree\Admin\WooCommerce\WooCommerceProductTabs();
 $resources         = new \WcElectronInvoiceFree\Resources();
 $optionPage        = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 $invoiceFields     = new \WcElectronInvoiceFree\WooCommerce\Fields\InvoiceFields($billingFields, $optionPage);

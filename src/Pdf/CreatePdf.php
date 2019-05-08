@@ -195,6 +195,10 @@ final class CreatePdf
      */
     private function docType($order)
     {
+        if ('private' === $order->invoice_type || 'receipt' === $order->choice_type) {
+            return esc_html__('Receipt', WC_EL_INV_FREE_TEXTDOMAIN);
+        }
+
         switch ($order->order_type) {
             case 'shop_order':
                 return esc_html__('Invoice', WC_EL_INV_FREE_TEXTDOMAIN);
@@ -865,6 +869,14 @@ final class CreatePdf
         $getNonce  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'nonce', FILTER_SANITIZE_STRING);
         $data      = ! empty($xmlData) && ! empty($xmlData[0]) ? (object)$xmlData[0] : null;
 
+        // Override choice_type from $_GET['choice_type'] value
+        $choiceType = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'choice_type', FILTER_SANITIZE_STRING);
+        // Default type choice.
+        $data->choice_type = 'invoice';
+        if ($choiceType) {
+            $data->choice_type = $choiceType;
+        }
+
         $retrieveFromRemote = isset($_SERVER['HTTP_REFERER']) ?
             strpos($_SERVER['HTTP_REFERER'], 'format=pdf&nonce=') : false;
 
@@ -882,10 +894,11 @@ final class CreatePdf
         }
 
         // @codingStandardsIgnoreLine
-        if (file_exists(get_theme_file_path("/woocommerce/pdf/invoice.php"))) {
-            include_once get_theme_file_path("/woocommerce/pdf/invoice.php");
+        $fileName = "pdf" . ucfirst(esc_attr($data->choice_type));
+        if (file_exists(get_theme_file_path("/woocommerce/pdf/{$fileName}.php"))) {
+            include_once get_theme_file_path("/woocommerce/pdf/{$fileName}.php");
         } else {
-            include_once Plugin::getPluginDirPath("/views/pdfTemplate.php");
+            include_once Plugin::getPluginDirPath("/views/{$fileName}.php");
         }
     }
 
