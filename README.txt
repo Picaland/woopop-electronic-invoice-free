@@ -3,7 +3,7 @@ Contributors: Picaland
 Tags: piva, codice fiscale, codice univoco, fattura pdf, fattura elettronica, fattura xml, woocommerce
 Requires at least: 4.6
 Tested up to: 5.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -46,7 +46,7 @@ In questa vengono visulizzati tutti gli ordini in lavorazione / completati con t
 E molto altro ancora...
 
 = Tested up to/Testato fino alle versioni: =
-* WooCommerce v. 3.6.2
+* WooCommerce v. 3.6.4
 
 = Links =
 
@@ -65,6 +65,10 @@ Php: >= 5.6
 WordPress: >= 4.6
 
 == Changelog ==
+
+= 1.1.1 - 05/06/2019 =
+
+* Fix: check on vat if you choose the receipt
 
 = 1.1.0 - 08/05/2019 =
 

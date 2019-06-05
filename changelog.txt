@@ -1,3 +1,6 @@
+== 1.1.1 - 05/06/2019 ==
+Fix: check on vat if you choose the receipt
+
 == 1.1.0 - 08/05/2019 ==
 Add: Receipt PDF template
 Add: Option to choose the type of document (invoice or receipt) in the checkout
