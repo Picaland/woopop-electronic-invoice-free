@@ -1045,6 +1045,13 @@ final class InvoiceFields
             );
 
             // @codingStandardsIgnoreLine
+            $choiceDocType = \WcElectronInvoiceFree\Functions\filterInput(
+                $_POST,
+                self::$metaKey . 'choice_type',
+                FILTER_SANITIZE_STRING
+            );
+
+            // @codingStandardsIgnoreLine
             $invoiceType = \WcElectronInvoiceFree\Functions\filterInput(
                 $_POST,
                 self::$metaKey . 'invoice_type',
@@ -1066,39 +1073,29 @@ final class InvoiceFields
             // Tax code length
             $vatCodeLength = isset($vatCode) ? strlen($vatCode) : 0;
 
-            // Message for change country in checkout
-//            if (is_checkout() && is_user_logged_in() && $userCountry !== $country) {
-//                wc_add_notice(
-//                    sprintf(
-//                        __('Your current country is %s - Before proceeding with the purchase, change your country (%s) to the billing address of your account',
-//                            WC_EL_INV_FREE_TEXTDOMAIN),
-//                        "<strong>" . strtoupper($userCountry) . "</strong>",
-//                        "<strong>" . strtoupper($country) . "</strong>"
-//                    ),
-//                    'error'
-//                );
-//            }
-
             // Invoice IT
             if ('IT' === $country && 'company' === $invoiceType || 'freelance' === $invoiceType) {
-                // Vat check
-                foreach ($users as $user) {
-                    $vat            = get_user_meta($user->ID, 'billing_vat_number', true);
-                    $currentUserVat = get_user_meta(get_current_user_id(), 'billing_vat_number', true);
 
-                    if (
-                        (! is_user_logged_in() && '' !== $vatCode && $vat === $vatCode) ||
-                        (is_user_logged_in() && '' === $currentUserVat && $vatCode === $vat)
-                    ) {
-                        wc_add_notice(
-                            sprintf(
-                                __('The VAT code entered "%s" is already associated with an account. please log in 
+                // Vat check
+                if (false === $choiceDocType || 'invoice' === $choiceDocType) {
+                    foreach ($users as $user) {
+                        $vat            = get_user_meta($user->ID, 'billing_vat_number', true);
+                        $currentUserVat = get_user_meta(get_current_user_id(), 'billing_vat_number', true);
+
+                        if (
+                            (! is_user_logged_in() && '' !== $vatCode && $vat === $vatCode) ||
+                            (is_user_logged_in() && '' === $currentUserVat && $vatCode === $vat)
+                        ) {
+                            wc_add_notice(
+                                sprintf(
+                                    __('The VAT code entered "%s" is already associated with an account. please log in 
                             with the correct account or enter another VAT number', WC_EL_INV_FREE_TEXTDOMAIN),
-                                "<strong>" . strtoupper($vatCode) . "</strong>"
-                            ),
-                            'error'
-                        );
-                        break;
+                                    "<strong>" . strtoupper($vatCode) . "</strong>"
+                                ),
+                                'error'
+                            );
+                            break;
+                        }
                     }
                 }
 
