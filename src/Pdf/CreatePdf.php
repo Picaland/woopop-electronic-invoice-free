@@ -36,6 +36,7 @@ use WcElectronInvoiceFree\Admin\Settings\OptionPage;
 use WcElectronInvoiceFree\Plugin;
 use WcElectronInvoiceFree\Utils\TimeZone;
 use WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields;
+use function WcElectronInvoiceFree\Functions\wcOrderClassName;
 
 /**
  * Class CreatePdf
@@ -116,9 +117,10 @@ final class CreatePdf
     /**
      * CreatePdf constructor.
      *
+     * @param Mpdf $pdf
+     *
      * @since  1.0.0
      *
-     * @param Mpdf $pdf
      */
     public function __construct(\Mpdf\Mpdf $pdf)
     {
@@ -128,16 +130,18 @@ final class CreatePdf
     /**
      * Invoice Number
      *
-     * @since 1.0.0
-     *
      * @param $order
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function invoiceNumber($order)
     {
-        $order = wc_get_order($order->id);
-        if (! $order instanceof \WC_Order && ! $order instanceof \WC_Order_Refund) {
+        $wcOrderClass       = wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = wcOrderClassName('\WC_Order_Refund');
+        $order              = wc_get_order($order->id);
+        if (! $order instanceof $wcOrderClass && ! $order instanceof $wcOrderRefundClass) {
             return '';
         }
 
@@ -166,11 +170,11 @@ final class CreatePdf
     /**
      * Doc ID
      *
-     * @since 1.0.0
-     *
      * @param $order
      *
      * @return int The doc ID
+     * @since 1.0.0
+     *
      */
     private function docID($order)
     {
@@ -187,11 +191,11 @@ final class CreatePdf
     /**
      * Doc Type
      *
-     * @since 1.0.0
-     *
      * @param $order
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function docType($order)
     {
@@ -214,12 +218,12 @@ final class CreatePdf
     /**
      * Date completed
      *
-     * @since 1.0.0
-     *
      * @param        $order
      * @param string $format
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function dateCompleted($order, $format = 'Y-m-d')
     {
@@ -261,12 +265,12 @@ final class CreatePdf
     /**
      * Date completed
      *
-     * @since 1.0.0
-     *
      * @param        $order
      * @param string $format
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function dateOrder($order, $format = 'Y-m-d')
     {
@@ -287,11 +291,11 @@ final class CreatePdf
     /**
      * Payment Method
      *
-     * @since 1.0.0
-     *
      * @param $order
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function paymentMethod($order)
     {
@@ -364,12 +368,12 @@ final class CreatePdf
     /**
      * Product Description
      *
-     * @since 1.0.0
-     *
      * @param      $item
      * @param null $type
      *
      * @return string|string[]|null
+     * @since 1.0.0
+     *
      */
     private function productDescription($item, $type = null)
     {
@@ -402,12 +406,12 @@ final class CreatePdf
     /**
      * Tax Rate
      *
-     * @since 1.0.0
-     *
      * @param        $item
      * @param string $get
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function taxRate($item, $get = 'rate')
     {
@@ -435,9 +439,9 @@ final class CreatePdf
     /**
      * Shipping Rate
      *
+     * @return string
      * @since 1.0.0
      *
-     * @return string
      */
     private function shippingRate()
     {
@@ -457,12 +461,12 @@ final class CreatePdf
     /**
      * Code or Pec
      *
-     * @since 1.0.0
-     *
      * @param $ordersData
      * @param $type
      *
      * @return null|string
+     * @since 1.0.0
+     *
      */
     private function codeOrPec($ordersData, $type)
     {
@@ -522,11 +526,11 @@ final class CreatePdf
     /**
      * Customer country
      *
-     * @since 1.0.0
-     *
      * @param $ordersData
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function customerCountry($ordersData)
     {
@@ -540,11 +544,11 @@ final class CreatePdf
     /**
      * Customer Tax Code
      *
-     * @since 1.0.0
-     *
      * @param $ordersData
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function customerTaxCodeNumber($ordersData)
     {
@@ -573,11 +577,11 @@ final class CreatePdf
     /**
      * Customer vat
      *
-     * @since 1.0.0
-     *
      * @param $ordersData
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function customerVatNumber($ordersData)
     {
@@ -599,11 +603,11 @@ final class CreatePdf
     /**
      * Progressive file number
      *
-     * @since 1.0.0
-     *
      * @param $ordersData
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function progressiveFileNumber($ordersData)
     {
@@ -627,25 +631,52 @@ final class CreatePdf
     }
 
     /**
+     * Calc Unit price from total and total tax
+     *
+     * @param $item
+     *
+     * @return float|int
+     * @since 1.2
+     */
+    public function calcUnitPrice($item)
+    {
+        $total    = isset($item['total']) ? $item['total'] : 0;
+        $totalTax = isset($item['total_tax']) ? $item['total_tax'] : 0;
+        $quantity = isset($item['quantity']) ? $item['quantity'] : 0;
+
+        $unitTaxedPrice = (($total + $totalTax) / $quantity);
+        // Vat
+        $vat = $this->numberFormat($this->taxRate($item));
+
+        return $unitTaxedPrice / (($vat / 100) + 1); // es: $unitTaxedPrice / 1,22 or 1.04
+    }
+
+    /**
      * Number Format
      *
-     * @since 1.0.0
-     *
      * @param int $number
+     * @param int $decimal
+     * @param bool $abs
      *
      * @return string
+     * @since 1.0.0
+     *
      */
-    private function numberFormat($number = 0)
+    private function numberFormat($number = 0, $decimal = 2, $abs = true)
     {
-        return number_format(abs($number), 2, '.', '');
+        if ($abs) {
+            $number = abs($number);
+        }
+
+        return number_format($number, $decimal, '.', '');
     }
 
     /**
      * Remove Sent Invoice attachment file
      *
+     * @return bool
      * @since 1.0.0
      *
-     * @return bool
      */
     public function removeSentInvoice()
     {
@@ -673,13 +704,13 @@ final class CreatePdf
     /**
      * Attachments Pdf To Email
      *
-     * @since 1.0.0
-     *
      * @param $attachments
      * @param $emailID
      * @param $order
      *
      * @return array|false|string
+     * @since 1.0.0
+     *
      */
     public function attachmentsPdfToEmail($attachments, $emailID, $order)
     {
@@ -753,13 +784,13 @@ final class CreatePdf
     /**
      * Build Attachment
      *
-     * @since  1.0.0
-     *
      * @param $order
      * @param $fileName
      * @param $attachments
      *
      * @return array
+     * @since  1.0.0
+     *
      */
     public function buildAttachment($order, $fileName, $attachments)
     {
@@ -857,11 +888,11 @@ final class CreatePdf
     /**
      * Create PDF
      *
-     * @since  1.0.0
-     *
      * @param $xmlData
      *
      * @return mixed
+     * @since  1.0.0
+     *
      */
     public function buildPdf($xmlData)
     {
@@ -905,12 +936,12 @@ final class CreatePdf
     /**
      * Create PDF
      *
-     * @since  1.0.0
-     *
      * @param array $xmlData The args for create Pdf
      *
      * @return mixed
      * @throws \Mpdf\MpdfException
+     * @since  1.0.0
+     *
      */
     public static function create($xmlData)
     {

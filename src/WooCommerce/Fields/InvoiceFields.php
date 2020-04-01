@@ -176,7 +176,7 @@ final class InvoiceFields
         }
 
         $this->countries    = new \WC_Countries();
-        self::$euVatCountry = $this->countries->get_european_union_countries('eu_vat');
+        self::$euVatCountry = $this->countries->get_european_union_countries();
         $this->options      = $options->getOptions();
     }
 

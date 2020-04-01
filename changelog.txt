@@ -1,3 +1,6 @@
+== 1.2 - 30/03/2020 ==
+Fix: support for WooCommerce 4.0.0
+
 == 1.1.1 - 05/06/2019 ==
 Fix: check on vat if you choose the receipt
 

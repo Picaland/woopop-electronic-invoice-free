@@ -62,9 +62,12 @@ function setInitInvoiceNumber()
         $invoiceNumber = $options->getOptions('number_next_invoice');
         $invoiceNumber = false !== $invoiceNumber && '' !== $invoiceNumber ? intval($invoiceNumber) : 1;
 
+        $wcOrderClass       = wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = wcOrderClassName('\WC_Order_Refund');
+
         if (! empty($orders)) {
             foreach ($orders as $order) {
-                if ($order instanceof \WC_Order || $order instanceof \WC_Order_Refund) {
+                if ($order instanceof $wcOrderClass || $order instanceof $wcOrderRefundClass) {
                     $invoiceNumberOrder = $order->get_meta('order_number_invoice');
                     $invoiceNumber      = isset($invoiceNumberOrder) && '' !== $invoiceNumberOrder ? intval($invoiceNumberOrder) : $invoiceNumber;
                     /**
@@ -116,11 +119,12 @@ function setInitInvoiceNumber()
 /**
  * Set invoice number on order completed
  *
- * @since 1.0.0
- *
  * @param $orderID
  * @param $from
  * @param $to
+ *
+ * @since 1.0.0
+ *
  */
 function setInvoiceNumberOnOrderCompleted($orderID, $from, $to)
 {
@@ -172,10 +176,11 @@ function setInvoiceNumberOnOrderCompleted($orderID, $from, $to)
 /**
  * Set invoice number on order auto completed
  *
- * @since 1.0.0
- *
  * @param $id
  * @param $obj
+ *
+ * @since 1.0.0
+ *
  */
 function setInvoiceNumberOnOrderAutoCompleted($id, $obj)
 {
@@ -227,9 +232,10 @@ function setInvoiceNumberOnOrderAutoCompleted($id, $obj)
 /**
  * Set invoice number on order refund
  *
+ * @param $refundID
+ *
  * @since 1.0.0
  *
- * @param $refundID
  */
 function setInvoiceNumberOnOrderRefund($refundID)
 {

@@ -146,10 +146,22 @@ $freeRefund  = false;
                     <?php esc_html_e($this->numberFormat($this->taxRate($item))); ?>%
                 </td>
                 <td style="border-bottom:1px solid #ddd;font-size:12px;padding:5px 0;" class="price-unit">
-                    <?php esc_html_e($currency . $this->numberFormat(($item['subtotal'] / abs($item['quantity'])))); ?>
+                    <?php
+                    // Set discount unit and total
+                    $discountUnit  = $this->numberFormat((($item['subtotal'] - $item['total']) / abs($item['quantity'])), 4);
+                    $discountTotal = $this->numberFormat((($item['subtotal'] - $item['total'])));
+                    // Set Unit Price if have discount or not
+                    if ($this->numberFormat($item['subtotal']) > $this->numberFormat($item['total'])) {
+                        $unitPrice = $this->numberFormat($this->calcUnitPrice($item) + abs($discountUnit), 4);
+                    } else {
+                        $unitPrice = $this->numberFormat($this->calcUnitPrice($item), 4);
+                    }
+                    esc_html_e($currency . $unitPrice); ?>
                 </td>
                 <td style="border-bottom:1px solid #ddd;font-size:12px;padding:5px 0;" class="discount">
-                    <?php esc_html_e($currency . $this->numberFormat(($item['subtotal'] - $item['total']) / abs($item['quantity']))); ?>
+                    <?php if ('0.00' !== $discountTotal) : ?>
+                        <?php esc_html_e($currency . $discountTotal); ?>
+                    <?php else: ?> *** <?php endif; ?>
                 </td>
                 <td style="border-bottom:1px solid #ddd;font-size:12px;padding:5px 0;" class="price">
                     <?php esc_html_e($currency . $this->numberFormat($item['total'])); ?><br>

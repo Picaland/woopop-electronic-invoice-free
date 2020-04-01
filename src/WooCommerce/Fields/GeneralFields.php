@@ -103,7 +103,7 @@ class GeneralFields
     {
         $countries = new \WC_Countries();
 
-        return $countries->get_european_union_countries('eu_vat');
+        return $countries->get_european_union_countries();
     }
 
     /**

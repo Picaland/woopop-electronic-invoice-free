@@ -37,7 +37,7 @@ $country = is_user_logged_in() ?
     get_user_meta(get_current_user_id(), 'billing_country', true) :
     $countries->get_base_country();
 
-$euVatCountry = $countries->get_european_union_countries('eu_vat');
+$euVatCountry = $countries->get_european_union_countries();
 
 $scripts = array();
 

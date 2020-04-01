@@ -26,7 +26,7 @@
  */
 $page        = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 $countries   = new WC_Countries();
-$euVat       = $countries->get_european_union_countries('eu_vat');
+$euVat       = $countries->get_european_union_countries();
 $userCountry = get_user_meta(get_current_user_id(), 'billing_country', true);
 
 // Sdi required
@@ -49,24 +49,34 @@ $choiceType = $page->getOptions('invoice_choice_type');
 $requiredOption = 'required' === $page->getOptions('invoice_required') ? true : false;
 $type           = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'billing_invoice_type', FILTER_SANITIZE_STRING);
 
-// VAT required
+// Init VAT required
 $required = isset($requiredOption) && true === $requiredOption &&
-            ('freelance' === $type || 'company' === $type || false === $type) ? true : false;
+            ('freelance' === $type || 'company' === $type || '' === $type) ? true : false;
 
+// Set required tax code
 $requiredTaxCode = $required;
 if ('on' === $disableTaxCode && $type !== 'private') {
     $requiredTaxCode = false;
 }
 
+// Set required invoice type
+$requiredInvoiceType = true;
+
+// Set required vat if no IT
 $requiredVat = $required;
 if (false === $requiredOption && 'IT' !== $userCountry || 'IT' !== $country) {
     $requiredVat = false;
 }
 
+// Set required
 if ('receipt' === $choiceDocType) {
-    $requiredOption = $sdiRequired = $requiredVat = $requiredTaxCode = false;
+    $requiredInvoiceType = $sdiRequired = $requiredVat = $requiredTaxCode = false;
 }
 
+// Check doc type and set required invoice type
+if ('invoice' === $choiceDocType) {
+    $requiredInvoiceType = true;
+}
 $fields = apply_filters('wc_el_inv-billing_fields', array(
     'billing_choice_type'  => array(
         'id'          => 'billing_choice_type',
@@ -77,9 +87,11 @@ $fields = apply_filters('wc_el_inv-billing_fields', array(
         ),
         'label'       => esc_html__('Choose the type of document', WC_EL_INV_FREE_TEXTDOMAIN),
         'description' => '',
-        'required'    => false,
+        'placeholder' => esc_html__('Choose the type of document', WC_EL_INV_FREE_TEXTDOMAIN),
+        'required'    => true,
         'default'     => 'invoice',
         'options'     => array(
+            ''        => esc_html__('Choose the type of document', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice' => esc_html_x('Invoice', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN),
             'receipt' => esc_html_x('Receipt', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN),
         ),
@@ -94,8 +106,9 @@ $fields = apply_filters('wc_el_inv-billing_fields', array(
         'label'       => esc_html__('Customer type', WC_EL_INV_FREE_TEXTDOMAIN),
         'description' => esc_html__('Please select Customer type', WC_EL_INV_FREE_TEXTDOMAIN),
         'placeholder' => esc_html__('Customer type', WC_EL_INV_FREE_TEXTDOMAIN),
-        'required'    => $requiredOption,
+        'required'    => $requiredInvoiceType,
         'options'     => array(
+            ''          => esc_html__('Customer type', WC_EL_INV_FREE_TEXTDOMAIN),
             'company'   => esc_html__('Company', WC_EL_INV_FREE_TEXTDOMAIN),
             'freelance' => esc_html__('Freelance', WC_EL_INV_FREE_TEXTDOMAIN),
             'private'   => esc_html__('Private', WC_EL_INV_FREE_TEXTDOMAIN),

@@ -355,3 +355,28 @@ function disablePlugin()
         deactivate_plugins(WC_EL_INV_FREE_PLUGIN_DIR . '/index.php');
     endif;
 }
+
+/**
+ * Helper for get Wc Order class name
+ *
+ * @since {$_SINCE}
+ * - Support for WC Admin package
+ *
+ * @param $classname
+ *
+ * @return string
+ */
+function wcOrderClassName($classname)
+{
+    if (isWooCommerceActive() && \WC()->version >= '4.0.1') {
+        if ('\WC_Order' === $classname) {
+            return '\Automattic\WooCommerce\Admin\Overrides\Order';
+        } elseif ('\WC_Order_Refund' === $classname) {
+            return '\Automattic\WooCommerce\Admin\Overrides\OrderRefund';
+        } else {
+            return $classname;
+        }
+    } else {
+        return $classname;
+    }
+}

@@ -32,6 +32,7 @@ if (! defined('ABSPATH')) {
 }
 
 use WcElectronInvoiceFree\Plugin;
+use function WcElectronInvoiceFree\Functions\wcOrderClassName;
 
 /**
  * Class BuildXml
@@ -409,7 +410,8 @@ class BuildXml extends BuildQuery
      */
     private function singleOrder(\WC_Order $query)
     {
-        if (! $query instanceof \WC_Order) {
+        $wcOrderClass = wcOrderClassName('\WC_Order');
+        if (! $query instanceof $wcOrderClass) {
             return array();
         }
 
@@ -637,8 +639,11 @@ class BuildXml extends BuildQuery
      */
     private function typeXmlCondition($query)
     {
-        return $query instanceof \WC_Order ||
-               $query instanceof \WC_Order_Refund ||
+        $wcOrderClass = wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = wcOrderClassName('\WC_Order_Refund');
+
+        return $query instanceof $wcOrderClass ||
+               $query instanceof $wcOrderRefundClass ||
                $query instanceof \WC_Order_Query;
     }
 }
