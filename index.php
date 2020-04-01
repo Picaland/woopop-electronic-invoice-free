@@ -42,7 +42,7 @@ if (! defined('WC_EL_INV_ENV')) {
 define('WC_EL_INV_PREMIUM', '(Premium Version)');
 define('WC_EL_INV_FREE_NAME', 'Electronic Invoice');
 define('WC_EL_INV_FREE_TEXTDOMAIN', 'el-inv');
-define('WC_EL_INV_FREE_VERSION', '1.1.1');
+define('WC_EL_INV_FREE_VERSION', '1.2.0');
 define('WC_EL_INV_FREE_PLUGIN_DIR', basename(plugin_dir_path(__FILE__)));
 define('WC_EL_INV_FREE_DIR', plugin_dir_path(__FILE__));
 define('WC_EL_INV_FREE_URL', plugin_dir_url(__FILE__));
