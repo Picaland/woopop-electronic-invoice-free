@@ -2,8 +2,8 @@
 * **Contributors:** Picaland
 * **Tags:** piva, codice fiscale, codice univoco, fattura pdf, fattura elettronica, fattura xml, woocommerce
 * **Requires at least:** 4.6
-* **Tested up to:** 5.2
-* **Stable tag:** 1.1.1
+* **Tested up to:** 5.5.x
+* **Stable tag:** 1.3
 * **Requires PHP:** 5.6
 * **License:** GPLv2 or later
 * **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
@@ -46,7 +46,7 @@ In questa vengono visulizzati tutti gli ordini in lavorazione / completati con t
 E molto altro ancora...
 
 ### Tested up to/Testato fino alle versioni:
-* WooCommerce v. 3.6.4
+* WooCommerce v. 4.7.x
 
 ## Links
 
@@ -65,6 +65,13 @@ Questa sezione descrive come installare il plugin e farlo funzionare.
 * **WordPress** >= 4.6
 
 ## Changelog
+
+== 1.3.0 - 03/12/2020 ==
+* Fix: support for WooCommerce 4.7.x
+* Fix: support for WordPress 5.5.x
+
+== 1.2 - 30/03/2020 ==
+* Fix: support for WooCommerce 4.0.0
 
 = 1.1.1 - 05/06/2019 =
 

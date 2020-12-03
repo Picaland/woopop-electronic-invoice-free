@@ -5,11 +5,11 @@
  * Plugin Name: WooPop Free -> (Fattura Elettronica)
  * Plugin URI: https://woopop.it
  * Description: <code><strong>WooPop Electronic Invoice (Versione Gratuita)</strong></code>, è integrato con woocommerce, Raccoglie i dati per la generazione del file XML per la fatturazione elettronica, ed inserisce in backend e in frontend i campi necessari alla fatturazione elettronica. Passa alla <strong><a href="https://woopop.it/">VERSIONE PREMIUM</a></strong>
- * Version: 1.2
+ * Version: 1.3.0
  * Author: alfiopiccione <alfio.piccione@gmail.com>
  * Author URI: https://alfiopiccione.com
  * WC requires at least: 3.2.0
- * WC tested up to: 4.0.x
+ * WC tested up to: 4.7.x
  * License GPL 2 Text
  * Domain: el-inv
  *
@@ -42,7 +42,7 @@ if (! defined('WC_EL_INV_ENV')) {
 define('WC_EL_INV_PREMIUM', '(Premium Version)');
 define('WC_EL_INV_FREE_NAME', 'Electronic Invoice');
 define('WC_EL_INV_FREE_TEXTDOMAIN', 'el-inv');
-define('WC_EL_INV_FREE_VERSION', '1.2.0');
+define('WC_EL_INV_FREE_VERSION', '1.3.0');
 define('WC_EL_INV_FREE_PLUGIN_DIR', basename(plugin_dir_path(__FILE__)));
 define('WC_EL_INV_FREE_DIR', plugin_dir_path(__FILE__));
 define('WC_EL_INV_FREE_URL', plugin_dir_url(__FILE__));
