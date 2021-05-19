@@ -311,7 +311,7 @@ function premiumBanner()
                 <li><strong>4.</strong> Marcare come inviate le fatture per una migliore gestione ed evitare errori.</li>
                 <li><strong>e molto altro ancora...</strong></li>
             </ul>
-            <p><a target="_blank" class="button" href="https://woopop.it/prodotto/woopop-plugin/">WooPOP Premium</a></p>
+            <p><a target="_blank" class="button" href="https://alfiopiccione.com/prodotto/woopop/">WooPOP Premium</a></p>
         </div>
     </div>
 
@@ -359,7 +359,7 @@ function disablePlugin()
 /**
  * Helper for get Wc Order class name
  *
- * @since {$_SINCE}
+ * @since 1.2
  * - Support for WC Admin package
  *
  * @param $classname

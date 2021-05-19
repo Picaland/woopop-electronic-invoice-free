@@ -2,8 +2,8 @@
 Contributors: Picaland
 Tags: piva, codice fiscale, codice univoco, fattura pdf, fattura elettronica, fattura xml, woocommerce
 Requires at least: 4.6
-Tested up to: 5.5.x
-Stable tag: 1.3
+Tested up to: 5.7
+Stable tag: 1.3.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -46,7 +46,7 @@ In questa vengono visulizzati tutti gli ordini in lavorazione / completati con t
 E molto altro ancora...
 
 = Tested up to/Testato fino alle versioni: =
-* WooCommerce v. 4.7.x
+* WooCommerce v. 5.2.x
 
 = Links =
 
@@ -59,6 +59,12 @@ Questa sezione descrive come installare il plugin e farlo funzionare.
 1. Carica la cartella 'woopop-electronic-invoice-free' nella directory /wp-content/plugins/
 2. Attiva <strong>WooPop -> (Fattura Elettronica)</strong> dalla pagina ‘Plugins’ di WordPress.
 
+== Screenshots ==
+
+1. Impostazioni WooCommerce
+2. Opzioni fattura
+3. Tabella lista fatture
+
 == Requirements ==
 
 Php: >= 5.6
@@ -66,12 +72,16 @@ WordPress: >= 4.6
 
 == Changelog ==
 
-= 1.3.0 - 03/12/2020 =
+== 1.3.1 - 12/05/2021 ==
 
-* Fix: support for WooCommerce 4.7.x
-* Fix: support for WordPress 5.5.x
+* Fix: minor fix and update description.
 
-= 1.2 - 30/03/2020 =
+== 1.3.0 - 08/05/2021 ==
+
+* Add: support for WooCommerce 5.2.x
+* Add: support for WordPress 5.7.x
+
+= 1.2.0 - 30/03/2020 =
 
 * Fix: support for WooCommerce 4.0.0
 

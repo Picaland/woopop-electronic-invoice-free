@@ -2,8 +2,8 @@
 * **Contributors:** Picaland
 * **Tags:** piva, codice fiscale, codice univoco, fattura pdf, fattura elettronica, fattura xml, woocommerce
 * **Requires at least:** 4.6
-* **Tested up to:** 5.5.x
-* **Stable tag:** 1.3
+* **Tested up to:** 5.7
+* **Stable tag:** 1.3.1
 * **Requires PHP:** 5.6
 * **License:** GPLv2 or later
 * **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
@@ -24,7 +24,7 @@ Nella pagina di checkout vengono aggiunti i campi per selezionare il tipo di cli
 3. Numeratore automatico progressivo fattura
 4. Suffisso fattura
 5. E' possibile disabilitare il campo PEC/Codice Univoco (solo per Azienda e Persona Fisica titolare di P.IVA),
-in tal caso il Codice univoco viene valorizzato con "0000000"
+   in tal caso il Codice univoco viene valorizzato con "0000000"
 6. E' possibile disabilitare Codice fiscale (solo per Azienda e Persona Fisica titolare di P.IVA)
 8. Link per stampare la fattura nella lista ordini.
 9. Attivare l'invio della fattura PDF via mail ad ordine completato
@@ -46,7 +46,7 @@ In questa vengono visulizzati tutti gli ordini in lavorazione / completati con t
 E molto altro ancora...
 
 ### Tested up to/Testato fino alle versioni:
-* WooCommerce v. 4.7.x
+* WooCommerce v. 5.2.x
 
 ## Links
 
@@ -56,7 +56,7 @@ E molto altro ancora...
 
 Questa sezione descrive come installare il plugin e farlo funzionare.
 
-1. Carica la cartella 'woopop-electronic-invoice-free' nella directory /wp-content/plugins/ 
+1. Carica la cartella 'woopop-electronic-invoice-free' nella directory /wp-content/plugins/
 2. Attiva **WooPop -> (Fattura Elettronica)** dalla pagina ‘Plugins’ di WordPress.
 
 ## Requirements
@@ -66,11 +66,17 @@ Questa sezione descrive come installare il plugin e farlo funzionare.
 
 ## Changelog
 
-== 1.3.0 - 03/12/2020 ==
-* Fix: support for WooCommerce 4.7.x
-* Fix: support for WordPress 5.5.x
+== 1.3.1 - 12/05/2021 ==
 
-== 1.2 - 30/03/2020 ==
+* Fix: minor fix and update description.
+
+== 1.3.0 - 08/05/2021 ==
+
+* Add: support for WooCommerce 5.2.x
+* Add: support for WordPress 5.7.x
+
+= 1.2.0 - 30/03/2020 =
+
 * Fix: support for WooCommerce 4.0.0
 
 = 1.1.1 - 05/06/2019 =
