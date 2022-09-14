@@ -2,7 +2,7 @@
 /**
  * summary.php
  *
- * @since      1.0.0
+ * @since      2.0.0
  * @package    ${NAMESPACE}
  * @author     alfiopiccione <alfio.piccione@gmail.com>
  * @copyright  Copyright (c) 2019, alfiopiccione
@@ -29,19 +29,19 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-global $orderTotals, $orderTaxTotals, $summaryRate, $currency;
-
+global $orderTotals, $orderTaxTotals, $summaryRate;
+$currency = apply_filters('wc_el_inv-pdf_currency_symbol', get_woocommerce_currency_symbol($data->currency));
 ?>
 <?php if (! empty($summaryRate)) : ?>
     <?php echo sprintf('<h2 style="font-size:16px;">%s</h2>',
         esc_html__('VAT SUMMARY', WC_EL_INV_FREE_TEXTDOMAIN)
     ); ?>
-    <table class="summary" width="100%" style="margin-top:2em;">
+    <table class="summary" style="width:100%;margin-top:2em;">
         <thead>
         <tr style="background:#ddd;">
-            <th align="left"><?php esc_html_e('Tax rate', WC_EL_INV_FREE_TEXTDOMAIN); ?></th>
-            <th align="left"><?php esc_html_e('Total amount', WC_EL_INV_FREE_TEXTDOMAIN); ?></th>
-            <th align="left"><?php esc_html_e('Total taxable', WC_EL_INV_FREE_TEXTDOMAIN); ?></th>
+            <th style="text-align:left;"><?php esc_html_e('Tax rate', WC_EL_INV_FREE_TEXTDOMAIN); ?></th>
+            <th style="text-align:left;"><?php esc_html_e('Total amount', WC_EL_INV_FREE_TEXTDOMAIN); ?></th>
+            <th style="text-align:left;"><?php esc_html_e('Total taxable', WC_EL_INV_FREE_TEXTDOMAIN); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -55,7 +55,7 @@ global $orderTotals, $orderTaxTotals, $summaryRate, $currency;
                     $total    += $item['total'];
                     $totalTax += $item['total_tax'];
                 }
-                if (0 !== $total && 0 !== $totalTax) : ?>
+                if (0 !== $total) : ?>
                     <td style="border-bottom:1px solid #ddd;font-size:12px;padding:5px 0;">
                         <?php echo $this->numberFormat($rate); ?>%
                     </td>

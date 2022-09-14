@@ -2,7 +2,7 @@
 /**
  * footer.php
  *
- * @since      1.0.0
+ * @since      2.0.0
  * @package    ${NAMESPACE}
  * @author     alfiopiccione <alfio.piccione@gmail.com>
  * @copyright  Copyright (c) 2019, alfiopiccione
@@ -29,19 +29,11 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-$options = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
-
+$options    = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
+$footerText = $options->getOptions('invoice_pdf_footer', true);
 ?>
-<div class="footer"
-     style="margin-top:4em;padding:1rem 0;border-top:1px solid #ddd;border-bottom:1px solid #ddd;font-size:12px;">
-    <?php echo $options->getOptions('invoice_pdf_footer', true); ?>
-</div>
-
-<?php if (! empty($data->billing) && 'IT' === $data->billing['country']) : ?>
-    <p style="margin-top:2em;padding:5px;background:#ddd;font-size:12px;">
-        <strong>
-            <?php esc_html_e('This document does not constitute a valid invoice for the purposes of the DpR 633 26/10/1972 and subsequent amendments. The final invoice will be issued upon payment of the fee (article 6, paragraph 3, DpR 633/72).',
-                WC_EL_INV_FREE_TEXTDOMAIN); ?>
-        </strong>
-    </p>
+<?php if ($footerText) : ?>
+    <div class="footer" style="margin-top:2em;padding:5px;background:#ddd;font-size:12px;">
+        <?php echo wp_kses_post($footerText); ?>
+    </div>
 <?php endif; ?>

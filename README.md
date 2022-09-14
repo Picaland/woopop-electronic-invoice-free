@@ -1,62 +1,52 @@
 # WooPop -> (Fattura Elettronica)
 * **Contributors:** Picaland
-* **Tags:** piva, codice fiscale, codice univoco, fattura pdf, fattura elettronica, fattura xml, woocommerce
+* **Tags:** fatturazione elettronica, fattura pdf, fattura elettronica, fattura xml
 * **Requires at least:** 4.6
-* **Tested up to:** 5.7
-* **Stable tag:** 1.3.1
+* **Tested up to:** 6.0
+* **Stable tag:** 3.0.3
 * **Requires PHP:** 5.6
 * **License:** GPLv2 or later
 * **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Description
 
-Integrato con WooCommerce, aggiunge il necessario per un'ecommerce italiano, si occupa di salvare tutti i dati per la Fatturazione Elettronica e crea il PDF della fattura / nota di credito.
-Nella pagina di checkout vengono aggiunti i campi per selezionare il tipo di cliente, P.IVA, Codice Fiscale, Codice Univoco o Email PEC.
+Con il plugin WooPOP generi la fattura elettronica in formato XML direttamente dal tuo WooCommerce.
 
-## Opzioni Impostazioni generali di integrazione con WooCommerce:
-1. Nelle opzioni generali di WooCommerce vengono aggiunti altri campi realtivi alla fattura.
-2. E' possibile impostare come richiesti i campi P.IVA e Codice Fiscale (Per IT sempre richiesti)
-3. Nascondere i campi P.IVA e Codice Fiscale se lo stato del cliente non è nell'Unione Europea.
+### FUNZIONALITÀ:
+* Imposta i tuoi dati fiscali per la fatturazione elettronica nelle opzioni generali di Woocommerce
+* Visualizza in fase di acquisto i campi per selezionare il tipo di cliente, P.IVA, Codice Fiscale, Codice Univoco o Email PEC.
+* Guarda la lista dei file XML generati (fino a 5 nella versione gratuita).
 
-### Opzioni Fattura:
-1. Prefisso per il numero di fattura.
-2. Numero di zeri da inserire nel numero di fattura
-3. Numeratore automatico progressivo fattura
-4. Suffisso fattura
-5. E' possibile disabilitare il campo PEC/Codice Univoco (solo per Azienda e Persona Fisica titolare di P.IVA),
-   in tal caso il Codice univoco viene valorizzato con "0000000"
-6. E' possibile disabilitare Codice fiscale (solo per Azienda e Persona Fisica titolare di P.IVA)
-8. Link per stampare la fattura nella lista ordini.
-9. Attivare l'invio della fattura PDF via mail ad ordine completato
-10. Visualizzazione fattura in HTML
-11. E' possibile impostare la url del logo da mostrare in fattura
-12. Testo per il footer della fatture PDF.
+### VERSIONE PREMIUM E ADD-ON:
+* <a href="https://woopop.it/?ref=1&wp_free_plugin">woopop.it</a>
+* <a href="https://woopop.it/woocommerce-fattureincloud-plugin/?ref=1&wp_free_plugin">Fatture in Cloud Plugin</a>
+* <a href="https://woopop.it/woocommerce-fatture-aruba-plugin//?ref=1&wp_free_plugin">Fatture Aruba Premium Plugin</a>
 
-### Tabella Fatture:
-In questa vengono visulizzati tutti gli ordini in lavorazione / completati con tutti i dati relativi alla fattura.
-1. E' possibile filtrare le fatture per data
-2. E' possibile salvare il file PDF della fattura.
+### OPZIONI FATTURA:
+* Prefisso per il numero di fattura.
+* Numero di zeri da inserire nel numero di fattura
+* Numeratore automatico progressivo fattura
+* Suffisso fattura
+* Abilita/disabilita il campo PEC/Codice Univoco (solo per Azienda e Persona Fisica titolare di P.IVA)
+* Abilita/disabilita il Codice fiscale (solo per Azienda e Persona Fisica titolare di P.IVA)
+* Attiva l'invio della fattura PDF via mail ad ordine completato
+* Visualizzazione fattura in HTML
 
-### Altre funzionalità è opzioni sono previste nella versione PREMIUM
-* Generare le fatture XML nella sezione "Fatture XML" e in ogni singolo ordine.
-* Scaricare le fatture sul tuo computer singolarmente o in formato .zip
-* Attivare il controllo VIES per i clienti dell'Unione Europea (non Italiani).
-* Marcare come inviate le fatture per una migliore gestione ed evitare errori.
+### FUNZIONALITÀ PREVISTE NELLA VERSIONE PREMIUM
+1. Scaricare le fatture in formato XML senza alcun limite.
+2. Generare la fattura elettronica nella sezione "Fatture XML" e in ogni singolo ordine.
+3. Scaricare le fatture sul tuo computer singolarmente o in formato .zip
+4. Attivare il controllo VIES per i clienti dell'Unione Europea (non Italiani).
+5. Inviare le fatture allo SDI direttamente da WooCommerce tramite add-on per Fatture in cloud
 
-E molto altro ancora...
-
-### Tested up to/Testato fino alle versioni:
-* WooCommerce v. 5.2.x
-
-## Links
-
-* VERSIONE PREMIUM: <a href="https://woopop.it/">woopop.it</a>
+### TESTED UP TO/TESTATO FINO ALLE VERSIONI:
+* WooCommerce v. 6.9.x
 
 ## Installation
 
 Questa sezione descrive come installare il plugin e farlo funzionare.
 
-1. Carica la cartella 'woopop-electronic-invoice-free' nella directory /wp-content/plugins/
+1. Carica la cartella 'woopop-electronic-invoice-free' nella directory /wp-content/plugins/ 
 2. Attiva **WooPop -> (Fattura Elettronica)** dalla pagina ‘Plugins’ di WordPress.
 
 ## Requirements
@@ -66,11 +56,61 @@ Questa sezione descrive come installare il plugin e farlo funzionare.
 
 ## Changelog
 
-== 1.3.1 - 12/05/2021 ==
+= 3.0.3 - 14/09/2022 =
+* Add: support for WooCommerce 6.9.x
+* Add: information and controls for the main options to configure
+
+= 3.0.2 - 24/07/2022 =
+* Fix: create xml query bug
+* Add: support for WooCommerce 6.7.x
+
+= 3.0.1 - 15/07/2022 =
+* Fix: create pdf
+* Fix: create pdf generate limit
+ 
+= 3.0.0 - 24/06/2022 =
+* Add: support for WordPress 6.0.x
+* Add: support for WooCommerce 6.6.x
+* Add: Download of XML invoices for the last 5 orders
+* Fix: various style fix
+
+= 2.0.4 - 25/05/2022 =
+* Fix: list order XmlOrderListTable (unset order) if Invoice order not sent and order total is equal total refunded or order total is zero
+* Add: support payment_method soisy
+* Add: payment method info in the invoice table
+
+= 2.0.3 - 24/05/2022 =
+* Fix: filter_var support for PHP >= 8.1
+
+= 2.0.2 - 22/05/2022 =
+* Fix: optimization code
+* Fix: filterInput filter for PHP >= 8.1
+
+= 2.0.1 - 21/05/2022 =
+* Fix: Error due to missing file vendor
+
+= 2.0.0 - 20/05/2022 =
+* Dev: autoload psr-4
+* Update: admin style
+* Add: support for WooCommerce 6.5.x
+* Add: support for WordPress 5.9.x
+
+= 1.3.3 - 17/11/2021 =
+
+* Fix: minor fix.
+* Add: support for WooCommerce 5.9.x
+* Add: support for WordPress 5.8.x
+
+= 1.3.2 - 01/09/2021 =
+
+* Add: support for WooCommerce 5.6.x
+* Add: support for WordPress 5.8.x
+
+= 1.3.1 - 12/05/2021 =
 
 * Fix: minor fix and update description.
 
-== 1.3.0 - 08/05/2021 ==
+= 1.3.0 - 08/05/2021 =
 
 * Add: support for WooCommerce 5.2.x
 * Add: support for WordPress 5.7.x

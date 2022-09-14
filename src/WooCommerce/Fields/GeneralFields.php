@@ -77,24 +77,6 @@ class GeneralFields
     }
 
     /**
-     * Redirect to general tab
-     *
-     * necessary to check the fields
-     */
-    public function wcGeneralRedirect()
-    {
-        if (is_admin()) {
-            $tab  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'tab', FILTER_SANITIZE_STRING);
-            $page = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'page', FILTER_SANITIZE_STRING);
-
-            if ('wc-settings' === $page && false === $tab) {
-                wp_redirect(admin_url('admin.php/?page=wc-settings&tab=general'));
-                die();
-            }
-        }
-    }
-
-    /**
      * Get EU countries
      *
      * @return string[]
@@ -109,11 +91,11 @@ class GeneralFields
     /**
      * Add General invoice fields
      *
-     * @since 1.0.0
-     *
      * @param $fields
      *
      * @return array
+     * @since 1.0.0
+     *
      */
     public function generalInvoiceFields($fields)
     {
@@ -127,9 +109,9 @@ class GeneralFields
     /**
      * General store name
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionName()
     {
@@ -145,9 +127,9 @@ class GeneralFields
     /**
      * General store surname
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionSurname()
     {
@@ -163,9 +145,9 @@ class GeneralFields
     /**
      * General store company name
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionCompanyName()
     {
@@ -174,16 +156,18 @@ class GeneralFields
         }
 
         return apply_filters('wc_el_inv-general_store_company_name',
-            get_option(self::$optionPrefix . 'general_store_company_name')
+            \WcElectronInvoiceFree\Functions\stripTags(
+                get_option(self::$optionPrefix . 'general_store_company_name')
+            )
         ) ?: '';
     }
 
     /**
-     * General store var number
-     *
-     * @since 1.0.0
+     * General store vat number
      *
      * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
      */
     public static function getGeneralInvoiceOptionVatNumber()
     {
@@ -199,9 +183,9 @@ class GeneralFields
     /**
      * General store email address
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionEmailAddress()
     {
@@ -217,9 +201,9 @@ class GeneralFields
     /**
      * General store phone number
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionPhoneNumber()
     {
@@ -233,11 +217,11 @@ class GeneralFields
     }
 
     /**
-     * General store phone number
-     *
-     * @since 1.0.0
+     * General store tax regime
      *
      * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
      */
     public static function getGeneralInvoiceOptionTaxRegime()
     {
@@ -251,11 +235,65 @@ class GeneralFields
     }
 
     /**
-     * General store invoice country state
-     *
-     * @since 1.0.0
+     * General store office register business
      *
      * @return mixed Value set for the option.
+     * @since 2.2.1
+     *
+     */
+    public static function getGeneralInvoiceOptionProvinceOfficeBusinessRegister()
+    {
+        if (! in_array(self::getGeneralInvoiceOptionCountryState(), self::getEuCountries())) {
+            return '';
+        }
+
+        return apply_filters('wc_el_inv-province_business_register_office',
+            get_option(self::$optionPrefix . 'province_business_register_office')
+        ) ?: '';
+    }
+
+    /**
+     * General store REA number
+     *
+     * @return mixed Value set for the option.
+     * @since 2.2.1
+     *
+     */
+    public static function getGeneralInvoiceOptionReaNumber()
+    {
+        if (! in_array(self::getGeneralInvoiceOptionCountryState(), self::getEuCountries())) {
+            return '';
+        }
+
+        return apply_filters('wc_el_inv-rea_registration_number',
+            get_option(self::$optionPrefix . 'rea_registration_number')
+        ) ?: '';
+    }
+
+    /**
+     * General store liquidation status
+     *
+     * @return mixed Value set for the option.
+     * @since 2.2.1
+     *
+     */
+    public static function getGeneralInvoiceOptionLiquidationStatus()
+    {
+        if (! in_array(self::getGeneralInvoiceOptionCountryState(), self::getEuCountries())) {
+            return '';
+        }
+
+        return apply_filters('wc_el_inv-liquidation_status',
+            get_option(self::$optionPrefix . 'liquidation_status')
+        ) ?: '';
+    }
+
+    /**
+     * General store invoice country state
+     *
+     * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
      */
     public static function getGeneralInvoiceOptionCountryState()
     {
@@ -274,9 +312,9 @@ class GeneralFields
     /**
      * General store invoice country province
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionCountryProvince()
     {
@@ -295,9 +333,9 @@ class GeneralFields
     /**
      * General store invoice city
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionCity()
     {
@@ -309,11 +347,27 @@ class GeneralFields
     }
 
     /**
-     * General store invoice post code
-     *
-     * @since 1.0.0
+     * General store invoice city
      *
      * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
+     */
+    public static function getGeneralShippingLocation()
+    {
+        $location = get_option('woocommerce_ship_to_countries');
+
+        return apply_filters('wc_el_inv-woocommerce_ship_to_countries',
+            $location
+        ) ?: '';
+    }
+
+    /**
+     * General store invoice post code
+     *
+     * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
      */
     public static function getGeneralInvoiceOptionPostCode()
     {
@@ -327,9 +381,9 @@ class GeneralFields
     /**
      * General store invoice post code
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
      *
-     * @return mixed Value set for the option.
      */
     public static function getGeneralInvoiceOptionAddress()
     {
@@ -341,15 +395,57 @@ class GeneralFields
     }
 
     /**
-     * Sanitize
+     * General store transmitter vat number
      *
+     * @return mixed Value set for the option.
      * @since 1.0.0
+     *
+     */
+    public static function getGeneralInvoiceTransmitterOptionVatNumber()
+    {
+        return apply_filters('wc_el_inv-general_store_vat_number_transmitter',
+            get_option(self::$optionPrefix . 'general_store_vat_number_transmitter') ?? null
+        ) ?: '';
+    }
+
+    /**
+     * General store transmitter phone
+     *
+     * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
+     */
+    public static function getGeneralInvoiceTransmitterOptionPhone()
+    {
+        return apply_filters('wc_el_inv-general_store_phone_transmitter',
+            get_option(self::$optionPrefix . 'general_store_phone_transmitter') ?? null
+        ) ?: '';
+    }
+
+    /**
+     * General store transmitter email
+     *
+     * @return mixed Value set for the option.
+     * @since 1.0.0
+     *
+     */
+    public static function getGeneralInvoiceTransmitterOptionEmail()
+    {
+        return apply_filters('wc_el_inv-general_store_email_transmitter',
+            get_option(self::$optionPrefix . 'general_store_email_transmitter') ?? null
+        ) ?: '';
+    }
+
+    /**
+     * Sanitize
      *
      * @param $value
      * @param $option
      * @param $rawValue
      *
      * @return bool|mixed|string
+     * @since 1.0.0
+     *
      */
     public function sanitize($value, $option, $rawValue)
     {
@@ -357,9 +453,7 @@ class GeneralFields
             return '';
         }
 
-        $value = \WcElectronInvoiceFree\Functions\sanitize($value);
-
-        return $value;
+        return \WcElectronInvoiceFree\Functions\sanitize($value);
     }
 
     /**
@@ -376,39 +470,41 @@ class GeneralFields
         // @codingStandardsIgnoreLine
         $vatCode = \WcElectronInvoiceFree\Functions\filterInput($_POST,
             self::$optionPrefix . 'general_store_vat_number',
-            FILTER_SANITIZE_STRING
+            FILTER_UNSAFE_RAW
         );
 
         // @codingStandardsIgnoreLine
-        $page = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'page', FILTER_SANITIZE_STRING);
-        $tab  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'tab', FILTER_SANITIZE_STRING);
+        $page = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'page', FILTER_UNSAFE_RAW);
+        $tab  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'tab', FILTER_UNSAFE_RAW);
 
-        if ('wc-settings' !== $page || ('wc-settings' === $page && 'general' !== $tab)) {
+        if ('wc-settings' !== $page ||
+            ($tab && ('wc-settings' === $page && 'general' !== $tab))
+        ) {
             return;
         }
 
         // @codingStandardsIgnoreLine
         $name = \WcElectronInvoiceFree\Functions\filterInput($_POST,
             self::$optionPrefix . 'general_store_your_name',
-            FILTER_SANITIZE_STRING
+            FILTER_UNSAFE_RAW
         );
 
         // @codingStandardsIgnoreLine
         $surname = \WcElectronInvoiceFree\Functions\filterInput($_POST,
             self::$optionPrefix . 'general_store_your_surname',
-            FILTER_SANITIZE_STRING
+            FILTER_UNSAFE_RAW
         );
 
         // @codingStandardsIgnoreLine
         $company = \WcElectronInvoiceFree\Functions\filterInput($_POST,
             self::$optionPrefix . 'general_store_company_name',
-            FILTER_SANITIZE_STRING
+            FILTER_UNSAFE_RAW
         );
 
         // @codingStandardsIgnoreLine
         $phone = \WcElectronInvoiceFree\Functions\filterInput($_POST,
             self::$optionPrefix . 'general_store_phone',
-            FILTER_VALIDATE_INT
+            FILTER_UNSAFE_RAW
         );
 
         // @codingStandardsIgnoreLine
@@ -419,7 +515,7 @@ class GeneralFields
 
         $country = \WcElectronInvoiceFree\Functions\filterInput($_POST,
             'woocommerce_default_country',
-            FILTER_SANITIZE_STRING
+            FILTER_UNSAFE_RAW
         );
 
         $country = explode(':', $country);

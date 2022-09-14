@@ -45,11 +45,13 @@
                 return false;
             }
 
-            $(invoiceType).select2(
-                {
-                    minimumResultsForSearch: Infinity
-                }
-            );
+            if (typeof $(invoiceType).select2 !== "undefined") {
+                $(invoiceType).select2(
+                    {
+                        minimumResultsForSearch: 3
+                    }
+                );
+            }
 
             var choiceType = document.getElementById('billing_choice_type');
             if (!choiceType) {
@@ -60,11 +62,13 @@
                 return false;
             }
 
-            $(choiceType).select2(
-                {
-                    minimumResultsForSearch: Infinity
-                }
-            );
+            if (typeof $(choiceType).select2 !== "undefined") {
+                $(choiceType).select2(
+                    {
+                        minimumResultsForSearch: 3
+                    }
+                );
+            }
         }
 
         /**
@@ -88,7 +92,7 @@
             }
 
             invoiceVat.addEventListener('keyup', function (evt) {
-                if ('IT' === country.value && 'company' !== invoiceType.value) {
+                if (country && 'IT' === country.value && invoiceType && 'company' !== invoiceType.value) {
                     return false;
                 }
                 invoiceTax.value = this.value;
@@ -133,6 +137,10 @@
             var country = event.target.value;
             var invoiceType = document.getElementById('billing_invoice_type');
 
+            if (!invoiceType) {
+                return false;
+            }
+
             if ('IT' !== country) {
                 switchTypeNoIT(invoiceType.value, event);
             } else {
@@ -153,7 +161,7 @@
             var type = event.target.value;
 
             // IT country and not required fields and country is in UE
-            if ('IT' === country.value &&
+            if (country && 'IT' === country.value &&
                 -1 !== wc_el_inv_invoice.eu_vat_country.indexOf(country.value)
             ) {
                 switchType(type, event);
@@ -188,27 +196,34 @@
             var country = document.getElementById('billing_country');
             var choiceTypeField = document.getElementById('billing_choice_type_field');
             var invoiceTypeField = document.getElementById('billing_invoice_type_field');
+            var choiceTypeFieldLabel = document.querySelector('#billing_choice_type_field label[for="billing_choice_type"]');
+            var invoiceTypeFieldLabel = document.querySelector('#billing_invoice_type_field label[for="billing_invoice_type"]');
             var sdi = document.getElementById('billing_sdi_type');
             var sdiField = document.getElementById('billing_sdi_type_field');
-            var sdiLabel = document.querySelector('#billing_sdi_type_field > label');
+            var sdiLabel = document.querySelector('#billing_sdi_type_field label[for="billing_sdi_type"]');
             if (sdiLabel) {
                 var sdiAbbr = sdiLabel.firstElementChild;
             }
 
             var vat = document.getElementById('billing_vat_number');
             var vatField = document.getElementById('billing_vat_number_field');
-            var vatLabel = document.querySelector('#billing_vat_number_field > label');
+            var vatLabel = document.querySelector('#billing_vat_number_field label[for="billing_vat_number"]');
             var vatAbbr = vatLabel.firstElementChild;
 
             var taxCode = document.getElementById('billing_tax_code');
             var taxCodeField = document.getElementById('billing_tax_code_field');
-            var taxCodeLabel = document.querySelector('#billing_tax_code_field > label');
+            var taxCodeLabel = document.querySelector('#billing_tax_code_field label[for="billing_tax_code"]');
             if (taxCode) {
                 var taxCodeAbbr = taxCodeLabel.firstElementChild;
+                var cfMessage = taxCode.nextElementSibling;
+                console.log(cfMessage);
+                if (cfMessage && cfMessage.classList.contains('no-valid-cf')) {
+                    cfMessage.remove();
+                }
             }
 
             // Sdi not required for no IT country
-            if (sdiField) {
+            if (sdiField && sdiAbbr) {
                 // SDI
                 sdiField.style.display = 'none';
                 sdiAbbr.classList.remove('required');
@@ -234,75 +249,125 @@
             }
 
             // No UE not required VAT and TAX
-            if ('show' !== wc_el_inv_invoice.hide_outside_ue &&
+            if (country &&
+                'show' !== wc_el_inv_invoice.hide_outside_ue &&
                 -1 === wc_el_inv_invoice.eu_vat_country.indexOf(country.value)
             ) {
                 if (choiceTypeField) {
                     choiceTypeField.style.display = 'none';
+                    if (choiceTypeFieldLabel.firstElementChild) {
+                        choiceTypeFieldLabel.firstElementChild.remove();
+                    }
                 }
-                invoiceTypeField.style.display = 'none';
+                if (invoiceTypeField) {
+                    invoiceTypeField.style.display = 'none';
+                    if (invoiceTypeFieldLabel.firstElementChild) {
+                        invoiceTypeFieldLabel.firstElementChild.remove();
+                    }
+                }
                 // TAX
                 taxCodeField.style.display = 'none';
                 taxCode.value = ''; // reset value
-                taxCodeAbbr.classList.remove('required');
+                if (taxCodeAbbr) {
+                    taxCodeAbbr.classList.remove('required');
+                }
                 taxCodeField.classList.remove('validate-required');
                 taxCode.removeAttribute('required');
                 // VAT
                 vatField.style.display = 'none';
                 vat.value = ''; // reset value
-                vatAbbr.classList.remove('required');
+                if (vatAbbr) {
+                    vatAbbr.classList.remove('required');
+                }
                 vatField.classList.remove('validate-required');
                 vat.removeAttribute('required');
                 return;
+            } else {
+                if (choiceTypeField) {
+                    if (choiceTypeFieldLabel.firstElementChild) {
+                        choiceTypeFieldLabel.firstElementChild.remove();
+                    }
+                    choiceTypeField.style.display = 'block';
+                }
+                if (invoiceTypeField) {
+                    if (invoiceTypeFieldLabel.firstElementChild) {
+                        invoiceTypeFieldLabel.firstElementChild.remove();
+                    }
+                    invoiceTypeField.style.display = 'block';
+                }
             }
 
             if ('1' === wc_el_inv_invoice.invoice_required) {
                 // TAX
                 taxCodeField.style.display = 'block';
-                taxCodeAbbr.classList.remove('optional');
-                taxCodeAbbr.classList.add('required');
+                if (taxCodeAbbr) {
+                    taxCodeAbbr.classList.remove('optional');
+                    taxCodeAbbr.classList.add('required');
+                }
                 taxCodeField.classList.add('validate-required');
-                taxCodeAbbr.innerText = '*';
-                taxCodeAbbr.outerHTML = taxCodeAbbr.outerHTML.replace(/span/g, "abbr");
+                if (taxCodeAbbr) {
+                    taxCodeAbbr.innerText = '*';
+                    taxCodeAbbr.outerHTML = taxCodeAbbr.outerHTML.replace(/span/g, "abbr");
+                }
                 taxCode.setAttribute('required', 'required');
                 // VAT
                 vatField.style.display = 'block';
-                vatAbbr.classList.remove('optional');
-                vatAbbr.classList.add('required');
+                if (vatAbbr) {
+                    vatAbbr.classList.remove('optional');
+                    vatAbbr.classList.add('required');
+                }
                 vatField.classList.add('validate-required');
-                vatAbbr.innerText = '*';
-                vatAbbr.setAttribute('title', wc_el_inv_invoice.required_text);
-                vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/span/g, "abbr");
+                if (vatAbbr) {
+                    vatAbbr.innerText = '*';
+                    vatAbbr.setAttribute('title', wc_el_inv_invoice.required_text);
+                    vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/span/g, "abbr");
+                }
                 vat.setAttribute('required', 'required');
             } else {
                 // TAX
-                taxCodeAbbr.classList.remove('required');
-                taxCodeAbbr.classList.add('optional');
+                if (taxCodeAbbr) {
+                    taxCodeAbbr.classList.remove('required');
+                    taxCodeAbbr.classList.add('optional');
+                }
                 taxCodeField.classList.remove('validate-required');
-                taxCodeAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
-                taxCodeAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                if (taxCodeAbbr) {
+                    taxCodeAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
+                }
+                if (vatAbbr) {
+                    taxCodeAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                }
                 taxCode.removeAttribute('required');
                 // VAT
-                vatAbbr.classList.remove('required');
-                vatAbbr.classList.add('optional');
+                if (vatAbbr) {
+                    vatAbbr.classList.remove('required');
+                    vatAbbr.classList.add('optional');
+                }
                 vatField.classList.remove('validate-required');
-                vatAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
-                vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                if (vatAbbr) {
+                    vatAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
+                    vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                }
                 vat.removeAttribute('required');
             }
 
-            invoiceTypeField.style.display = 'block';
+            if (invoiceTypeField) {
+                invoiceTypeField.style.display = 'block';
+            }
 
             switch (type) {
                 case 'private':
                     if (vat) {
                         // VAT
                         vatField.style.display = 'none';
-                        vatAbbr.classList.remove('required');
-                        vatAbbr.classList.add('optional');
+                        if (vatAbbr) {
+                            vatAbbr.classList.remove('required');
+                            vatAbbr.classList.add('optional');
+                        }
                         vatField.classList.remove('validate-required');
-                        vatAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
-                        vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                        if (vatAbbr) {
+                            vatAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
+                            vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                        }
                         vat.removeAttribute('required');
                     }
                     if (taxCode) {
@@ -317,11 +382,17 @@
                     if (taxCode && 'on' === wc_el_inv_invoice.disable_cf) {
                         // TAX
                         taxCodeField.style.display = 'none';
-                        taxCodeAbbr.classList.remove('required');
-                        taxCodeAbbr.classList.add('optional');
+                        if (taxCodeAbbr) {
+                            taxCodeAbbr.classList.remove('required');
+                            taxCodeAbbr.classList.add('optional');
+                        }
                         taxCodeField.classList.remove('validate-required');
-                        taxCodeAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
-                        taxCodeAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                        if (taxCodeAbbr) {
+                            taxCodeAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
+                        }
+                        if (vatAbbr) {
+                            taxCodeAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                        }
                         taxCode.removeAttribute('required');
                     }
                     break;
@@ -352,10 +423,12 @@
             var country = document.getElementById('billing_country');
             var choiceTypeField = document.getElementById('billing_choice_type_field');
             var invoiceTypeField = document.getElementById('billing_invoice_type_field');
+            var choiceTypeFieldLabel = document.querySelector('#billing_choice_type_field label[for="billing_choice_type"]');
+            var invoiceTypeFieldLabel = document.querySelector('#billing_invoice_type_field label[for="billing_invoice_type"]');
             var sdi = document.getElementById('billing_sdi_type');
             var sdiField = document.getElementById('billing_sdi_type_field');
             var sdiInput = document.getElementById('billing_sdi_type');
-            var sdiLabel = document.querySelector('#billing_sdi_type_field > label');
+            var sdiLabel = document.querySelector('#billing_sdi_type_field label[for="billing_sdi_type"]');
             var sdiDesc = document.querySelector('#billing_sdi_type_field #billing_sdi_type-description');
 
             if (sdi) {
@@ -364,12 +437,12 @@
 
             var vat = document.getElementById('billing_vat_number');
             var vatField = document.getElementById('billing_vat_number_field');
-            var vatLabel = document.querySelector('#billing_vat_number_field > label');
+            var vatLabel = document.querySelector('#billing_vat_number_field label[for="billing_vat_number"]');
             var vatAbbr = vatLabel.firstElementChild;
 
             var taxCode = document.getElementById('billing_tax_code');
             var taxCodeField = document.getElementById('billing_tax_code_field');
-            var taxCodeLabel = document.querySelector('#billing_tax_code_field > label');
+            var taxCodeLabel = document.querySelector('#billing_tax_code_field label[for="billing_tax_code"]');
 
             if (taxCode) {
                 var taxCodeAbbr = taxCodeLabel.firstElementChild;
@@ -401,8 +474,31 @@
             // Initialize display fields
             if (choiceTypeField) {
                 choiceTypeField.style.display = 'block';
+                if (choiceTypeFieldLabel.firstElementChild &&
+                    'ABBR' !== choiceTypeFieldLabel.firstElementChild.nodeName &&
+                    !choiceTypeFieldLabel.querySelector('.required')
+                ) {
+                    $(choiceTypeFieldLabel).append('<abbr class="required">*</abbr>');
+                } else {
+                    if (null === choiceTypeFieldLabel.firstElementChild) {
+                        $(choiceTypeFieldLabel).append('<abbr class="required">*</abbr>');
+                    }
+                }
             }
-            invoiceTypeField.style.display = 'block';
+
+            if (invoiceTypeField) {
+                invoiceTypeField.style.display = 'block';
+                if (invoiceTypeFieldLabel.firstElementChild &&
+                    'ABBR' !== invoiceTypeFieldLabel.firstElementChild.nodeName
+                ) {
+                    $(invoiceTypeFieldLabel).append('<abbr class="required">*</abbr>');
+                } else {
+                    if (null === invoiceTypeFieldLabel.firstElementChild) {
+                        $(invoiceTypeFieldLabel).append('<abbr class="required">*</abbr>');
+                    }
+                }
+            }
+
             taxCodeField.style.display = 'block';
             vatField.style.display = 'block';
 
@@ -411,11 +507,15 @@
                     // TAX-CODE
                     if (taxCode) {
                         taxCodeField.style.display = 'block';
-                        taxCodeAbbr.classList.remove('optional');
-                        taxCodeAbbr.classList.add('required');
+                        if (taxCodeAbbr) {
+                            taxCodeAbbr.classList.remove('optional');
+                            taxCodeAbbr.classList.add('required');
+                        }
                         taxCodeField.classList.add('validate-required');
-                        taxCodeAbbr.innerText = '*';
-                        taxCodeAbbr.outerHTML = taxCodeAbbr.outerHTML.replace(/span/g, "abbr");
+                        if (taxCodeAbbr) {
+                            taxCodeAbbr.innerText = '*';
+                            taxCodeAbbr.outerHTML = taxCodeAbbr.outerHTML.replace(/span/g, "abbr");
+                        }
                         taxCode.setAttribute('required', 'required');
                     }
                     // SDI check
@@ -423,21 +523,29 @@
                         // SDI
                         sdiField.style.display = 'none';
                         sdi.value = ''; // reset value
-                        sdiAbbr.classList.remove('required');
-                        sdiAbbr.classList.add('optional');
+                        if (sdiAbbr) {
+                            sdiAbbr.classList.remove('required');
+                            sdiAbbr.classList.add('optional');
+                        }
                         sdiField.classList.remove('validate-required');
-                        sdiAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
-                        sdiAbbr.outerHTML = sdiAbbr.outerHTML.replace(/abbr/g, "span");
+                        if (sdiAbbr) {
+                            sdiAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
+                            sdiAbbr.outerHTML = sdiAbbr.outerHTML.replace(/abbr/g, "span");
+                        }
                         sdi.removeAttribute('required');
                     }
 
                     // VAT
                     vatField.style.display = 'none';
-                    vatAbbr.classList.remove('required');
-                    vatAbbr.classList.add('optional');
+                    if (vatAbbr) {
+                        vatAbbr.classList.remove('required');
+                        vatAbbr.classList.add('optional');
+                    }
                     vatField.classList.remove('validate-required');
-                    vatAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
-                    vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                    if (vatAbbr) {
+                        vatAbbr.innerText = '(' + wc_el_inv_invoice.not_required_text + ')';
+                        vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/abbr/g, "span");
+                    }
                     vat.removeAttribute('required');
 
                     break;
@@ -448,15 +556,21 @@
                         if ('on' !== wc_el_inv_invoice.disable_pec_sdi) {
                             // SDI
                             sdiField.style.display = 'block';
-                            sdiAbbr.classList.remove('optional');
-                            sdiAbbr.classList.add('required');
+                            if (sdiAbbr) {
+                                sdiAbbr.classList.remove('optional');
+                                sdiAbbr.classList.add('required');
+                            }
                             sdiField.classList.add('validate-required');
-                            sdiAbbr.innerText = '*';
-                            sdiAbbr.setAttribute('title', wc_el_inv_invoice.required_text);
-                            sdiAbbr.outerHTML = sdiAbbr.outerHTML.replace(/span/g, "abbr");
+                            if (sdiAbbr) {
+                                sdiAbbr.innerText = '*';
+                                sdiAbbr.setAttribute('title', wc_el_inv_invoice.required_text);
+                                sdiAbbr.outerHTML = sdiAbbr.outerHTML.replace(/span/g, "abbr");
+                            }
                             sdi.setAttribute('required', 'required');
 
-                            sdiLabel.innerHTML = wc_el_inv_invoice.sdi_label + sdiAbbr.outerHTML;
+                            if (sdiAbbr) {
+                                sdiLabel.innerHTML = wc_el_inv_invoice.sdi_label + sdiAbbr.outerHTML;
+                            }
                             sdiDesc.innerText = wc_el_inv_invoice.sdi_description;
                             sdiInput.placeholder = wc_el_inv_invoice.sdi_placeholder;
                         } else {
@@ -467,22 +581,30 @@
 
                     // VAT
                     vatField.style.display = 'block';
-                    vatAbbr.classList.remove('optional');
-                    vatAbbr.classList.add('required');
+                    if (vatAbbr) {
+                        vatAbbr.classList.remove('optional');
+                        vatAbbr.classList.add('required');
+                    }
                     vatField.classList.add('validate-required');
-                    vatAbbr.innerText = '*';
-                    vatAbbr.setAttribute('title', wc_el_inv_invoice.required_text);
-                    vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/span/g, "abbr");
+                    if (vatAbbr) {
+                        vatAbbr.innerText = '*';
+                        vatAbbr.setAttribute('title', wc_el_inv_invoice.required_text);
+                        vatAbbr.outerHTML = vatAbbr.outerHTML.replace(/span/g, "abbr");
+                    }
                     vat.setAttribute('required', 'required');
 
                     // TAX-CODE
                     if (taxCode && 'on' !== wc_el_inv_invoice.disable_cf) {
                         taxCodeField.style.display = 'block';
-                        taxCodeAbbr.classList.remove('optional');
-                        taxCodeAbbr.classList.add('required');
+                        if (taxCodeAbbr) {
+                            taxCodeAbbr.classList.remove('optional');
+                            taxCodeAbbr.classList.add('required');
+                        }
                         taxCodeField.classList.add('validate-required');
-                        taxCodeAbbr.innerText = '*';
-                        taxCodeAbbr.outerHTML = taxCodeAbbr.outerHTML.replace(/span/g, "abbr");
+                        if (taxCodeAbbr) {
+                            taxCodeAbbr.innerText = '*';
+                            taxCodeAbbr.outerHTML = taxCodeAbbr.outerHTML.replace(/span/g, "abbr");
+                        }
                         taxCode.setAttribute('required', 'required');
                     } else if (taxCode && 'on' === wc_el_inv_invoice.disable_cf) {
                         taxCodeField.style.display = 'none';
@@ -501,6 +623,34 @@
                 default:
                     break;
             }
+
+            var companyFiled = document.getElementById('billing_company');
+            if (companyFiled) {
+                var companyFieldWrap = companyFiled.closest('p');
+                var companyLabel = companyFieldWrap.querySelector('label');
+                var abbrCompany = companyLabel.querySelector('.required');
+                var companySpan = companyFieldWrap.querySelector('label span.optional');
+
+                if ('company' === type) {
+                    companyFiled.setAttribute('required', 'required');
+                    companyFieldWrap.classList.add('validate-required');
+                    if (companySpan) {
+                        companySpan.style.display = 'none';
+                    }
+                    if (!abbrCompany) {
+                        companyLabel.insertAdjacentHTML('beforeend', '<abbr class="required">*</abbr>');
+                    }
+                } else {
+                    if (abbrCompany) {
+                        companyFiled.removeAttribute('required');
+                        companyFieldWrap.classList.remove('validate-required');
+                        if (companySpan) {
+                            companySpan.style.display = 'inline';
+                        }
+                        abbrCompany.remove();
+                    }
+                }
+            }
         }
 
         /**
@@ -509,26 +659,30 @@
          */
         function choiceType(ev)
         {
+            var editAddress = document.querySelector('body.woocommerce-edit-address');
             var choiceType = document.getElementById('billing_choice_type');
-            if (!choiceType) {
-                toggleFieldsDisplay('reset', ev);
-                return;
-            }
+
+            initSelect2();
 
             // Remove optional text
-            var choiceTypeLabel = document.querySelector('#billing_choice_type_field > label span.optional');
+            var choiceTypeLabel = document.querySelector('#billing_choice_type_field label[for="billing_choice_type"] span.optional');
             if (choiceTypeLabel) {
                 choiceTypeLabel.remove();
             }
 
-            if ('load' === ev.type) {
+            if (choiceType && 'load' === ev.type && !editAddress) {
                 toggleFieldsDisplay(choiceType.options[choiceType.selectedIndex].value, ev);
             }
 
-            $(choiceType).on('change', function (evt) {
-                toggleFieldsDisplay(this.value, evt);
-            });
+            if (choiceType) {
+                $(choiceType).on('change', function (evt) {
+                    toggleFieldsDisplay(this.value, evt);
+                });
+            }
 
+            if (editAddress) {
+                toggleFieldsDisplay('edit-address', ev);
+            }
         }
 
         /**
@@ -548,6 +702,8 @@
             var vat = document.getElementById('billing_vat_number');
             var taxCode = document.getElementById('billing_tax_code');
 
+            console.log('toggle:', type, 'event:', ev.type);
+
             switch (type) {
                 case'invoice':
                     var country = document.getElementById('billing_country');
@@ -560,24 +716,34 @@
 
                             if ('private' === invoiceType.options[invoiceType.selectedIndex].value) {
                                 taxCodeField.style.display = 'block';
+                                if (type === 'load' && taxCode.value === 'XXXXXX00L00L000X') {
+                                    taxCode.value = '';
+                                }
+
                             } else if ('company' === invoiceType.options[invoiceType.selectedIndex].value ||
                                        'freelance' === invoiceType.options[invoiceType.selectedIndex].value
                             ) {
                                 // Display and reset value
                                 if (vat) {
                                     vatField.style.display = 'block';
-                                    vat.value = '';
+                                    if ('load' !== ev.type) {
+                                        vat.value = '';
+                                    }
                                 }
                                 // Display Only IT
                                 if ('IT' === country.value) {
                                     if (sdi) {
                                         sdiField.style.display = 'block';
-                                        sdi.value = '';
+                                        if ('load' !== ev.type) {
+                                            sdi.value = '';
+                                        }
                                     }
                                 }
                                 if (taxCode) {
                                     taxCodeField.style.display = 'block';
-                                    taxCode.value = '';
+                                    if ('load' !== ev.type) {
+                                        taxCode.value = '';
+                                    }
                                 }
                             }
 
@@ -614,6 +780,18 @@
                         taxCode.value = '';
                     }
                     break;
+                case 'edit-address':
+                    // Support other plugin save fields
+                    if (taxCode.value !== '') {
+                        taxCodeField.style.display = 'block';
+                    }
+                    if (vat.value !== '') {
+                        vatField.style.display = 'block';
+                    }
+                    if (sdi.value !== '') {
+                        sdiField.style.display = 'block';
+                    }
+                    break
                 default:
                     break;
             }
@@ -624,15 +802,36 @@
 
         // Load listener
         window.addEventListener('load', function (ev) {
+
             // Default
             var invoiceType = document.getElementById('billing_invoice_type');
             var country = document.getElementById('billing_country');
+            var taxCode = document.getElementById('billing_tax_code');
+
             if (!invoiceType) {
                 return false;
             }
 
+            if (!country) {
+                return false;
+            }
+
+            if (country) {
+                var readOnly = country.getAttribute('readonly');
+                if (readOnly && 'readonly' === readOnly) {
+                    country.closest('#billing_country_field').style.display = 'none';
+                }
+            }
+
+            // Remove optional label
+            var invoiceTypeLabelOption = document.querySelector('label[for="billing_invoice_type"] .optional');
+            if (invoiceTypeLabelOption) {
+                invoiceTypeLabelOption.remove();
+            }
+
             // Required and in not UE country
-            if ('IT' === country.value &&
+            if (country &&
+                'IT' === country.value &&
                 -1 !== wc_el_inv_invoice.eu_vat_country.indexOf(wc_el_inv_invoice.country)
             ) {
                 switchType(invoiceType.options[invoiceType.selectedIndex].value, ev);
@@ -641,7 +840,9 @@
             }
 
             // Switch country
-            switchCountry(country.value, invoiceType.value, ev);
+            if (country) {
+                switchCountry(country.value, invoiceType.value, ev);
+            }
             choiceType(ev);
             initSelect2();
             cloneValueVat();

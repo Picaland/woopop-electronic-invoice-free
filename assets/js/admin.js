@@ -256,6 +256,7 @@
         {
             var actions = [
                 document.querySelector('.save-all'),
+                document.querySelector('.save-all-csv'),
                 document.querySelector('.view-all'),
                 document.querySelector('.get-all')
             ];
@@ -267,11 +268,12 @@
             // Filter in admin table
             var filter = document.querySelector('.filter');
             if (filter) {
+                var filterHref = filter.getAttribute('href');
                 filter.addEventListener('click', function (evt) {
                     evt.preventDefault();
                     evt.stopImmediatePropagation();
 
-                    var baseHref = evt.target.href;
+                    var baseHref = filterHref;
 
                     var customerID = '';
                     var customer = document.getElementById('filter_customer_id');
@@ -282,7 +284,15 @@
                         }
                     }
 
-                    window.location = setUrlForFilter(baseHref);
+                    if ('undefined' !== baseHref) {
+                        var targetHref = setUrlForFilter(baseHref);
+                        if (targetHref !== filterHref && -1 !== targetHref.indexOf('date_in')) {
+                            window.location = targetHref;
+                        } else {
+                            alert(wc_el_inv_admin.select_date_filter);
+                        }
+                    }
+
                 })
             }
 
@@ -297,10 +307,31 @@
                     item.addEventListener('click', function (evt) {
                         evt.preventDefault();
                         evt.stopImmediatePropagation();
-                        /* ... PREMIM VERION ... */
+
+                        var href = setUrlForFilter(evt.target.parentElement.href);
+                        window.open(href, '_blank');
                     })
                 });
             }
+        }
+
+        /**
+         * Parse Date
+         * @param date
+         * @returns {number}
+         */
+        function parseDate(date)
+        {
+            var dateSplit = date.split(/[^0-9]/);
+            var DateString = dateSplit[0] + '-' +
+                             dateSplit[1] + '-' +
+                             dateSplit[2] + 'T' +
+                             dateSplit[3] + ':' +
+                             dateSplit[4] + ':00';
+
+            var dateObj = new Date(DateString.toString());
+
+            return dateObj.getTime() / 1000;
         }
 
         /**
@@ -318,16 +349,17 @@
             var dateIN = document.getElementById('date_in');
             var dateOUT = document.getElementById('date_out');
 
+            // Add date params
             if (dateIN.value || dateOUT.value) {
-                var IN = dateIN.value + ' 00:00';
-                var OUT = dateOUT.value + ' 00:00';
+                var IN = dateIN.value + ' 23:59';
+                var OUT = dateOUT.value + ' 23:59';
 
                 IN = IN.split(" - ").map(function (date) {
-                    return Date.parse(date + "-0500") / 1000;
+                    return parseDate(date);
                 }).join(" - ");
 
                 OUT = OUT.split(" - ").map(function (date) {
-                    return Date.parse(date + "-0500") / 1000;
+                    return parseDate(date);
                 }).join(" - ");
 
                 if (dateIN.value && '' === dateOUT.value) {
@@ -384,11 +416,12 @@
         }
 
         /**
-         * Bulk Mark
+         * Bulk Mark actions
          */
         function bulkMarkActions()
         {
             var triggers = document.querySelectorAll('.mark_bulk_trigger');
+            var form = document.getElementById('wp-list-table-invoice-form');
             if (!triggers) {
                 return;
             }
@@ -397,6 +430,48 @@
                 trigger.addEventListener('click', function (evt) {
                     evt.preventDefault();
                     evt.stopImmediatePropagation();
+
+                    var inputAction = document.getElementById('bulk-sent');
+                    if (inputAction) {
+                        inputAction.remove();
+                    }
+
+                    var cbs = document.querySelectorAll('input[name="woopop-invoice[]"]');
+                    var cbChecked = false;
+                    _.forEach(cbs, function (cb) {
+                        if (true === cb.checked) {
+                            cbChecked = cb.checked;
+                        }
+                    });
+
+                    if (!cbChecked) {
+                        alert(wc_el_inv_admin.bulk_invoice_cb);
+                        return;
+                    }
+
+                    var confirm = false;
+
+                    if (this.classList.contains('mark_as_sent')) {
+                        if (window.confirm(wc_el_inv_admin.invoice_sent_confirm)) {
+                            confirm = true;
+                        }
+                    } else if (this.classList.contains('mark_undo')) {
+                        if (window.confirm(wc_el_inv_admin.invoice_undo_confirm)) {
+                            confirm = true;
+                        }
+                    }
+
+                    if (!confirm) {
+                        return;
+                    }
+
+                    var action = document.createElement("input");
+                    action.setAttribute('type', 'hidden');
+                    action.setAttribute('id', 'bulk-sent');
+                    action.setAttribute('name', 'bulk-sent');
+                    action.setAttribute('value', trigger.value);
+                    form.appendChild(action);
+                    form.submit();
                 })
             });
         }
@@ -415,11 +490,334 @@
                 trigger.addEventListener('click', function (evt) {
                     evt.preventDefault();
                     evt.stopImmediatePropagation();
+
+                    var confirm = false;
+
+                    if (this.classList.contains('mark_as_sent')) {
+                        if (window.confirm(wc_el_inv_admin.invoice_sent_confirm)) {
+                            confirm = true;
+                        }
+                    } else if (this.classList.contains('mark_undo')) {
+                        if (window.confirm(wc_el_inv_admin.invoice_undo_confirm)) {
+                            confirm = true;
+                        }
+                    }
+
+                    if (!confirm) {
+                        return;
+                    }
+
+                    $.ajax({
+                        url: wc_el_inv_admin.ajax_url,
+                        method: 'POST',
+                        cache: false,
+                        data: {
+                            'action': 'markInvoice',
+                            'action_url': this.href,
+                            'nonce': wc_el_inv_admin.ajax_nonce
+                        },
+                        /**
+                         * Before Send
+                         */
+                        beforeSend: function () {
+
+                        }.bind(this),
+                        /**
+                         * Complete
+                         */
+                        complete: function (xhr, status) {
+                            // Stop running.
+                            console.log(xhr, status)
+                        }.bind(this),
+                        /**
+                         * Error
+                         */
+                        error: function (xhr, status, error) {
+                            console.warn('markInvoice ' + error, status);
+                        }.bind(this),
+                        /**
+                         * Success
+                         */
+                        success: function (data, status, xhr) {
+                            console.log(data);
+                            window.location.reload();
+                        }.bind(this)
+                    });
+
                 })
             });
         }
 
+        /**
+         * Refund item control
+         */
+        function refundItemControl()
+        {
+            var buttonRefund = document.querySelector('#woocommerce-order-items .inside .refund-items');
+            var marks = document.querySelectorAll('#order_refunds .actions .mark_trigger');
+
+            if (!marks) {
+                return
+            }
+            _.forEach(marks, function (mark) {
+                if (mark.classList.contains('mark_as_sent')) {
+                    if (buttonRefund) {
+                        buttonRefund.setAttribute('disabled', true);
+                        buttonRefund.innerText = wc_el_inv_admin.refund_item_disabled_text;
+                    }
+                }
+            });
+
+        }
+
+        /**
+         * invoice item control refund amount
+         */
+        function invoiceItemControl()
+        {
+            var refundAmount = document.querySelector('#woocommerce-order-items .inside input#refund_amount');
+            var mark = document.querySelector('.wc_el_inv__general-order .actions .mark_trigger');
+
+            if (!refundAmount || !mark) {
+                return;
+            }
+
+            if (mark.classList.contains('mark_as_sent')) {
+                refundAmount.setAttribute('readonly', true);
+                refundAmount.insertAdjacentHTML(
+                    'afterend',
+                    '<p id="readonly-info">' + wc_el_inv_admin.refund_amount_read_only_info_text + '</p>'
+                )
+            }
+        }
+
+        /**
+         * Choice type
+         */
+        function choiceType()
+        {
+            var docTypeInputs = document.querySelectorAll('.doc-type-input');
+            if (!docTypeInputs) {
+                return;
+            }
+
+            _.forEach(docTypeInputs, function (input) {
+                input.addEventListener('change', function (evt) {
+                    this.parentElement
+                        .parentElement
+                        .parentElement
+                        .querySelectorAll('.choice_type--current')[0]
+                        .setAttribute('value', this.value);
+                })
+            });
+
+        }
+
+        /**
+         * Set document type in query args
+         */
+        function endPointActions()
+        {
+            var actions = document.querySelectorAll('.action-endpoint');
+            if (!actions) {
+                return;
+            }
+
+            _.forEach(actions, function (action) {
+                action.addEventListener('click', function (evt) {
+                    evt.preventDefault();
+                    evt.stopImmediatePropagation();
+
+                    var type = this.parentElement.querySelector('.choice_type--current');
+                    var href = this.href;
+                    if (type) {
+                        href = href + '&choice_type=' + type.value;
+                    }
+                    window.open(href);
+                })
+            });
+        }
+
+        /**
+         * Get Url vars
+         * @returns {{}}
+         */
+        function getUrlVars()
+        {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        /**
+         * Get url param
+         * @param parameter
+         * @param defaultvalue
+         * @returns {*}
+         */
+        function getUrlParam(parameter, defaultvalue)
+        {
+            var urlparameter = defaultvalue;
+            if (window.location.href.indexOf(parameter) > -1) {
+                urlparameter = getUrlVars()[parameter];
+            }
+            return urlparameter;
+        }
+
+        /**
+         * Active sub menu item
+         */
+        function activeSubMenu()
+        {
+            var urlParam = getUrlParam('tab');
+
+            var list = document.querySelectorAll('#toplevel_page_wc_el_inv-options-page ul.wp-submenu li a');
+            if (list) {
+                list.forEach(function (item) {
+                    if (item.parentElement.classList.contains('wp-first-item')) {
+                        item.parentElement.remove();
+                    }
+                    item.parentElement.classList.remove('current');
+                    var href = item.getAttribute('href');
+                    if (-1 !== href.indexOf(urlParam)) {
+                        item.parentElement.classList.add('current');
+                    }
+                })
+            }
+        }
+
+        /**
+         * Renumber invoice utility function
+         */
+        function renumberUtility()
+        {
+            var initialNumber = document.getElementById('renumber_order_initial');
+            var finalNumber = document.getElementById('renumber_order_final');
+            var renumberFrom = document.getElementById('renumber_invoice_from');
+            var submit = document.getElementById('renumber_invoice_submit');
+            var baseUrl = document.getElementById('renumber_base_url');
+            var target = null;
+
+            if (submit) {
+                submit.addEventListener('click', function (evt) {
+                    baseUrl = baseUrl.value;
+                    if ('' !== initialNumber.value && '' !== finalNumber.value && '' !== renumberFrom.value) {
+                        target = baseUrl + '&renumber_invoice=' + renumberFrom.value +
+                                 '&initial=' + initialNumber.value +
+                                 '&final=' + finalNumber.value;
+                    } else if ('' !== initialNumber.value && '' === finalNumber.value && '' !== renumberFrom.value) {
+                        target = baseUrl + '&renumber_invoice=' + renumberFrom.value +
+                                 '&initial=' + initialNumber.value;
+                    } else if ('' === initialNumber.value && '' === finalNumber.value && '' !== renumberFrom.value) {
+                        target = baseUrl + '&renumber_invoice=' + renumberFrom.value;
+                    }
+
+                    if (target) {
+                        window.location = target;
+                    } else {
+                        alert(wc_el_inv_admin.renumber_not_data);
+                    }
+                });
+            }
+        }
+
+        /**
+         * Reverse charge quick edit
+         */
+        function reverseChargeEdit()
+        {
+            // Gift QuickEdit
+            // we create a copy of the WP inline edit post function
+            if (typeof inlineEditPost === "undefined") {
+                return;
+            }
+
+            var wpInlineEdit = inlineEditPost.edit;
+            // and then we overwrite the function with our own code
+
+            inlineEditPost.edit = function (id) {
+                // "call" the original WP edit function
+                // we don't want to leave WordPress hanging
+                wpInlineEdit.apply(this, arguments);
+
+                // get the post ID
+                var postID = 0;
+                if ('object' === typeof (id)) {
+                    postID = parseInt(this.getId(id));
+                }
+
+                if (postID > 0) {
+                    // define the edit row
+                    var editRow = $('#edit-' + postID);
+                    var postRow = $('#post-' + postID);
+
+                    // get the data
+                    var reverseCharge = !!$('.column-reverse_charge > *', postRow).prop('checked');
+                    $(':input[name="active_reverse_charge"]', editRow).prop('checked', reverseCharge);
+                }
+            };
+        }
+
+        function searchOrderByID()
+        {
+            var searchInput = document.getElementById('wc_el_inv_order_search');
+            var searchTrigger = document.querySelector('.wc_el_inv_order_search_trigger');
+            if (searchInput && searchTrigger) {
+                searchTrigger.addEventListener('click', function (evt) {
+                    evt.preventDefault();
+                    evt.stopImmediatePropagation();
+                    if ('' === searchInput.value) {
+                        alert(wc_el_inv_admin.search_by_id);
+                    } else {
+                        window.location = searchTrigger.href + "&order_search=" + searchInput.value;
+                    }
+                    console.log(searchInput.value);
+                })
+            }
+        }
+
         window.addEventListener('load', function () {
+
+            // Invoice xml data
+            var contentInv = $('#store_invoice-description');
+            if (contentInv) {
+                var titleInv = $(contentInv).prev();
+                titleInv.addClass('store_invoice_title');
+            }
+
+            var contentInvT = $('#store_invoice_transmitter-description');
+            if (contentInvT) {
+                var titleInvT = $(contentInvT).prev();
+                titleInvT.addClass('store_invoice_transmitter_title');
+            }
+
+            // Invoice info UE and extra UE options
+            var contentOptions = $('#reverse_charge_invoice-description');
+            if (contentOptions) {
+                var title = $(contentOptions).prev();
+                title.addClass('reverse_charge_invoice_title');
+            }
+
+            // Invoice info UE and extra UE
+            var content = $('#reverse_charge_invoice_info-description');
+            if (content) {
+                var trigger = $(content).prev();
+                trigger.addClass('reverse_charge_info_trigger');
+                trigger.append('<span class="dashicons dashicons-arrow-right-alt2"></span>')
+                $(trigger).on('click', function (evt) {
+                    content.slideToggle('slow');
+                    trigger.toggleClass('open');
+                });
+            }
+
+            // Hide the info by clicking on the edit link
+            $('a.edit_address').on('click', function (evt) {
+                $('.order_data_column > p').addClass('hide');
+            });
+
+            activeSubMenu();
             editInvoiceNumber();
             editOrderInvoiceNumber();
             editRefundInvoiceNumber();
@@ -427,7 +825,34 @@
             filterType();
             filterByDate();
             markInvoice();
+            refundItemControl();
+            invoiceItemControl();
+            searchOrderByID();
             bulkMarkActions();
+            choiceType();
+            endPointActions();
+            renumberUtility();
+            reverseChargeEdit();
+
+            // Remove refund ajax complete action
+            $(document).ajaxComplete(function () {
+                var refundAmount = document.querySelector('#woocommerce-order-items .inside input#refund_amount');
+                var mark = document.querySelector('.wc_el_inv__general-order .actions .mark_trigger');
+
+                if (!refundAmount || !mark) {
+                    return;
+                }
+
+                if (!refundAmount.hasAttribute('readonly') && mark.classList.contains('mark_as_sent')) {
+                    refundAmount.setAttribute('readonly', true);
+                    refundAmount.insertAdjacentHTML(
+                        'afterend',
+                        '<p id="readonly-info">' + wc_el_inv_admin.refund_amount_read_only_info_text + '</p>'
+                    )
+                } else if (refundAmount.hasAttribute('readonly') && !mark.classList.contains('mark_as_sent')) {
+                    refundAmount.removeAttribute('readonly');
+                }
+            });
         });
 
     }(window._, window.jQuery, window.wc_el_inv_admin)

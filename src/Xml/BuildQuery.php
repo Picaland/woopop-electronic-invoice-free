@@ -33,6 +33,7 @@ if (! defined('ABSPATH')) {
 
 use WcElectronInvoiceFree\EndPoint\Endpoints;
 use WcElectronInvoiceFree\Functions as F;
+use WcElectronInvoiceFree\Utils\Helpers;
 
 /**
  * Class BuildQuery
@@ -45,9 +46,8 @@ class BuildQuery extends Endpoints
     /**
      * Xml Query
      *
+     * @return bool|false|\WC_Order|\WC_Order_Query|\WC_Order_Refund|\WC_Product|\WC_Product_Query|null
      * @since  1.0.0
-     *
-     * @return null|\WP_Query
      */
     public function xmlQuery()
     {
@@ -55,140 +55,69 @@ class BuildQuery extends Endpoints
         $query   = null;
 
         // @codingStandardsIgnoreLine
-        $getFormat = F\filterInput($_GET, 'format', FILTER_SANITIZE_STRING);
+        $getFormat = F\filterInput($_GET, 'format', FILTER_UNSAFE_RAW);
         $format    = get_query_var('format');
+        // Date ID
+        $dateIN = get_query_var('date_in');
+        // Date ID
+        $dateOUT = get_query_var('date_out');
 
         if ('json' === $format) {
             return null;
         }
 
-        if ('prod' === WC_EL_INV_ENV) {
-            if ('pdf' !== $format) {
-                return null;
+        // Setup data for query
+        $data = Helpers::setQueryData(array(
+            'getFormat' => $getFormat,
+            'format'    => $format,
+        ), $wpQuery, $this);
+
+        if (is_object($data)) {
+            // Set arguments for query
+            switch ($data->postType) {
+                case 'shop_order':
+                    $args = array(
+                        'status'  => array('processing', 'completed', 'refunded'),
+                        'limit'   => 1,
+                        'orderby' => 'date',
+                        'order'   => 'ASC',
+                    );
+
+                    // Filter Order by date completed
+                    if (isset($dateIN) && '' !== $dateIN && '' === $dateOUT) {
+                        $args['date_modified'] = ">{$dateIN}";
+                    } elseif ('' === $dateIN && isset($dateOUT) && '' !== $dateOUT) {
+                        $args['date_modified'] = "<{$dateOUT}";
+                    } elseif (isset($dateIN) && '' !== $dateIN && isset($dateOUT) && '' !== $dateOUT) {
+                        $args['date_modified'] = "{$dateIN}...{$dateOUT}";
+                    }
+
+                    // Equal date
+                    if (isset($dateIN) &&
+                        isset($dateOUT) &&
+                        '' !== $dateIN &&
+                        '' !== $dateOUT &&
+                        $dateIN === $dateOUT
+                    ) {
+                        $date                  = date('Y-m-d', intval($dateIN));
+                        $args['date_modified'] = "{$date}";
+                    }
+
+                    if (isset($billingEmail) && '' !== $billingEmail) {
+                        $args['billing_email'] = $billingEmail;
+                    }
+
+                    if (isset($data->idTag) && '' !== $data->idTag) {
+                        $args['order_id'] = intval($data->idTag);
+                    }
+                    break;
+                default:
+                    $args = array();
+                    break;
             }
-            if ('' === $format || $format !== $getFormat) {
-                return null;
-            }
-        }
 
-        // Return, if wc-elc-inv is don't in query
-        if (! isset($wpQuery->query['wc-elc-inv'])) {
-            return null;
-        }
-
-        if (! isset($wpQuery->query['shop_order'])) {
-            return null;
-        }
-
-        // Return, if post is null or in query
-        if (null === $wpQuery->post && 1 < $wpQuery->post_count) {
-            return null;
-        }
-
-        // Initialized tag
-        $tag   = '';
-        $idTag = '';
-
-        // Get tag and reset unnecessary param from the query
-        if (is_array($this->postType) && sizeof($this->postType) >= 0) {
-            foreach ($this->postType as $type) {
-                // Post type tag
-                $tag = $wpQuery->get($type);
-                // Post ID tag
-                $idTag = $wpQuery->get($type . '_id');
-
-                // Unset unnecessary query param
-                unset($wpQuery->query[$type]);
-                unset($wpQuery->query_vars[$type]);
-
-                if ($idTag) {
-                    unset($wpQuery->query[$type . '_id']);
-                    unset($wpQuery->query_vars[$type . '_id']);
-                }
-            }
-        } else {
-            // Post type tag
-            $tag = $wpQuery->get($this->postType);
-            // Post ID tag
-            $idTag = $wpQuery->get($this->postType . '_id');
-        }
-
-        // Esc if not $tag
-        if (! $tag || $tag === '' || $this->postType === null) {
-            return null;
-        }
-
-        // Explode $tag or empty array
-        $arrayTag = strpos($tag, '/') ? explode('/', $tag) : array();
-        // Set post type
-        $postType = ! empty($arrayTag) ? reset($arrayTag) : $tag;
-        // Set post id
-        $idTag = ! empty($arrayTag) && '' === $idTag ? end($arrayTag) : $idTag;
-
-        // Set current post type
-        if (! empty($this->postType) && ! empty($arrayTag) && in_array(reset($arrayTag), $this->postType)) {
-            // Set post type
-            $wpQuery->set('post_type', $postType);
-            $wpQuery->query['post_type'] = $postType;
-        }
-
-        // Set arguments for query
-        switch ($postType) {
-            case 'shop_order':
-                $args = array(
-                    'status'  => array('processing', 'completed', 'refunded'),
-                    'limit'   => -1,
-                    'orderby' => 'date',
-                    'order'   => 'ASC',
-                );
-
-                if (isset($idTag) && '' !== $idTag) {
-                    $args['order_id'] = intval($idTag);
-                }
-                break;
-            default:
-                $args = array();
-                break;
-        }
-
-        // Set query
-        $query = $this->setQuery($postType, $args);
-
-        return $query;
-    }
-
-    /**
-     * Set Query
-     *
-     * @since  1.0.0
-     *
-     * @param $tag
-     * @param $args
-     *
-     * @return null|\WC_Order_Query|\WP_Query
-     */
-    public function setQuery($tag, $args)
-    {
-        $query = null;
-
-        // switch lang.
-        F\switchLang();
-
-        switch ($tag) {
-            case 'shop_order':
-                if (! isset($args['order_id'])) {
-                    $query = new \WC_Order_Query($args);
-                } else {
-                    $query = wc_get_order(intval($args['order_id']));
-                }
-                break;
-            default:
-                break;
-        }
-
-        // Query is null? return
-        if (null === $query) {
-            return null;
+            // Set query
+            $query = Helpers::setQuery($data->postType, $args);
         }
 
         return $query;

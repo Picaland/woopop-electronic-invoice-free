@@ -33,7 +33,16 @@ require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/src/Functions/Uti
 require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/src/Functions/Conditionals.php');
 require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/src/Functions/Invoice.php');
 require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/src/Functions/Query.php');
-// Mpdf
-! class_exists('Mpdf') ?
-    require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/libs/vendor/autoload.php') :
-    null;
+
+// Autoloader
+if (phpversion() >= 7.4) {
+    // Autoload PSR-4
+    require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/vendor/autoload.php');
+} else {
+    require_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/src/Autoloader.php');
+    // Setup Autoloader.
+    $loaderMap = include \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/autoloaderMapping.php');
+    $loader    = new \WcElectronInvoiceFree\Autoloader();
+    $loader->addNamespaces($loaderMap);
+    $loader->register();
+}

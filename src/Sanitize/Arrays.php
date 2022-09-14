@@ -74,10 +74,14 @@ final class Arrays implements Sanitize
         }
 
         try {
-            foreach ($input as $key => $item) {
-                // To be sure that it only works with the plugin data.
-                if (false !== strpos('wc_el_inv-', $key)) {
-                    $input[$key] = esc_attr(strip_tags($item));
+            if(! empty($input)) {
+                foreach ($input as $key => $item) {
+                    if(is_string($key)) {
+                        // To be sure that it only works with the plugin data.
+                        if (false !== strpos('wc_el_inv-', $key)) {
+                            $input[$key] = esc_attr(strip_tags($item));
+                        }
+                    }
                 }
             }
         } catch (\Exception $e) {

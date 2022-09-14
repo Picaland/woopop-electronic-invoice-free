@@ -25,6 +25,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
 return apply_filters('wc_el_inv-general_shop_tax_regime', array(
     'IT' => array(
         'RF01' => esc_html__('Ordinario', WC_EL_INV_FREE_TEXTDOMAIN),

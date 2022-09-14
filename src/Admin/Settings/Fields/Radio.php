@@ -52,7 +52,7 @@ class Radio extends Text
     private $allowHtml = array();
 
     /**
-     * Checkbox constructor.
+     * Radio constructor.
      *
      * @since 1.0.0
      *
@@ -175,7 +175,7 @@ class Radio extends Text
          * @since 1.0.0
          *
          * @param string $output The output of the input type.
-         * @param KeyField The instance class
+         * @param Radio The instance class
          */
         $output = apply_filters('wc_el_inv-input_radio_output', $output, $this);
 

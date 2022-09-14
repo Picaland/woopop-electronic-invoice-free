@@ -36,6 +36,8 @@ use WcElectronInvoiceFree\EndPoint\Endpoints;
 use WcElectronInvoiceFree\Plugin;
 use WcElectronInvoiceFree\Utils\TimeZone;
 use WcElectronInvoiceFree\WooCommerce\Fields\InvoiceFields;
+use function WcElectronInvoiceFree\Functions\filterInput;
+use function WcElectronInvoiceFree\Functions\paymentMethodCode;
 
 /**
  * Class XmlOrderListTable
@@ -69,11 +71,17 @@ class XmlOrderListTable extends \WP_List_Table
     public static $listIds = array();
 
     /**
+     * @var int
+     */
+    public static $itemN = 1;
+
+    /**
      * XmlOrderListTable constructor.
+     *
+     * @param array $args
      *
      * @since 1.0.0
      *
-     * @param array $args
      */
     public function __construct($args = array())
     {
@@ -83,17 +91,19 @@ class XmlOrderListTable extends \WP_List_Table
             'ajax'     => false,
         ));
 
+        $this->processBulkAction();
+
         $this->data = $this->convertObjInArray($this->getOrders());
     }
 
     /**
      * Convert Object in Array
      *
-     * @since 1.0.0
-     *
      * @param $dataObj
      *
      * @return array
+     * @since 1.0.0
+     *
      */
     private function convertObjInArray($dataObj)
     {
@@ -111,30 +121,76 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Get Actions
      *
-     * @since 1.0.0
-     *
      * @param $id
      * @param $item
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function actions($id, $item)
     {
         $output  = '';
         $nonce   = wp_create_nonce('wc_el_inv_invoice_pdf');
         $pdfArgs = "?format=pdf&nonce={$nonce}";
-        $url     = site_url() . '/' . Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/';
+        $url     = home_url() . '/' . Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/';
 
-        $output .= sprintf(
-            '<a id="mark_as_sent-%1$s" class="mark_trigger disabled mark_as_sent button button-secondary" href="javascript:;" title="%1$s %2$s">' .
-            '<span class="dashicons dashicons-yes"></span></a>',
-            esc_html__('Mark as Sent', WC_EL_INV_FREE_TEXTDOMAIN),
-            WC_EL_INV_PREMIUM
+        // Check if invoice is sent
+        $checkSent = get_post_meta($id, '_invoice_sent', true);
+        $checkSent = isset($checkSent) && 'sent' === $checkSent ? true : false;
+
+        // Choice type
+        $choiceTypeModifier = isset($item['choice_type']) ? esc_attr($item['choice_type']) : null;
+        $orderType          = isset($item['order_type']) ? esc_attr($item['order_type']) : null;
+        // Get params
+        $dateOrderIN  = filterInput($_GET, 'date_in', FILTER_UNSAFE_RAW) ?: null;
+        $dateOrderOUT = filterInput($_GET, 'date_out', FILTER_UNSAFE_RAW) ?: null;
+        $orderSearch  = filterInput($_GET, 'order_search', FILTER_UNSAFE_RAW) ?: null;
+
+        /**
+         * Filter Check sent by Choice type modifier
+         */
+        $checkSent = apply_filters('wc_el_inv-actions_choice_type_modifier', $checkSent, $id, $choiceTypeModifier);
+
+        $output .= sprintf('<div class="doc-type-wrap">' .
+                           '<label title="%6$s" for="doc_type_invoice-%1$s">%2$s ' .
+                           '<input class="doc-type-input" value="invoice" id="doc_type_invoice-%1$s" type="radio" name="doc_type-%1$s" %3$s></label>' .
+                           '<label for="doc_type_receipt-%1$s">%4$s ' .
+                           '<input class="doc-type-input" value="receipt"  id="doc_type_receipt-%1$s" type="radio" name="doc_type-%1$s" %5$s></label>' .
+                           '</div><hr>',
+            $item['id'],
+            'shop_order' === $item['order_type'] ?
+                esc_html_x('Invoice', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN) :
+                esc_html_x('Refund', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN),
+            '' === $item['choice_type'] || 'invoice' === $item['choice_type'] ? 'checked' : '',
+            esc_html_x('Receipt', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN),
+            'receipt' === $item['choice_type'] ? 'checked' : '',
+            esc_html__('Remember to check the data entered by the customer', WC_EL_INV_FREE_TEXTDOMAIN)
         );
+
+        $output .= sprintf('<input class="choice_type--current" type="hidden" value="%s">', $item['choice_type']);
+        if ($checkSent) {
+            $output .= sprintf(
+                '<a id="mark_as_sent-%1$s" class="mark_trigger mark_undo button button-secondary" href="%2$s" title="%3$s">' .
+                '<span class="dashicons dashicons-undo"></span></a>',
+                $id,
+                esc_url($url . "?id={$id}&undo=true&nonce={$nonce}"),
+                esc_html__('Undo', WC_EL_INV_FREE_TEXTDOMAIN)
+            );
+        } else {
+            $output .= sprintf(
+                '<a id="mark_as_sent-%1$s" class="mark_trigger mark_as_sent button button-secondary" href="%2$s" title="%3$s">' .
+                '<span class="dashicons dashicons-yes"></span></a>',
+                $id,
+                esc_url($url . "?id={$id}&sent=true&nonce={$nonce}"),
+                true === $checkSent ? esc_html__('Disabled', WC_EL_INV_FREE_TEXTDOMAIN) : esc_html__('Mark as Sent',
+                    WC_EL_INV_FREE_TEXTDOMAIN),
+            );
+        }
 
         // XML structure
         $output .= sprintf(
-            '<a class="button button-secondary disabled" href="javascript:;" title="%1$s %2$s">' .
+            '<a class="button button-secondary action-endpoint disabled" href="javascript:;" title="%1$s %2$s">' .
             '<span class="dashicons dashicons-editor-ul"></span></a>',
             esc_html__('Get Xml', WC_EL_INV_FREE_TEXTDOMAIN),
             WC_EL_INV_PREMIUM
@@ -142,36 +198,79 @@ class XmlOrderListTable extends \WP_List_Table
 
         // XML view whit style
         $output .= sprintf(
-            '<a class="button button-primary disabled" href="javascript:;" title="%1$s %2$s">' .
+            '<a class="button button-primary action-endpoint disabled" href="javascript:;" title="%1$s %2$s">' .
             '<span class="dashicons dashicons-visibility"></span></a>',
             esc_html__('View Xml', WC_EL_INV_FREE_TEXTDOMAIN),
             WC_EL_INV_PREMIUM
         );
 
-        // XML download
-        $output .= sprintf(
-            '<a class="button button-secondary button-save disabled" href="javascript:;" title="%1$s %2$s">' .
-            '<span class="dashicons dashicons-media-code"></span></a>',
-            esc_html__('Save Xml', WC_EL_INV_FREE_TEXTDOMAIN),
-            WC_EL_INV_PREMIUM
-        );
+        try {
+            $timeZone = new TimeZone();
+            $timeZone = new \DateTimeZone($timeZone->getTimeZone()->getName());
+            $itemDateTime = new \DateTime($item['date_created']);
+            $itemDateTime->setTimezone($timeZone);
+        } catch (\Exception $e) {
+            $itemDateTime = null;
+        }
 
-        // PDF view
-        $output .= sprintf(
-            '<a class="button button-secondary button-pdf" %1$s href="%2$s%3$s" title="%4$s">' .
-            '<span class="dashicons dashicons-media-text"></span></a>',
-            'target="_blank"',
-            esc_url($url . $id),
-            $pdfArgs . "&choice_type={$item['choice_type']}",
-            esc_html__('View PDF', WC_EL_INV_FREE_TEXTDOMAIN)
-        );
+        // Get 10 order IDs after date last night
+        $ordersIds = wc_get_orders(array(
+            'status'       => array('processing', 'completed', 'refunded'),
+            'limit'        => 6,
+            'orderby'      => 'date',
+            'order'        => 'ASC',
+            'date_created' => '>' . strtotime($item['date_created']),
+            'return'       => 'ids',
+        ));
 
-        /**
-         * Filter actions out put
-         *
-         * @since 1.0.0
-         */
-        $output = apply_filters('wc_el_inv-xml_order_list_table_actions', $output);
+        if (self::$itemN <= 10 &&
+            'shop_order' === $orderType &&
+            1 == $this->get_pagenum() &&
+            ($itemDateTime instanceof \DateTime && $itemDateTime->format('Ym') === date('Ym', time())) &&
+            count($ordersIds) < 5 &&
+            (! $dateOrderIN &&
+             ! $dateOrderOUT &&
+             ! $orderSearch)
+        ) {
+            $n = base64_encode('item__' . self::$itemN);
+            $nonce   = wp_create_nonce('wc_el_inv_invoice_xml');
+            // XML download
+            $output .= sprintf(
+                '<a class="button button-secondary button-save action-endpoint" %1$s href="%2$s%3$s" title="%4$s" %5$s>' .
+                '<span class="dashicons dashicons-media-code"></span></a>',
+                false === $checkSent ? 'target="_blank"' : '',
+                false === $checkSent ? esc_url($url . $id) : 'javascript:;',
+                false === $checkSent ? "?format=xml&nonce={$nonce}&item={$n}&save=true" : '',
+                false === $checkSent ?
+                    esc_html__('Save Xml', WC_EL_INV_FREE_TEXTDOMAIN) :
+                    esc_html__('Disabled', WC_EL_INV_FREE_TEXTDOMAIN),
+                false === $checkSent ? '' : 'disabled="disabled"',
+            );
+        } else {
+            // XML download
+            $output .= sprintf(
+                '<a class="button button-secondary button-save action-endpoint disabled" href="javascript:;" title="%1$s %2$s">' .
+                '<span class="dashicons dashicons-media-code"></span></a>',
+                esc_html__('Save Xml', WC_EL_INV_FREE_TEXTDOMAIN),
+                WC_EL_INV_PREMIUM
+            );
+        }
+
+        if (class_exists('\Dompdf\Dompdf')) {
+            // PDF view
+            $output .= sprintf(
+                '<a class="button button-secondary button-pdf action-endpoint" %1$s href="%2$s%3$s" title="%4$s">' .
+                '<span class="dashicons dashicons-media-text"></span></a>',
+                'target="_blank"',
+                esc_url($url . $id),
+                $pdfArgs,
+                esc_html__('View PDF', WC_EL_INV_FREE_TEXTDOMAIN)
+            );
+        }
+
+        $output .= '<hr>';
+
+        self::$itemN++;
 
         return $output;
     }
@@ -179,11 +278,11 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Get Order Type string
      *
-     * @since 1.0.0
-     *
      * @param $item
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function orderCustomer($item)
     {
@@ -196,7 +295,7 @@ class XmlOrderListTable extends \WP_List_Table
 
         $fullName = isset($name) ? $name . ' ' . $lastName : $company;
 
-        return sprintf('<strong>%s</strong>%s',
+        return sprintf('%s %s',
             ucfirst($fullName),
             isset($item['customer_id']) && 0 !== $item['customer_id'] ?
                 "<br><small class='edit'><a href='{$customerLink}' title='{$edit}'>{$edit}</a></small>" : ''
@@ -206,11 +305,11 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Get Order Title
      *
-     * @since 1.0.0
-     *
      * @param $item
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function orderTitle($item)
     {
@@ -270,7 +369,8 @@ class XmlOrderListTable extends \WP_List_Table
                     break;
             }
 
-            return sprintf('<strong>%s:</strong> %s<br><strong>%s</strong> - %s %s %s <br><strong>%s </strong><span %s>%s</span> %s',
+            $output = '';
+            $output .= sprintf('<strong>%s:</strong> %s<br><strong>%s</strong> - %s %s %s <br><strong>%s </strong><span %s>%s</span> %s',
                 esc_html__('Customer', WC_EL_INV_FREE_TEXTDOMAIN),
                 $this->orderCustomer($item),
                 esc_html("#" . $item['id']),
@@ -282,6 +382,23 @@ class XmlOrderListTable extends \WP_List_Table
                 $status,
                 "<br><small class='edit'><a href='{$editOrderLink}' title='{$edit}'>{$edit}</a></small>"
             );
+
+            $nature = $order->get_meta('nature_rc');
+            $ref    = $order->get_meta('ref_norm_rc');
+            if ($nature) {
+                $output .= sprintf('<hr><strong>%s:</strong> %s',
+                    esc_html__('Nature operations', WC_EL_INV_FREE_TEXTDOMAIN),
+                    $nature
+                );
+            }
+            if ($ref) {
+                $output .= sprintf('<br><strong>%s:</strong> %s',
+                    esc_html__('Ref. Normative', WC_EL_INV_FREE_TEXTDOMAIN),
+                    $ref
+                );
+            }
+
+            return $output;
         } catch (\Exception $e) {
             echo esc_html__('Order title DateTime error: ', WC_EL_INV_FREE_TEXTDOMAIN) . $e->getMessage();
         }
@@ -290,11 +407,11 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Order Total
      *
-     * @since 1.0.0
-     *
      * @param $item
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function orderTotal($item)
     {
@@ -303,9 +420,23 @@ class XmlOrderListTable extends \WP_List_Table
         }
 
         if (! empty($item['refunded']) && 'shop_order_refund' === $item['order_type']) {
-            $total = sprintf('<strong>-%s %s</strong>',
-                $this->numberFormat(abs($item['refunded']['total_refunded'])),
-                get_woocommerce_currency_symbol($item['currency'])
+
+            $total = $item['refunded']['total_refunded'];
+
+            if (! empty($item['current_refund_items'])) {
+                foreach ($item['current_refund_items'] as $item) {
+                    $total = floatval($item['total']) + floatval($item['total_tax']);
+                }
+            }
+
+            $editOrderLink = isset($item['order_id']) ? esc_url(get_edit_post_link($item['order_id'])) : '';
+            $currency      = isset($item['currency']) ? $item['currency'] : '';
+            $total         = sprintf('<strong>-%s %s</strong><br>%s: <a href="%s"><b>#%s</b></a>',
+                $this->numberFormat(abs($total)),
+                get_woocommerce_currency_symbol($currency),
+                esc_html__('Linked order', WC_EL_INV_FREE_TEXTDOMAIN),
+                $editOrderLink,
+                $item['order_id']
             );
         } elseif (! empty($item['refunded']) && 'shop_order' === $item['order_type']) {
 
@@ -314,11 +445,23 @@ class XmlOrderListTable extends \WP_List_Table
                 get_woocommerce_currency_symbol($item['currency'])
             );
 
+            // check total refunded
             if (abs($item['refunded']['total_refunded']) === abs($item['total'])) {
                 $total = sprintf('<strong>%s %s</strong>',
                     $this->numberFormat(abs($item['total'])),
                     get_woocommerce_currency_symbol($item['currency'])
                 );
+            }
+
+            // add refunded total
+            if (0 !== abs($item['refunded']['total_refunded']) &&
+                abs($item['refunded']['total_refunded']) !== abs($item['total'])
+            ) {
+                $total = $total . sprintf('<br>%s <strong>%s %s</strong>',
+                        esc_html__('Refunded', WC_EL_INV_FREE_TEXTDOMAIN),
+                        $this->numberFormat(abs($item['refunded']['total_refunded'])),
+                        get_woocommerce_currency_symbol($item['currency'])
+                    );
             }
         } else {
             $total = sprintf('<strong>%s %s</strong>',
@@ -333,53 +476,93 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Number Format
      *
-     * @since 1.0.0
-     *
-     * @param int $number
+     * @param int    $number
+     * @param int    $decimal
+     * @param bool   $abs
+     * @param string $decSep
+     * @param string $thSep
      *
      * @return string
+     * @since 1.0.0
+     *
      */
-    private function numberFormat($number = 0)
+    private function numberFormat($number = 0, $decimal = 2, $abs = true, $decSep = '.', $thSep = '')
     {
-        return number_format(abs($number), 2, '.', '');
+        if ($abs) {
+            $number = abs($number);
+        }
+
+        return number_format($number, $decimal, $decSep, $thSep);
     }
 
     /**
      * Invoice Number
      *
-     * @since 1.0.0
-     *
-     * @param $number
+     * @param $item
      *
      * @return string
+     * @since 1.0.0
+     *
      */
-    private function invoiceNumber($number)
+    private function invoiceNumber($item)
     {
         $options = OptionPage::init();
+
+        $order              = wc_get_order($item['id']);
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+
+        if (! $order instanceof $wcOrderClass && ! $order instanceof $wcOrderRefundClass) {
+            return '';
+        }
+
+        $number = isset($item['invoice_number']) ? $item['invoice_number'] : '';
+
+        if ('shop_order_refund' === $item['order_type']) {
+            $number = $order->get_meta("refund_number_invoice-{$item['id']}");
+        }
 
         // Number of digits
         $digits = $options->getOptions('number_digits_in_invoice');
         $digits = isset($digits) && '' !== $digits ? $digits : 2;
         // Prefix
         $prefix = $options->getOptions('prefix_invoice_number');
-        $prefix = isset($prefix) && '' !== $prefix ? $prefix : 'inv';
+        $prefix = isset($prefix) && '' !== $prefix ? "{$prefix}-" : 'inv-';
+
+        /**
+         * Invoice prefix filter
+         */
+        $prefix = apply_filters('wc_el_inv-prefix_invoice', $prefix, $order);
+
         // Suffix
-        $suffix = $options->getOptions('suffix_invoice_number');
-        $suffix = isset($suffix) && '' !== $suffix ? $suffix : '';
+        $suffix     = $options->getOptions('suffix_invoice_number');
+        $suffixYear = $options->getOptions('suffix_year_invoice_number');
+        if ('on' === $suffixYear) {
+            $created = $order->get_date_created();
+            $suffix  = "/" . $created->format('Y');
+        } else {
+            $suffix = isset($suffix) && '' !== $suffix ? $suffix : '';
+        }
+
+        /**
+         * Invoice suffix filter
+         */
+        $suffix = apply_filters('wc_el_inv-suffix_invoice', $suffix, $order);
+
         // Invoice number
         $invNumber = str_pad($number, $digits, '0', STR_PAD_LEFT);
 
-        return isset($number) && 0 !== $number && '' !== $number ? "{$prefix}-{$invNumber}{$suffix}" : '';
+        return isset($number) && 0 !== $number && '' !== $number ? "{$prefix}{$invNumber}{$suffix}" : '';
     }
 
     /**
      * Customer Type
      *
-     * @since 1.0.0
-     *
      * @param $item
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function customerType($item)
     {
@@ -422,7 +605,7 @@ class XmlOrderListTable extends \WP_List_Table
     {
         switch ($item['choice_type']) {
             case 'receipt':
-                $type = sprintf('<span style="color:dodgerblue;" class="dashicons dashicons-media-default" title="%s"></span>',
+                $type = sprintf('<span style="color:dodgerblue;" class="dashicons dashicons-media-text" title="%s"></span>',
                     esc_html_x('Receipt', 'invoice_choice', WC_EL_INV_FREE_TEXTDOMAIN)
                 );
                 break;
@@ -451,15 +634,19 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Custom VAT or SDI
      *
-     * @since 1.0.0
-     *
      * @param $item
      * @param $key
      *
      * @return string
+     * @since 1.0.0
+     *
      */
     private function customerVatOrSdi($item, $key)
     {
+        if ('receipt' === $item['choice_type']) {
+            return '';
+        }
+
         $value = isset($item[$key]) && '' !== $item[$key] ? $item[$key] : null;
 
         if ('sdi_type' === $key && null === $value) {
@@ -497,14 +684,11 @@ class XmlOrderListTable extends \WP_List_Table
 
         switch ($item['invoice_sent']) {
             case 'sent':
-                return '<i class="mark-yes dashicons dashicons-yes" title="' . WC_EL_INV_PREMIUM . '"></i>';
-                break;
+                return '<i class="mark-yes dashicons dashicons-yes"></i>';
             case 'no_sent':
-                return '<i class="mark-warning dashicons dashicons-warning" title="' . WC_EL_INV_PREMIUM . '"></i>';
-                break;
+                return '<i class="mark-warning dashicons dashicons-warning"></i>';
             default:
-                return '<i class="mark-warning dashicons dashicons-warning" title="' . WC_EL_INV_PREMIUM . '"></i>';
-                break;
+                return '<i class="mark-warning dashicons dashicons-warning"></i>';
         }
     }
 
@@ -532,16 +716,17 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Data Order
      *
-     * @since 1.0.0
-     *
      * @param $order
      *
      * @return array
+     * @since 1.0.0
+     *
      */
     public function getDataOrder($order)
     {
         // Customer ID
         $customerID = $order->get_user_id();
+        \WcElectronInvoiceFree\Functions\setCustomerLocation($customerID);
 
         // Initialize Orders data and type.
         $orderType   = $order->get_type();
@@ -567,9 +752,15 @@ class XmlOrderListTable extends \WP_List_Table
         );
 
         // Initialize Order Items
-        $orderItems   = $order->get_items();
-        $itemsData    = array();
-        $refundedItem = array();
+        $orderItems         = $order->get_items();
+        $orderItemsTaxes    = $order->get_items('tax');
+        $orderItemsShipping = $order->get_items('shipping');
+        $orderItemsFee      = $order->get_items('fee');
+        $itemsData          = array();
+        $itemsDataTax       = array();
+        $itemsDataShip      = array();
+        $itemsDataFee       = array();
+        $refundedItem       = array();
 
         foreach ($orderItems as $item) {
             if ($item instanceof \WC_Order_Item_Product) {
@@ -595,7 +786,74 @@ class XmlOrderListTable extends \WP_List_Table
             }
         }
 
+        // Tax
+        foreach ($orderItemsTaxes as $itemID => $itemTax) {
+            $itemsDataTax[] = $itemTax->get_data();
+            $itemsDataTax   = array_filter($itemsDataTax);
+        }
+
+        // Shipping
+        foreach ($orderItemsShipping as $itemID => $itemShip) {
+
+            $dataShip   = $itemShip->get_data();
+            $refundShip = $refundShipTax = 0;
+            foreach ($dataShip as $key => $data) {
+                if ('id' === $key) {
+                    $taxRates = isset($dataShip['tax_class']) ? \WC_Tax::get_rates($dataShip['tax_class']) : array();
+                    if (empty($taxRates)) {
+                        $taxRates = \WC_Tax::get_base_tax_rates();
+                    }
+                    if (! empty($taxRates)) {
+                        $id            = array_keys($taxRates);
+                        $refundShip    = $order->get_total_refunded_for_item($data, 'shipping');
+                        $refundShipTax = $order->get_tax_refunded_for_item($data, $id[0], 'shipping');
+                    }
+                }
+            }
+
+            $itemsDataShip[] = $dataShip;
+            if (0 !== $refundShip || 0 !== $refundShipTax) {
+                $itemsDataShip[]['refund_shipping'] = array(
+                    'total'     => $refundShip,
+                    'total_tax' => $refundShipTax,
+                );
+            }
+            $itemsDataShip = array_filter($itemsDataShip);
+        }
+
+        // Fee
+        foreach ($orderItemsFee as $itemID => $itemFee) {
+            $dataFee   = $itemFee->get_data();
+            $refundFee = $refundFeeTax = 0;
+            foreach ($dataFee as $key => $data) {
+                if ('id' === $key) {
+                    $taxRates = \WC_Tax::get_rates($dataFee['tax_class']);
+                    if (empty($taxRates)) {
+                        $taxRates = \WC_Tax::get_base_tax_rates();
+                    }
+                    if (! empty($taxRates)) {
+                        $id           = array_keys($taxRates);
+                        $refundFee    = $order->get_total_refunded_for_item($data, 'fee');
+                        $refundFeeTax = $order->get_tax_refunded_for_item($data, $id[0], 'fee');
+                    }
+                }
+            }
+            $itemsDataFee[] = $dataFee;
+            if (0 !== $refundFee || 0 !== $refundFeeTax) {
+                $itemsDataFee[]['refund_fee'] = array(
+                    'total'     => $refundFee,
+                    'total_tax' => $refundFeeTax,
+                );
+            }
+            $itemsDataFee = array_filter($itemsDataFee);
+        }
+
         $filePath = '/inc/ordersJsonArgs.php';
+        // Get Ids.
+        if (get_query_var('get_ids') === 'true') {
+            $orderID  = $order->get_id();
+            $filePath = '/inc/ordersIdsJsonArgs.php';
+        }
         // @codingStandardsIgnoreLine
         $data = include Plugin::getPluginDirPath($filePath);
 
@@ -605,11 +863,11 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Data Refund Order
      *
-     * @since 1.0.0
-     *
      * @param $order
      *
      * @return array
+     * @since 1.0.0
+     *
      */
     public function getDataRefundOrder($order)
     {
@@ -618,7 +876,8 @@ class XmlOrderListTable extends \WP_List_Table
 
         // Customer ID
         $customerID = $parentOrder->get_user_id();
-        $refundID   = $order->get_id();
+        \WcElectronInvoiceFree\Functions\setCustomerLocation($customerID);
+        $refundID = $order->get_id();
 
         // Initialize Orders data and type.
         $orderType    = $order->get_type();
@@ -657,14 +916,93 @@ class XmlOrderListTable extends \WP_List_Table
         );
 
         // Initialize Order Items
-        $orderItems        = $parentOrder->get_items();
-        $itemsRefundedData = array();
-        $refundedItem      = array();
+        $orderItems                = $parentOrder->get_items();
+        $orderItemsTaxes           = $parentOrder->get_items('tax');
+        $orderItemsShipping        = $parentOrder->get_items('shipping');
+        $orderItemsFee             = $parentOrder->get_items('fee');
+        $itemsRefundedData         = array();
+        $itemsRefundedDataTax      = array();
+        $itemsRefundedDataFee      = array();
+        $itemsRefundedDataShipping = array();
+        $refundedItem              = array();
+
+        // Current order refund item data
+        // Product line
+        $refundOrder      = wc_get_order($refundID);
+        $refundOrderItems = $refundOrder->get_items();
+        $currentRefund    = array();
+        // Items refunded
+        $refundItemsShipping = $refundOrder->get_items('shipping');
+        $refundItemsFee      = $refundOrder->get_items('fee');
+        if (! empty($refundOrderItems)) {
+            foreach ($refundOrderItems as $item) {
+                $data            = $item->get_data();
+                $currentRefund[] = array(
+                    'order_id'     => $order->get_parent_id(),
+                    'refund_id'    => $data['order_id'],
+                    'name'         => $data['name'],
+                    'product_id'   => $data['product_id'],
+                    'variation_id' => $data['variation_id'],
+                    'quantity'     => $data['quantity'],
+                    'subtotal'     => $data['subtotal'],
+                    'subtotal_tax' => $data['subtotal_tax'],
+                    'total'        => $data['total'],
+                    'total_tax'    => $data['total_tax'],
+                );
+            }
+        }
+        // Shipping
+        if (! empty($refundItemsShipping) && false !== strpos($order->get_shipping_total(), '-')) {
+            foreach ($orderItemsShipping as $item) {
+                $data            = $item->get_data();
+                $currentRefund[] = array(
+                    'order_id'     => $order->get_parent_id(),
+                    'refund_id'    => $order->get_id(),
+                    'name'         => $data['name'],
+                    'method_title' => $data['method_title'],
+                    'method_id'    => $data['method_id'],
+                    'instance_id'  => $data['instance_id'],
+                    'total'        => $data['total'],
+                    'total_tax'    => $data['total_tax'],
+                );
+            }
+        }
+        // Fee
+        if (! empty($refundItemsFee)) {
+            foreach ($orderItemsFee as $itemID => $itemFee) {
+                $dataFee   = $itemFee->get_data();
+                $refundFee = $refundFeeTax = $rate = 0;
+                foreach ($dataFee as $key => $data) {
+                    if ('id' === $key) {
+                        $taxRates = \WC_Tax::get_rates($dataFee['tax_class']);
+                        if (empty($taxRates)) {
+                            $taxRates = \WC_Tax::get_base_tax_rates();
+                        }
+                        if (! empty($taxRates)) {
+                            $taxRate      = reset($taxRates);
+                            $rate         = $taxRate['rate'];
+                            $id           = array_keys($taxRates);
+                            $refundFee    = $parentOrder->get_total_refunded_for_item($data, 'fee');
+                            $refundFeeTax = $parentOrder->get_tax_refunded_for_item($data, $id[0], 'fee');
+                        }
+                    }
+                }
+                $currentRefund[] = array(
+                    'order_id'    => $order->get_parent_id(),
+                    'refund_id'   => $order->get_id(),
+                    'refund_type' => 'fee',
+                    'name'        => trim($dataFee['name']),
+                    'tax_rate'    => $rate,
+                    'total'       => $refundFee,
+                    'total_tax'   => $refundFeeTax,
+                );
+            }
+        }
 
         foreach ($orderItems as $item) {
             if ($item instanceof \WC_Order_Item_Product) {
                 $varID   = $item->get_variation_id();
-                $id      = isset($varID) && '0' !== $varID ? $varID : $item->get_product_id();
+                $id      = isset($varID) && 0 !== $varID ? $varID : $item->get_product_id();
                 $product = wc_get_product($id);
                 $sku     = null;
                 if ($product instanceof \WC_Product) {
@@ -687,7 +1025,72 @@ class XmlOrderListTable extends \WP_List_Table
             }
         }
 
+        // Tax
+        foreach ($orderItemsTaxes as $itemID => $itemTax) {
+            $itemsRefundedDataTax[] = $itemTax->get_data();
+            $itemsRefundedDataTax   = array_filter($itemsRefundedDataTax);
+        }
+
+        // Fee
+        foreach ($orderItemsFee as $itemID => $itemFee) {
+            $dataFee   = $itemFee->get_data();
+            $refundFee = $refundFeeTax = 0;
+            foreach ($dataFee as $key => $data) {
+                if ('id' === $key) {
+                    $taxRates = \WC_Tax::get_rates($dataFee['tax_class']);
+                    if (empty($taxRates)) {
+                        $taxRates = \WC_Tax::get_base_tax_rates();
+                    }
+                    if (! empty($taxRates)) {
+                        $id           = array_keys($taxRates);
+                        $refundFee    = $parentOrder->get_total_refunded_for_item($data, 'fee');
+                        $refundFeeTax = $parentOrder->get_tax_refunded_for_item($data, $id[0], 'fee');
+                    }
+                }
+            }
+            $itemsRefundedDataFee[] = $dataFee;
+            if (0 !== $refundFee || 0 !== $refundFeeTax) {
+                $itemsRefundedDataFee[]['refund_fee'] = array(
+                    'total'     => $refundFee,
+                    'total_tax' => $refundFeeTax,
+                );
+            }
+            $itemsRefundedDataFee = array_filter($itemsRefundedDataFee);
+        }
+
+        // Shipping
+        foreach ($orderItemsShipping as $itemID => $itemShip) {
+            $dataShip   = $itemShip->get_data();
+            $refundShip = $refundShipTax = 0;
+            foreach ($dataShip as $key => $data) {
+                if ('id' === $key) {
+                    $taxRates = \WC_Tax::get_rates($itemShip->get_tax_class());
+                    if (empty($taxRates)) {
+                        $taxRates = \WC_Tax::get_base_tax_rates();
+                    }
+                    if (! empty($taxRates)) {
+                        $id            = array_keys($taxRates);
+                        $refundShip    = $parentOrder->get_total_refunded_for_item($data, 'shipping');
+                        $refundShipTax = $parentOrder->get_tax_refunded_for_item($data, $id[0], 'shipping');
+                    }
+                }
+            }
+            $itemsRefundedDataShipping[] = $dataShip;
+            if (0 !== $refundShip || 0 !== $refundShipTax) {
+                $itemsRefundedDataShipping[]['refund_shipping'] = array(
+                    'total'     => $refundShip,
+                    'total_tax' => $refundShipTax,
+                );
+            }
+            $itemsRefundedDataShipping = array_filter($itemsRefundedDataShipping);
+        }
+
         $filePath = '/inc/ordersRefundedJsonArgs.php';
+        // Get Ids.
+        if (get_query_var('get_ids') === 'true') {
+            $orderID  = $order->get_id();
+            $filePath = '/inc/ordersIdsJsonArgs.php';
+        }
         // @codingStandardsIgnoreLine
         $data = include Plugin::getPluginDirPath($filePath);
 
@@ -697,11 +1100,13 @@ class XmlOrderListTable extends \WP_List_Table
     /**
      * Get Orders
      *
-     * @since 1.0.0
+     * @param bool $onlyCount
      *
-     * @return array
+     * @return array|int
+     * @throws \Exception
+     * @since 1.0.0
      */
-    public function getOrders()
+    public function getOrders($onlyCount = false)
     {
         $args = array(
             'status'  => array('processing', 'completed', 'refunded'),
@@ -719,23 +1124,30 @@ class XmlOrderListTable extends \WP_List_Table
             $now->setTimezone($timeZone);
 
             $before = $now->getTimestamp();
-            $now->modify("-1 month");
+            $now->modify(apply_filters('wc_el_inv-orders_days_range', "-14 days"));
             $after                = $now->getTimestamp();
             $args['date_created'] = "{$after}...{$before}";
         } catch (\Exception $e) {
         }
 
+        // Order Class
+        $ordersData         = array();
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+
         // @codingStandardsIgnoreLine
-        $customer = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'customer_id', FILTER_SANITIZE_STRING);
-        $type     = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'type', FILTER_SANITIZE_STRING);
-        $dateIN   = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'date_in', FILTER_SANITIZE_STRING);
-        $dateOUT  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'date_out', FILTER_SANITIZE_STRING);
+        $customer      = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'customer_id', FILTER_UNSAFE_RAW);
+        $type          = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'type', FILTER_UNSAFE_RAW);
+        $dateIN        = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'date_in', FILTER_UNSAFE_RAW);
+        $dateOUT       = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'date_out', FILTER_UNSAFE_RAW);
+        $orderToSearch = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'order_search',
+            FILTER_SANITIZE_NUMBER_INT);
 
         if ($customer && isset($customer) && '' !== $customer) {
             $args['customer_id'] = intval($customer);
         }
 
-        if ($type && isset($type) && '' !== $type) {
+        if ($type && isset($type) && '' !== $type && 'receipt' !== $type) {
             $args['type'] = "{$type}";
         }
 
@@ -755,9 +1167,38 @@ class XmlOrderListTable extends \WP_List_Table
             }
         }
 
-        $args = apply_filters('wc_el_inv-xml_list_query_args', $args);
+        $query  = new \WC_Order_Query($args);
+        $orders = $query->get_orders();
 
-        $query = new \WC_Order_Query($args);
+        // Get single order to search
+        if ($orderToSearch) {
+            $order = wc_get_order($orderToSearch);
+            if ($order instanceof $wcOrderClass || $order instanceof $wcOrderRefundClass) {
+                switch ($order) {
+                    // Shop Order
+                    case $order instanceof $wcOrderClass:
+                        $ordersData[] = $this->getDataOrder($order);
+                        break;
+                    // Order Refunded
+                    case $order instanceof $wcOrderRefundClass:
+                        $ordersData[] = $this->getDataRefundOrder($order);
+                        break;
+                    default:
+                        $ordersData[] = array();
+                        break;
+                }
+            }
+
+            if ($onlyCount) {
+                return count($ordersData);
+            } else {
+                return $ordersData;
+            }
+        }
+
+        if ($onlyCount) {
+            return count($orders);
+        }
 
         /**
          * Add filter for get receipt order
@@ -773,33 +1214,38 @@ class XmlOrderListTable extends \WP_List_Table
             return $query;
         }, 10, 2);
 
-        $ordersData = array();
-
         // Set order for list
         try {
-            $orders          = $query->get_orders();
             $incrementRefund = 0;
             foreach ($orders as $index => $orderID) {
                 $order = wc_get_order($orderID);
-                if ($order instanceof \WC_Order) {
+                if ($order instanceof $wcOrderClass) {
                     $data      = $order->get_data();
                     $checkSent = get_post_meta($order->get_id(), '_invoice_sent', true);
                     $checkSent = isset($checkSent) && 'sent' === $checkSent ? true : false;
 
-                    // Remove receipt if filter type is't receipt
-                    if ($type && isset($type) && '' !== $type && 'receipt' !== $type) {
+                    if ($type && '' !== $type && 'receipt' === $type) {
+                        // Remove receipt if filter meta choice_type is't receipt
                         // Get meta order choice type
                         $meta = $order->get_meta('_billing_choice_type');
-                        if ('receipt' === $meta) {
+                        if ('receipt' !== $meta) {
+                            unset($orders[$index]);
+                        }
+                    } elseif ($type && '' !== $type && 'shop_order' === $type) {
+                        // Remove receipt if filter choice_type is't invoice
+                        // Get meta order choice type
+                        $meta = $order->get_meta('_billing_choice_type');
+                        if ('invoice' !== $meta) {
                             unset($orders[$index]);
                         }
                     }
 
                     if (! $checkSent &&
-                        floatval($order->get_total()) === floatval($order->get_total_refunded())
+                        (floatval($order->get_total()) === floatval(0) ||
+                         floatval($order->get_total()) === floatval($order->get_total_refunded()))
                     ) {
                         // Unset order
-                        // Invoice order not sent and order total is equal total refunded
+                        // Invoice order not sent and order total is equal total refunded or order total is zero
                         unset($orders[$index]);
                     }
 
@@ -850,7 +1296,7 @@ class XmlOrderListTable extends \WP_List_Table
 
                 // Unset order refund
                 // Check for remove order refund from list
-                if ($order instanceof \WC_Order_Refund) {
+                if ($order instanceof $wcOrderRefundClass) {
 
                     // Get check order sent meta time
                     $checkOrderSentTime = get_post_meta($order->get_parent_id(), '_invoice_sent_timestamp', true);
@@ -895,7 +1341,7 @@ class XmlOrderListTable extends \WP_List_Table
                             // Last refund
                             $sent = get_post_meta($order->get_id(), '_invoice_sent', true);
                             // If last refund not sent and isset other refunds continue else unset order
-                            if ('no_sent' === $sent && isset($refunds[$index - $incrementRefund]) && $refunds[$index - $incrementRefund] instanceof \WC_Order_Refund) {
+                            if ('no_sent' === $sent && isset($refunds[$index - $incrementRefund]) && $refunds[$index - $incrementRefund] instanceof $wcOrderRefundClass) {
                                 continue;
                             } else {
                                 unset($orders[$index]);
@@ -906,7 +1352,7 @@ class XmlOrderListTable extends \WP_List_Table
                             // Invoice
                             $sentParent = get_post_meta($parentOrder->get_id(), '_invoice_sent', true);
                             if (! $sentParent && 'no_sent' === $sent &&
-                                isset($refunds[$index - $incrementRefund]) && $refunds[$index - $incrementRefund] instanceof \WC_Order_Refund
+                                isset($refunds[$index - $incrementRefund]) && $refunds[$index - $incrementRefund] instanceof $wcOrderRefundClass
                             ) {
                                 unset($orders[$index]);
                             }
@@ -932,11 +1378,11 @@ class XmlOrderListTable extends \WP_List_Table
                 $order = wc_get_order($orderID);
                 switch ($order) {
                     // Shop Order
-                    case $order instanceof \WC_Order:
+                    case $order instanceof $wcOrderClass:
                         $ordersData[] = $this->getDataOrder($order);
                         break;
                     // Order Refunded
-                    case $order instanceof \WC_Order_Refund:
+                    case $order instanceof $wcOrderRefundClass:
                         $ordersData[] = $this->getDataRefundOrder($order);
                         break;
                     default:
@@ -945,7 +1391,62 @@ class XmlOrderListTable extends \WP_List_Table
             }
         }
 
+        // Store current filtered document
+        if ($dateIN || $dateOUT || $customer || $type) {
+            update_option('temp_order_filtered', $ordersData);
+        } else {
+            update_option('temp_order_filtered', array());
+        }
+
         return $ordersData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function column_cb($item)
+    {
+        return sprintf('<input type="checkbox" name="%1$s[]" value="%2$s" />',
+            $this->_args['singular'],
+            $item['id']
+        );
+    }
+
+    /**
+     * Process Bulk
+     */
+    public function processBulkAction()
+    {
+        if (isset($_POST['woopop-invoice'])) {
+
+            $action = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'bulk-sent', FILTER_UNSAFE_RAW);
+
+            $args['woopop-invoice'] = array(
+                'filter' => array(FILTER_UNSAFE_RAW),
+                'flags'  => FILTER_FORCE_ARRAY,
+            );
+
+            $invoice = filter_var_array($_POST, $args);
+
+            if (! empty($invoice)) {
+                foreach ($invoice as $cbs) {
+                    foreach ($cbs as $cbIndex => $id) {
+                        if ($id) {
+                            switch ($action) {
+                                case 'sent':
+                                    update_post_meta(intval($id), '_invoice_sent', 'sent');
+                                    break;
+                                case 'no_sent':
+                                    update_post_meta(intval($id), '_invoice_sent', 'no_sent');
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -954,12 +1455,13 @@ class XmlOrderListTable extends \WP_List_Table
     public function get_columns()
     {
         $columns = array(
+            'cb'             => '<input type="checkbox" />',
             'id'             => esc_html__('Order', WC_EL_INV_FREE_TEXTDOMAIN),
             'total'          => esc_html__('Order Total', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice_number' => esc_html__('Number', WC_EL_INV_FREE_TEXTDOMAIN),
-            'choice_type'    => esc_html__('Document', WC_EL_INV_FREE_TEXTDOMAIN),
+            'choice_type'    => esc_html__('Doc. required', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice_type'   => esc_html__('Customer Type', WC_EL_INV_FREE_TEXTDOMAIN),
-            'data_entered'   => esc_html__('Data entered', WC_EL_INV_FREE_TEXTDOMAIN),
+            'data_order'     => esc_html__('Order data', WC_EL_INV_FREE_TEXTDOMAIN),
             'invoice_sent'   => esc_html__('Sent', WC_EL_INV_FREE_TEXTDOMAIN),
             'actions'        => esc_html__('Actions', WC_EL_INV_FREE_TEXTDOMAIN),
         );
@@ -1018,47 +1520,41 @@ class XmlOrderListTable extends \WP_List_Table
         switch ($columnName) {
             case 'id':
                 return $this->orderTitle($item);
-                break;
             case 'total':
                 return $this->orderTotal($item);
-                break;
             case 'invoice_number':
-                return isset($item[$columnName]) ? $this->invoiceNumber($item[$columnName]) : '';
-                break;
+                return $this->invoiceNumber($item);
             case 'invoice_type':
                 return $this->customerType($item);
-                break;
             case 'choice_type':
                 return isset($item[$columnName]) ? $this->choiceType($item) : '';
-                break;
-            case 'data_entered':
+            case 'data_order':
                 $data = sprintf('<strong>%s:</strong> %s<br>',
                     esc_html__('VAT number', WC_EL_INV_FREE_TEXTDOMAIN),
-                    $this->customerVatOrSdi($item, 'tax_code')
+                    $this->customerVatOrSdi($item, 'vat_number')
                 );
                 $data .= sprintf('<strong>%s:</strong> %s<br>',
                     esc_html__('Tax Code', WC_EL_INV_FREE_TEXTDOMAIN),
-                    $this->customerVatOrSdi($item, 'vat_number')
+                    $this->customerVatOrSdi($item, 'tax_code')
                 );
-                $data .= sprintf('<strong>%s:</strong> %s',
+                $data .= sprintf('<strong>%s:</strong> %s<br>',
                     esc_html__('SDI or PEC', WC_EL_INV_FREE_TEXTDOMAIN),
                     $this->customerVatOrSdi($item, 'sdi_type')
                 );
+                $data .= sprintf('<hr><strong>%s:</strong> %s',
+                    esc_html__('Payment method', WC_EL_INV_FREE_TEXTDOMAIN),
+                    paymentMethodCode((object)$item)
+                );
 
                 return $data;
-                break;
             case 'invoice_sent':
                 return $this->sentInvoice($item);
-                break;
             case 'actions':
                 return isset($item['id']) ? $this->actions($item['id'], $item) : '';
-                break;
             case $columnName:
-                apply_filters('wc_el_inv-xml_list_column', $item, $columnName);
-                break;
+                return apply_filters('wc_el_inv-xml_list_column', $item, $columnName);
             default:
                 return print_r($item, true);
-                break;
         }
     }
 }

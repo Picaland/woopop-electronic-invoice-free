@@ -32,6 +32,7 @@ if (! defined('ABSPATH')) {
 }
 
 use WcElectronInvoiceFree\Plugin;
+use function WcElectronInvoiceFree\Functions\checkOptions;
 
 /**
  * Class OptionFields
@@ -81,9 +82,9 @@ abstract class OptionFields
     /**
      * Add settings section and setting fields in an array
      *
+     * @return array|bool $settings_and_fields The settings section and setting fields in an array
      * @since 1.0.0
      *
-     * @return array|bool $settings_and_fields The settings section and setting fields in an array
      */
     public function sectionAndFieldsOptions()
     {
@@ -112,12 +113,20 @@ abstract class OptionFields
      */
     public function sectionSettingsGeneralDescription()
     {
-        echo sprintf('<div class="wc_el_inv__description"><p>%1$s</p></div>',
-            esc_html__('General options for enabling APIs',
-                WC_EL_INV_FREE_TEXTDOMAIN)
+        echo sprintf('<div class="wc_el_inv__description wc_el_inv__description--general"><p><span class="dashicons dashicons-info"></span> %1$s</p><ol><li><a href="%2$s">%3$s</a> %4$s</li><li><a href="%5$s">%6$s</a> %7$s</li><li><a href="%8$s">%9$s</a> %10$s</li></ol></div>',
+            esc_html__('After activating your license, set up the general options for e-invoice and the invoice and checkout options',
+                WC_EL_INV_FREE_TEXTDOMAIN),
+            esc_url(admin_url('admin.php?page=wc-settings')),
+            esc_html__('General Options Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+            checkOptions('general') ? '<span class="dashicons dashicons-yes-alt"></span>' : '<span class="dashicons dashicons-dismiss"></span>',
+            esc_url(admin_url('admin.php?page=wc_el_inv-options-page&tab=invoice')),
+            esc_html__('Invoice settings', WC_EL_INV_FREE_TEXTDOMAIN),
+            checkOptions('invoice') ? '<span class="dashicons dashicons-yes-alt"></span>' : '<span class="dashicons dashicons-dismiss"></span>',
+            esc_url(admin_url('admin.php?page=wc_el_inv-options-page&tab=wc-checkout')),
+            esc_html__('General WooCommerce integration settings', WC_EL_INV_FREE_TEXTDOMAIN),
+            checkOptions('checkout') ? '<span class="dashicons dashicons-yes-alt"></span>' : '<span class="dashicons dashicons-dismiss"></span>',
         );
     }
-
     /**
      * Print the Section text settings
      *
@@ -132,8 +141,10 @@ abstract class OptionFields
         $output .= '<thead>';
         $output .= '<tr>';
         $output .= '<td width="18%"><strong>' . esc_html__('Customer Country', WC_EL_INV_FREE_TEXTDOMAIN) . '</strong></td>';
-        $output .= '<td width="64%"><strong>' . esc_html__('The user selects: Company or Freelance', WC_EL_INV_FREE_TEXTDOMAIN) . '</strong></td>';
-        $output .= '<td width="18%"><strong>' . esc_html__('The user selects: Private', WC_EL_INV_FREE_TEXTDOMAIN) . '</strong></td>';
+        $output .= '<td width="64%"><strong>' . esc_html__('The user selects: Company or Freelance',
+                WC_EL_INV_FREE_TEXTDOMAIN) . '</strong></td>';
+        $output .= '<td width="18%"><strong>' . esc_html__('The user selects: Private',
+                WC_EL_INV_FREE_TEXTDOMAIN) . '</strong></td>';
         $output .= '<tr>';
         $output .= '</thead>';
         $output .= '<tbody>';
@@ -143,7 +154,8 @@ abstract class OptionFields
                 WC_EL_INV_FREE_TEXTDOMAIN),
                 "<strong class='req'>{$required}</strong>"
             ) . '</td>';
-        $output .= '<td>' . sprintf("<strong class='req'>%s %s</strong>", $required, esc_html__('(Tax Code)', WC_EL_INV_FREE_TEXTDOMAIN)) . '</td>';
+        $output .= '<td>' . sprintf("<strong class='req'>%s %s</strong>", $required,
+                esc_html__('(Tax Code)', WC_EL_INV_FREE_TEXTDOMAIN)) . '</td>';
         $output .= '</tr>';
         $output .= '<tr>';
         $output .= '<td><strong>' . esc_html__('UE', WC_EL_INV_FREE_TEXTDOMAIN) . '</strong></td>';
@@ -166,6 +178,34 @@ abstract class OptionFields
         $output .= '</tr>';
         $output .= '</tbody>';
         $output .= '</table>';
+
+        echo $output;
+    }
+
+    /**
+     * changelog page
+     *
+     * @return void
+     */
+    public function changelog()
+    {
+        // Close current table
+        $output = '</tr></tbody></table>';
+        $output .= '<style>.form-table{display:none;}</style>';
+        $output .= '<!-- changelog_content --><div class="changelog_content">';
+
+        // Current version
+        $output .= '<ul>';
+        $output .= sprintf('<li><strong>%s:</strong> %s</li>',
+            __('Versione corrente', WC_EL_INV_FREE_TEXTDOMAIN),
+            WC_EL_INV_FREE_VERSION
+        );
+
+        $output .= '<hr>';
+        $output .= '<p><strong>Changelog completo consultabile <a target="_blank" href="' . WC_EL_INV_FREE_URL . 'changelog.txt">qui</a></strong></p>';
+        // Current version
+
+        $output .= '</div><!--/ changelog_content -->';
 
         echo $output;
     }

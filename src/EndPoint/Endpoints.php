@@ -49,6 +49,15 @@ class Endpoints implements EndpointsInterface
     const ENDPOINT = 'wc-inv';
 
     /**
+     * Current language
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    public $lang;
+
+    /**
      * Query var
      *
      * @since 1.0.0
@@ -72,6 +81,7 @@ class Endpoints implements EndpointsInterface
      */
     public function __construct()
     {
+        $this->lang = F\getCurrentLanguage();
         $this->var  = 'wc-elc-inv';
     }
 
@@ -167,10 +177,51 @@ class Endpoints implements EndpointsInterface
     {
         $query = F\getWpQuery();
 
-        $format = F\filterInput($_GET, 'format', FILTER_SANITIZE_STRING);
+        $idsArgs            = F\filterInput($_GET, 'get_ids', FILTER_UNSAFE_RAW);
+        $format             = F\filterInput($_GET, 'format', FILTER_UNSAFE_RAW);
+        $customerID         = F\filterInput($_GET, 'customer_id', FILTER_UNSAFE_RAW);
+        $billingEmail       = F\filterInput($_GET, 'billing_email', FILTER_UNSAFE_RAW);
+        $dateOrderCompleted = F\filterInput($_GET, 'date_completed', FILTER_UNSAFE_RAW);
+        $dateOrderModified  = F\filterInput($_GET, 'date_modified', FILTER_UNSAFE_RAW);
+        $dateOrderIN        = F\filterInput($_GET, 'date_in', FILTER_UNSAFE_RAW);
+        $dateOrderOUT       = F\filterInput($_GET, 'date_out', FILTER_UNSAFE_RAW);
 
         if (! $query) {
             return null;
+        }
+
+        if ($idsArgs) {
+            $query->set('get_ids', 'true');
+        }
+
+        // Set Customer ID
+        if ($customerID) {
+            $query->set('customer_id', $customerID);
+        }
+
+        // Set Billing email
+        if ($billingEmail) {
+            $query->set('billing_email', $billingEmail);
+        }
+
+        // Set date completed timestamp
+        if ($dateOrderCompleted) {
+            $query->set('date_completed', $dateOrderCompleted);
+        }
+
+        // Set date modified timestamp
+        if ($dateOrderModified) {
+            $query->set('date_modified', $dateOrderModified);
+        }
+
+        // Set date completed in timestamp
+        if ($dateOrderIN) {
+            $query->set('date_in', $dateOrderIN);
+        }
+
+        // Set date completed out timestamp
+        if ($dateOrderOUT) {
+            $query->set('date_out', $dateOrderOUT);
         }
 
         // Set format

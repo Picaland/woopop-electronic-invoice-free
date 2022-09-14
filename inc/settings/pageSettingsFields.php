@@ -29,20 +29,34 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
+// No SoapClient message
+$noSoapMessage = '';
+if (! class_exists('SoapClient')) {
+    $noSoapMessage = '****** ' .
+                     __('the SoapClient service is not active on your server. The VIES control will always be true',
+                         WC_EL_INV_FREE_TEXTDOMAIN) .
+                     ' ******';
+}
+
 $page = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 $tabs = $this->tabs;
 
 $active  = $this->checkPageTab($tabs);
 $section = isset($tabs[$active]['section_id']) ? $tabs[$active]['section_id'] : '';
 
-// Json info.
-$mode = sprintf('<code class="wc_el_inv-mode %1$s">MODE: %1$s</code>', WC_EL_INV_ENV);
-$icon = 'prod' === WC_EL_INV_ENV ? '<i class="dashicons dashicons-lock"></i>' : '<i class="dashicons dashicons-unlock"></i>';
-
 $invoiceNumber         = $page->getOptions('number_next_invoice');
 $invoiceNumberDisabled = isset($invoiceNumber) && '' !== $invoiceNumber ? 'disabled' : '';
 
 switch ($section) {
+    // General Tab
+    case 'setting_section_general' :
+        $this->sectionArgs['wc_el_inv_settings'] = array(
+            'section_id'       => 'setting_section_general',
+            'section_title'    => esc_html__('General options', WC_EL_INV_FREE_TEXTDOMAIN),
+            'section_callback' => array($this, 'sectionSettingsGeneralDescription'),
+            'section_page'     => 'wc_el_inv-options-page',
+        );
+        break;
     // Invoice
     case 'setting_section_invoice':
         $this->sectionArgs['wc_el_inv_settings'] = array(
@@ -50,6 +64,22 @@ switch ($section) {
             'section_title'    => esc_html__('Invoice settings', WC_EL_INV_FREE_TEXTDOMAIN),
             'section_callback' => '',
             'section_page'     => 'wc_el_inv-options-page',
+        );
+        $this->fieldsArgs[]                      = array(
+            'field_id'       => 'add_stamp_duty_options_fields',
+            'field_title'    => esc_html__('Add virtual stamp duty on invoices', WC_EL_INV_FREE_TEXTDOMAIN),
+            'field_callback' => array(
+                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                    'id'          => 'wc_el_inv-settings-add_stamp_duty',
+                    'name'        => 'wc_el_inv-settings-add_stamp_duty',
+                    'label'       => esc_html__('Add virtual stamp', WC_EL_INV_FREE_TEXTDOMAIN),
+                    'description' => esc_html__('The duty stamp must be applied when electronic invoices (and pdfs) are issued without VAT and if the amount exceeds 77.47€.',
+                        WC_EL_INV_FREE_TEXTDOMAIN),
+                ), $this, $page),
+                'field',
+            ),
+            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+            'field_section'  => 'setting_section_invoice',
         );
         $this->fieldsArgs[]                      = array(
             'field_id'       => 'prefix_invoice_number_options_fields',
@@ -66,7 +96,8 @@ switch ($section) {
         );
         $this->fieldsArgs[]                      = array(
             'field_id'       => 'number_digits_in_invoice_options_fields',
-            'field_title'    => esc_html__('Number of digits (enter 4 to display 13 as 0013)', WC_EL_INV_FREE_TEXTDOMAIN),
+            'field_title'    => esc_html__('Number of digits (enter 4 to display 13 as 0013)',
+                WC_EL_INV_FREE_TEXTDOMAIN),
             'field_callback' => array(
                 new \WcElectronInvoiceFree\Admin\Settings\Fields\Text(array(
                     'type'        => 'number',
@@ -109,6 +140,22 @@ switch ($section) {
             'field_section'  => 'setting_section_invoice',
         );
         $this->fieldsArgs[]                      = array(
+            'field_id'       => 'disable_invoice_number_order_zero_options_fields',
+            'field_title'    => esc_html__('Disable invoice if total zero', WC_EL_INV_FREE_TEXTDOMAIN),
+            'field_callback' => array(
+                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                    'id'          => 'wc_el_inv-settings-disable_invoice_number_order_zero',
+                    'name'        => 'wc_el_inv-settings-disable_invoice_number_order_zero',
+                    'label'       => esc_html__('Disable increment', WC_EL_INV_FREE_TEXTDOMAIN),
+                    'description' => esc_html__('Disable invoice number increment if order total is zero.',
+                        WC_EL_INV_FREE_TEXTDOMAIN),
+                ), $this, $page),
+                'field',
+            ),
+            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+            'field_section'  => 'setting_section_invoice',
+        );
+        $this->fieldsArgs[]                      = array(
             'field_id'       => 'suffix_invoice_number_options_fields',
             'field_title'    => esc_html__('Suffix invoice number', WC_EL_INV_FREE_TEXTDOMAIN),
             'field_callback' => array(
@@ -121,7 +168,23 @@ switch ($section) {
             'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
             'field_section'  => 'setting_section_invoice',
         );
-        $this->fieldsArgs[] = array(
+        $this->fieldsArgs[]                      = array(
+            'field_id'       => 'suffix_year_invoice_number_options_fields',
+            'field_title'    => esc_html__('Suffix year', WC_EL_INV_FREE_TEXTDOMAIN),
+            'field_callback' => array(
+                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                    'id'          => 'wc_el_inv-settings-suffix_year_invoice_number',
+                    'name'        => 'wc_el_inv-settings-suffix_year_invoice_number',
+                    'label'       => esc_html__('Set the year as a suffix', WC_EL_INV_FREE_TEXTDOMAIN),
+                    'description' => esc_html__('Selecting the option the year of order creation will be set as a suffix.',
+                        WC_EL_INV_FREE_TEXTDOMAIN),
+                ), $this, $page),
+                'field',
+            ),
+            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+            'field_section'  => 'setting_section_invoice',
+        );
+        $this->fieldsArgs[]                      = array(
             'field_id'       => 'invoice_choice_type_options_fields',
             'field_title'    => esc_html__('Invoice or Receipt', WC_EL_INV_FREE_TEXTDOMAIN),
             'field_callback' => array(
@@ -185,82 +248,97 @@ switch ($section) {
             'field_section'  => 'setting_section_invoice',
         );
         $this->fieldsArgs[]                      = array(
-            'field_id'       => 'invoice_in_my_orders_options_fields',
-            'field_title'    => esc_html__('My Orders invoice', WC_EL_INV_FREE_TEXTDOMAIN),
-            'field_callback' => array(
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
-                    'id'          => 'wc_el_inv-settings-invoice_in_my_orders',
-                    'name'        => 'wc_el_inv-settings-invoice_in_my_orders',
-                    'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
-                    'description' => esc_html__('Activate to view the link to download the pdf in the list of orders in my account',
-                        WC_EL_INV_FREE_TEXTDOMAIN),
-                ), $this, $page),
-                'field',
-            ),
+            'field_id'       => 'invoice_active_js_cf_check_options_fields',
+            'field_title'    => esc_html__('Verify Tax Code', WC_EL_INV_FREE_TEXTDOMAIN),
+            'field_callback' => function () {
+                echo '<strong style="color:red">' . WC_EL_INV_PREMIUM . '</strong>';
+            },
             'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
             'field_section'  => 'setting_section_invoice',
         );
-        $this->fieldsArgs[]                      = array(
-            'field_id'       => 'invoice_via_email_options_fields',
-            'field_title'    => esc_html__('Email invoice', WC_EL_INV_FREE_TEXTDOMAIN),
-            'field_callback' => array(
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
-                    'id'          => 'wc_el_inv-settings-invoice_via_email',
-                    'name'        => 'wc_el_inv-settings-invoice_via_email',
-                    'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
-                    'description' => esc_html__('Active the sending of the invoice in PDF format via e-mail upon completion of the order',
-                        WC_EL_INV_FREE_TEXTDOMAIN),
-                ), $this, $page),
-                'field',
-            ),
-            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_invoice',
-        );
-        $this->fieldsArgs[]                      = array(
-            'field_id'       => 'invoice_html_options_fields',
-            'field_title'    => esc_html__('Invoice HTML', WC_EL_INV_FREE_TEXTDOMAIN),
-            'field_callback' => array(
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
-                    'id'          => 'wc_el_inv-settings-invoice_html',
-                    'name'        => 'wc_el_inv-settings-invoice_html',
-                    'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
-                    'description' => esc_html__('View the invoice (pdf) in HTML',
-                        WC_EL_INV_FREE_TEXTDOMAIN),
-                ), $this, $page),
-                'field',
-            ),
-            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_invoice',
-        );
-        $this->fieldsArgs[]                      = array(
-            'field_id'       => 'invoice_pdf_logo_url_options_fields',
-            'field_title'    => esc_html__('Invoice PDF Logo', WC_EL_INV_FREE_TEXTDOMAIN),
-            'field_callback' => array(
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\Text(array(
-                    'type'        => 'url',
-                    'id'          => 'wc_el_inv-settings-invoice_pdf_logo_url',
-                    'name'        => 'wc_el_inv-settings-invoice_pdf_logo_url',
-                    'description' => esc_html__('Enter the url of the logo for the invoice', WC_EL_INV_FREE_TEXTDOMAIN),
-                ), $this, $page),
-                'field',
-            ),
-            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_invoice',
-        );
-        $this->fieldsArgs[]                      = array(
-            'field_id'       => 'invoice_pdf_footer_options_fields',
-            'field_title'    => esc_html__('Invoice pdf footer text', WC_EL_INV_FREE_TEXTDOMAIN),
-            'field_callback' => array(
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\TextArea(array(
-                    'id'          => 'wc_el_inv-settings-invoice_pdf_footer',
-                    'name'        => 'wc_el_inv-settings-invoice_pdf_footer',
-                    'description' => esc_html__('Enter the text for the PDF invoice footer.', WC_EL_INV_FREE_TEXTDOMAIN),
-                ), $this, $page),
-                'field',
-            ),
-            'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_invoice',
-        );
+
+        // Only Dompdf exists
+        if (class_exists('\Dompdf\Dompdf')) {
+            $this->fieldsArgs[] = array(
+                'field_id'       => 'invoice_in_my_orders_options_fields',
+                'field_title'    => esc_html__('My Orders invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+                'field_callback' => array(
+                    new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                        'id'          => 'wc_el_inv-settings-invoice_in_my_orders',
+                        'name'        => 'wc_el_inv-settings-invoice_in_my_orders',
+                        'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
+                        'description' => esc_html__('Activate to view the link to download the pdf in the list of orders in my account',
+                            WC_EL_INV_FREE_TEXTDOMAIN),
+                    ), $this, $page),
+                    'field',
+                ),
+                'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+                'field_section'  => 'setting_section_invoice',
+            );
+            $this->fieldsArgs[] = array(
+                'field_id'       => 'invoice_via_email_options_fields',
+                'field_title'    => esc_html__('Email invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+                'field_callback' => array(
+                    new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                        'id'          => 'wc_el_inv-settings-invoice_via_email',
+                        'name'        => 'wc_el_inv-settings-invoice_via_email',
+                        'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
+                        'description' => esc_html__('Active the sending of the invoice in PDF format via e-mail upon completion of the order',
+                            WC_EL_INV_FREE_TEXTDOMAIN),
+                    ), $this, $page),
+                    'field',
+                ),
+                'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+                'field_section'  => 'setting_section_invoice',
+            );
+            $this->fieldsArgs[] = array(
+                'field_id'       => 'invoice_html_options_fields',
+                'field_title'    => esc_html__('Invoice HTML', WC_EL_INV_FREE_TEXTDOMAIN),
+                'field_callback' => array(
+                    new \WcElectronInvoiceFree\Admin\Settings\Fields\Checkbox(array(
+                        'id'          => 'wc_el_inv-settings-invoice_html',
+                        'name'        => 'wc_el_inv-settings-invoice_html',
+                        'label'       => esc_html__('Check to activate', WC_EL_INV_FREE_TEXTDOMAIN),
+                        'description' => esc_html__('View the invoice (pdf) in HTML - (activate only if the PDF generation presents problems)',
+                            WC_EL_INV_FREE_TEXTDOMAIN),
+                    ), $this, $page),
+                    'field',
+                ),
+                'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+                'field_section'  => 'setting_section_invoice',
+            );
+            $this->fieldsArgs[] = array(
+                'field_id'       => 'invoice_pdf_logo_url_options_fields',
+                'field_title'    => esc_html__('Invoice PDF Logo', WC_EL_INV_FREE_TEXTDOMAIN),
+                'field_callback' => array(
+                    new \WcElectronInvoiceFree\Admin\Settings\Fields\Text(array(
+                        'type'        => 'url',
+                        'id'          => 'wc_el_inv-settings-invoice_pdf_logo_url',
+                        'name'        => 'wc_el_inv-settings-invoice_pdf_logo_url',
+                        'description' => esc_html__('Enter the url of the logo for the invoice (.jpg format)',
+                            WC_EL_INV_FREE_TEXTDOMAIN),
+                    ), $this, $page),
+                    'field',
+                ),
+                'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+                'field_section'  => 'setting_section_invoice',
+            );
+            $this->fieldsArgs[] = array(
+                'field_id'       => 'invoice_pdf_footer_options_fields',
+                'field_title'    => esc_html__('Invoice pdf footer text', WC_EL_INV_FREE_TEXTDOMAIN),
+                'field_callback' => array(
+                    new \WcElectronInvoiceFree\Admin\Settings\Fields\TextArea(array(
+                        'id'          => 'wc_el_inv-settings-invoice_pdf_footer',
+                        'name'        => 'wc_el_inv-settings-invoice_pdf_footer',
+                        'description' => esc_html__('Enter the text for the PDF invoice footer.',
+                            WC_EL_INV_FREE_TEXTDOMAIN),
+                    ), $this, $page),
+                    'field',
+                ),
+                'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
+                'field_section'  => 'setting_section_invoice',
+            );
+        }
         break;
     // WC Checkout
     case 'setting_section_wc-checkout':
@@ -319,47 +397,13 @@ switch ($section) {
             'field_section'  => 'setting_section_wc-checkout',
         );
         break;
-    // Json Order Tab
-    case 'setting_section_json_order' :
-        $this->sectionArgs['wc_el_inv_settings'] = array(
-            'section_id'       => 'setting_section_json_order',
-            'section_title'    => array(
-                $icon . '%1$s' . $mode,
-                esc_html__('Json Order list', WC_EL_INV_FREE_TEXTDOMAIN),
-            ),
-            // After option form
-            'section_callback' => function () {
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\JsonOrderList(
-                    new \WcElectronInvoiceFree\EndPoint\Endpoints()
-                );
-            },
-            'section_page'     => 'wc_el_inv-options-page',
-        );
-        break;
-    // Json Product Tab
-    case 'setting_section_json_product' :
-        $this->sectionArgs['wc_el_inv_settings'] = array(
-            'section_id'       => 'setting_section_json_product',
-            'section_title'    => array(
-                $icon . '%1$s' . $mode,
-                esc_html__('Json Product list', WC_EL_INV_FREE_TEXTDOMAIN),
-            ),
-            // After option form
-            'section_callback' => function () {
-                new \WcElectronInvoiceFree\Admin\Settings\Fields\JsonProductList(
-                    new \WcElectronInvoiceFree\EndPoint\Endpoints()
-                );
-            },
-            'section_page'     => 'wc_el_inv-options-page',
-        );
-        break;
     // Xml Invoice Tab
     case 'setting_section_xml' :
         $this->sectionArgs['wc_el_inv_settings'] = array(
             'section_id'       => 'setting_section_xml',
             'section_title'    => array(
-                $icon . '%1$s' . $mode,
-                esc_html__('Xml for the electron invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+                //$icon . '%1$s' . $mode,
+                esc_html__('Invoice table', WC_EL_INV_FREE_TEXTDOMAIN),
             ),
             // After option form
             'section_callback' => function () {

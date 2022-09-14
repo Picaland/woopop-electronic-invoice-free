@@ -48,5 +48,6 @@ class Activate
      */
     public static function activate()
     {
+
     }
 }

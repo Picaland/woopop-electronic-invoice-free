@@ -13,22 +13,31 @@
   height:              24px;
   line-height:         24px;
 }
+
 #wp-admin-bar-wc_el_inv_options.active > a.ab-item,
 #wp-admin-bar-wc_el_inv_options.active {
   background: #46b450 !important;
   color:      #fff !important;
 }
+
 #wp-admin-bar-wc_el_inv_options.not-active > a.ab-item,
 #wp-admin-bar-wc_el_inv_options.not-active {
   background: #dc3232 !important;
   color:      #fff !important;
 }
+
+#billing_choice_type_field select#billing_choice_type + .select2-container,
 #billing_invoice_type_field select#billing_invoice_type + .select2-container {
   width: 100% !important;
 }
+
 /* Input */
 input#billing_sdi_type,
 input#billing_vat_number,
 input#billing_tax_code {
   text-transform: uppercase !important;
+}
+
+#billing_tax_code_field .no-valid-cf {
+  color: #dc3232 !important;
 }

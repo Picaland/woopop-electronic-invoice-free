@@ -29,9 +29,17 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-$optionsPage = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
+$optionPage = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 
-return apply_filters('wc_el_inv-filters', array(
+//
+//  array(
+//      'filter'        => ''
+//      'callback'      => ''
+//      'priority'      => ''
+//      'accepted_args' => ''
+//  )
+//
+$filters = array(
     'inc' => array(
         'action' => array(
             /**
@@ -41,10 +49,38 @@ return apply_filters('wc_el_inv-filters', array(
              */
             array(
                 'filter'   => 'admin_bar_menu',
-                'callback' => array($optionsPage, 'adminToolbar'),
+                'callback' => array($optionPage, 'adminToolbar'),
                 'priority' => 100,
             ),
         ),
         'filter' => array(),
     ),
-));
+);
+
+if (class_exists('\Dompdf\Dompdf')) {
+    /**
+     * CreatePdf instance
+     */
+    $pdf = new \WcElectronInvoiceFree\Pdf\CreatePdf(new \Dompdf\Dompdf());
+
+    /**
+     * Remove temp Pdf files after sent completed email @since 1.0.0
+     */
+    $filters['inc']['action'][] = array(
+        'filter'   => 'wp_loaded',
+        'callback' => array($pdf, 'removeSentInvoice'),
+        'priority' => 10,
+    );
+
+    /**
+     * - wc mail completed attachments    @since 1.0.0
+     */
+    $filters['inc']['filter'][] = array(
+        'filter'        => 'woocommerce_email_attachments',
+        'callback'      => array($pdf, 'attachmentsPdfToEmail'),
+        'priority'      => PHP_INT_MAX,
+        'accepted_args' => 3,
+    );
+}
+
+return apply_filters('wc_el_inv-filters', $filters);

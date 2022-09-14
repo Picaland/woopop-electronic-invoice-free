@@ -2,7 +2,7 @@
 /**
  * addresses.php
  *
- * @since      1.0.0
+ * @since      2.0.0
  * @package    ${NAMESPACE}
  * @author     alfiopiccione <alfio.piccione@gmail.com>
  * @copyright  Copyright (c) 2019, alfiopiccione
@@ -29,31 +29,50 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-$invoiceTypeLabel         = esc_html__('Type:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceTypeID            = esc_html__('Refund ID:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceNumberLabel       = esc_html__('Number:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceDateLabel         = esc_html__('Date:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceOrderNumberLabel  = esc_html__('Order:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceOrderDateLabel    = esc_html__('Order date:', WC_EL_INV_FREE_TEXTDOMAIN);
-$invoiceOrderPaymentLabel = esc_html__('Payment method:', WC_EL_INV_FREE_TEXTDOMAIN);
+$wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+$wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+
+$invoiceTypeID                  = esc_html__('Refund ID:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceNumberLabel             = esc_html__('Number:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceDateLabel               = esc_html__('Date:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceOrderNumberLabel        = esc_html__('Order:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceOrderNumberRelatedLabel = esc_html__('Order related:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceOrderDateLabel          = esc_html__('Order date:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceOrderPaymentLabel       = esc_html__('Payment method:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceReverseCharge           = esc_html__('Nature operations:', WC_EL_INV_FREE_TEXTDOMAIN);
+$invoiceReverseChargeRefNorm    = esc_html__('Ref. Normative:', WC_EL_INV_FREE_TEXTDOMAIN);
 
 // Translate billing and shipping label.
 esc_html__('First name', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('Last name', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('Address 1', WC_EL_INV_FREE_TEXTDOMAIN);
+esc_html__('Address 2', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('City', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('State', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('Postcode', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('Postcode', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('Country', WC_EL_INV_FREE_TEXTDOMAIN);
 esc_html__('Phone', WC_EL_INV_FREE_TEXTDOMAIN);
+
+// Reverse charge data
+$order = isset($data->parent_id) && 0 !== $data->parent_id ?
+    // shop refund order
+    wc_get_order($data->parent_id) :
+    // shop order
+    wc_get_order($data->id);
+
+$nature  = $order->get_meta('nature_rc');
+$refNorm = $order->get_meta('ref_norm_rc');
 ?>
-<table class="order-data-addresses" width="100%">
+<table class="order-data-addresses" style="width:100%">
     <tr>
         <?php if (! empty($data->billing) && 'receipt' !== $data->choice_type) : ?>
-            <td width="33%" class="address billing-address" valign="top" style="padding:0 10px 0 0">
+            <td class="address billing-address"
+                style="vertical-align:top;padding:0 10px 0 0;width:33%;vertical-align:top;">
+                <h5 style="margin-bottom:10px"><?php esc_html_e('Billing address', WC_EL_INV_FREE_TEXTDOMAIN); ?></h5>
                 <div style="vert-align:top;font-size:12px;">
-                    <?php foreach ($data->billing as $key => $billing) {
+                    <?php
+                    foreach ($data->billing as $key => $billing) {
                         if (isset($data->billing[$key]) && '' !== $data->billing[$key]) {
                             echo sprintf('%s: %s<br>',
                                 esc_html__(ucfirst(str_replace('_', ' ', $key)), WC_EL_INV_FREE_TEXTDOMAIN),
@@ -85,7 +104,9 @@ esc_html__('Phone', WC_EL_INV_FREE_TEXTDOMAIN);
         <?php
         $shipping = isset($data->shipping) ? array_filter($data->shipping) : array();
         if (! empty($shipping)) : ?>
-            <td width="33%" class="address shipping-address" valign="top" style="padding:0 10px 0 0">
+            <td class="address shipping-address"
+                style="vertical-align:top;padding:0 10px 0 0;width:33%;vertical-align:top;">
+                <h5 style="margin-bottom:10px"><?php esc_html_e('Shipping address', WC_EL_INV_FREE_TEXTDOMAIN); ?></h5>
                 <div style="vert-align:top;font-size:12px;">
                     <?php
                     if (! empty($data->shipping)) {
@@ -102,16 +123,37 @@ esc_html__('Phone', WC_EL_INV_FREE_TEXTDOMAIN);
                 </div>
             </td>
         <?php endif; ?>
-        <td width="33%" class="invoice invoice-data" valign="top" style="padding:0 10px 0 0">
-            <div style="vert-align:top;font-size:12px;">
-                <?php echo $invoiceTypeLabel . ' ' . $this->docType($data); ?><br>
+        <td class="invoice invoice-data" style="©;padding:0 10px 0 0;width:33%;vertical-align:top;">
+            <h5 style="margin-bottom:10px"><?php esc_html_e('Payment', WC_EL_INV_FREE_TEXTDOMAIN); ?></h5>
+            <div style="vertical-align:top;font-size:12px;">
                 <?php if ('shop_order_refund' === $data->order_type): ?>
                     <?php echo $invoiceTypeID . ' ' . $data->id; ?><br>
                 <?php endif; ?>
                 <?php echo $invoiceNumberLabel . ' ' . $this->invoiceNumber($data); ?><br>
-                <?php echo $invoiceDateLabel . ' ' . $this->dateCompleted($data, 'd-m-Y'); ?><br>
-                <?php echo $invoiceOrderNumberLabel . ' ' . $this->docID($data); ?><br>
-                <?php echo $invoiceOrderDateLabel . ' ' . $this->dateOrder($data, 'd-m-Y'); ?><br>
+                <?php if ('shop_order_refund' === $data->order_type): ?>
+                    <?php echo $invoiceDateLabel . ' ' . $this->dateOrder($data, 'd-m-Y'); ?><br>
+                <?php else: ?>
+                    <?php echo $invoiceDateLabel . ' ' . $this->dateInvoice($data, 'd-m-Y'); ?><br>
+                <?php endif; ?>
+                <?php if ('shop_order_refund' === $data->order_type): ?>
+                    <p style="border-bottom:1px solid #ddd"></p>
+                    <?php echo $invoiceOrderNumberRelatedLabel . ' ' . $this->docID($data); ?><br>
+                <?php else: ?>
+                    <?php echo $invoiceOrderNumberLabel . ' ' . $this->docID($data); ?><br>
+                <?php endif; ?>
+                <?php if ('shop_order_refund' === $data->order_type): ?>
+                    <?php echo $invoiceOrderDateLabel . ' ' . $this->dateCompleted($data, 'd-m-Y', true); ?><br>
+                <?php endif; ?>
+
+                <?php if ('RF19' === WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields::getGeneralInvoiceOptionTaxRegime()) : ?>
+                    <?php echo $invoiceReverseCharge . ' ' . 'N2.2 (non soggette)'; ?><br>
+                <?php else : ?>
+                    <?php if (($nature && $refNorm) || (floatval(0) === floatval($data->total_tax) && $nature && $refNorm)) : ?>
+                        <?php echo $invoiceReverseCharge . ' ' . $nature; ?><br>
+                        <?php echo $invoiceReverseChargeRefNorm . ' ' . $refNorm; ?><br>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <p style="border-bottom:1px solid #ddd"></p>
                 <?php echo $invoiceOrderPaymentLabel . ' ' . $this->paymentMethod($data); ?><br>
             </div>
         </td>

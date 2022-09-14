@@ -192,14 +192,40 @@ final class OptionPage extends OptionFields
 
         // Args for menu page
         $this->menuPageTitle = esc_html__('Electronic Invoice - Settings', WC_EL_INV_FREE_TEXTDOMAIN);
-        $this->menuTitle     = esc_html__('Electr. Invoice', WC_EL_INV_FREE_TEXTDOMAIN);
+        $this->menuTitle     = esc_html__('WooPOP Free', WC_EL_INV_FREE_TEXTDOMAIN);
         $this->capability    = 'manage_options';
         $this->menuSlug      = 'wc_el_inv-options-page';
         $this->callback      = array($this, 'createPage');
         $this->icon          = '';
 
         // Args for sub menu pages
-        $this->subPageArgs['sub_menu_page'] = array();
+        // Args for sub menu pages
+        $this->subPageArgs['sub_menu_page'] = array(
+            array(
+                'parent_slug' => $this->menuSlug,
+                'page_title'  => esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
+                'menuTitle'   => esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
+                'capability'  => 'manage_options',
+                'menuSlug'    => 'admin.php?page=' . $this->menuSlug . '&tab=wc-checkout',
+                'function'    => null,
+            ),
+            array(
+                'parent_slug' => $this->menuSlug,
+                'page_title'  => esc_html__('Invoice options', WC_EL_INV_FREE_TEXTDOMAIN),
+                'menuTitle'   => esc_html__('Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+                'capability'  => 'manage_options',
+                'menuSlug'    => 'admin.php?page=' . $this->menuSlug . '&tab=invoice',
+                'function'    => null,
+            ),
+            array(
+                'parent_slug' => $this->menuSlug,
+                'page_title'  => esc_html__('Invoices', WC_EL_INV_FREE_TEXTDOMAIN),
+                'menuTitle'   => esc_html__('Invoices', WC_EL_INV_FREE_TEXTDOMAIN),
+                'capability'  => 'manage_options',
+                'menuSlug'    => 'admin.php?page=' . $this->menuSlug . '&tab=xml',
+                'function'    => null,
+            ),
+        );
 
         $this->tabs = include \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/settings/pageSettingsTabs.php');
 
@@ -210,12 +236,17 @@ final class OptionPage extends OptionFields
     /**
      * Admin bar link
      *
+     * @param \WP_Admin_Bar $adminBar
+     *
      * @since 1.0.0
      *
-     * @param \WP_Admin_Bar $adminBar
      */
     public function adminToolbar(\WP_Admin_Bar $adminBar)
     {
+        if (! is_user_logged_in() && ! current_user_can('administrator')) {
+            return;
+        }
+
         if (! $adminBar instanceof \WP_Admin_Bar) {
             return;
         }
@@ -228,6 +259,7 @@ final class OptionPage extends OptionFields
                 'class' => 'active',
             ),
         ));
+
         // Sum menu link
         $adminBar->add_menu(array(
             'parent' => $this->optionsName,
@@ -238,25 +270,13 @@ final class OptionPage extends OptionFields
         $adminBar->add_menu(array(
             'parent' => $this->optionsName,
             'id'     => $this->optionsName . '-invoice',
-            'title'  => esc_html__('Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+            'title'  => esc_html__('Invoice options', WC_EL_INV_FREE_TEXTDOMAIN),
             'href'   => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=invoice')),
         ));
         $adminBar->add_menu(array(
             'parent' => $this->optionsName,
-            'id'     => $this->optionsName . '-json-order',
-            'title'  => esc_html__('Json Order', WC_EL_INV_FREE_TEXTDOMAIN),
-            'href'   => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=json-order')),
-        ));
-        $adminBar->add_menu(array(
-            'parent' => $this->optionsName,
-            'id'     => $this->optionsName . '-json-product',
-            'title'  => esc_html__('Json Product', WC_EL_INV_FREE_TEXTDOMAIN),
-            'href'   => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=json-product')),
-        ));
-        $adminBar->add_menu(array(
-            'parent' => $this->optionsName,
             'id'     => $this->optionsName . '-xml',
-            'title'  => esc_html__('Xml Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+            'title'  => esc_html__('Invoices', WC_EL_INV_FREE_TEXTDOMAIN),
             'href'   => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=xml')),
         ));
     }
@@ -264,13 +284,13 @@ final class OptionPage extends OptionFields
     /**
      * Return Options
      *
-     * @since 1.0.0
-     *
      * @param string $singleKey
      * @param bool   $allowedHtml
      *
      * @return array|bool|mixed|string $option The value of the option retrieved from the options array / single key
      *                                 value or false
+     * @since 1.0.0
+     *
      */
     public function getOptions($singleKey = '', $allowedHtml = false)
     {
@@ -296,10 +316,11 @@ final class OptionPage extends OptionFields
     /**
      * Set Option
      *
-     * @since 1.0.0
-     *
      * @param $key
      * @param $value
+     *
+     * @since 1.0.0
+     *
      */
     public function setOption($key, $value)
     {
@@ -386,9 +407,10 @@ final class OptionPage extends OptionFields
     /**
      * Add sub menu pages
      *
+     * @param $subPageArgs
+     *
      * @since 1.0.0
      *
-     * @param $subPageArgs
      */
     private function addPluginSubmenuPage($subPageArgs)
     {
@@ -410,7 +432,7 @@ final class OptionPage extends OptionFields
                 // The slug name to refer to this menu by (should be unique for this menu).
                 $args['menuSlug'],
                 // The function that displays the page content for the menu page.
-                array($this, $args['function'])
+                $args['function'] ? array($this, $args['function']) : null
             );
         }
     }
@@ -418,9 +440,9 @@ final class OptionPage extends OptionFields
     /**
      * Add sub menu page
      *
+     * @return bool
      * @since 1.0.0
      *
-     * @return bool
      */
     public function submenuPage()
     {
@@ -448,11 +470,11 @@ final class OptionPage extends OptionFields
     /**
      * Add sections and fields in the settings
      *
-     * @since 1.0.0
-     *
      * @param array $sectionFields
      *
      * @return bool
+     * @since 1.0.0
+     *
      */
     private function addSectionAndFields(array $sectionFields)
     {
@@ -465,9 +487,10 @@ final class OptionPage extends OptionFields
 
             // Check section title structure.
             if (is_array($sectionFields['section'][$key]['section_title'])) {
+                $titleString  = $sectionFields['section'][$key]['section_title'][1] ?? '';
                 $sectionTitle = sprintf(
                     $sectionFields['section'][$key]['section_title'][0],
-                    __($sectionFields['section'][$key]['section_title'][1], WC_EL_INV_FREE_TEXTDOMAIN)
+                    __($titleString, WC_EL_INV_FREE_TEXTDOMAIN)
                 );
             } else {
                 $sectionTitle = __($sectionFields['section'][$key]['section_title'], WC_EL_INV_FREE_TEXTDOMAIN);
@@ -505,17 +528,17 @@ final class OptionPage extends OptionFields
     /**
      * Check Actiore tab.
      *
-     * @since 1.0.0
-     *
      * @param $tabs
      *
      * @return string The active tab
+     * @since 1.0.0
+     *
      */
     public function checkPageTab($tabs)
     {
-        $tab = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'tab', FILTER_SANITIZE_STRING);
+        $tab = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'tab', FILTER_UNSAFE_RAW);
         // Default active tab
-        $activeTab = 'general';
+        $activeTab = 'wc-checkout';
         if ($tab && is_array($tabs)) {
             if (array_key_exists($tab, $tabs)) {
                 $activeTab = $tab;
@@ -538,12 +561,21 @@ final class OptionPage extends OptionFields
         if (! empty($this->tabs)) {
             $output = '<ul class="wc_el_inv__tabs">';
             foreach ($this->tabs as $key => $tab) {
-                if (isset($tab['header'])) {
-                    $output .= sprintf('<li class="wc_el_inv__tabs--item"><a class="%s" href="%s">%s</a></li>',
+                if (is_array($tab['header']) && ! empty($tab['header'])) {
+                    $output .= sprintf('<li class="wc_el_inv__tabs--item"><a class="%s" href="%s">%s%s</a></li>',
                         $key === $active ? 'active' : '',
                         "admin.php?page={$this->menuSlug}&tab={$key}",
-                        esc_html__($tab['header'], WC_EL_INV_FREE_TEXTDOMAIN)
+                        isset($tab['header'][0]) ? $tab['header'][0] : '', // icon
+                        esc_html__($tab['header'][1], WC_EL_INV_FREE_TEXTDOMAIN) // label
                     );
+                } else {
+                    if (isset($tab['header'])) {
+                        $output .= sprintf('<li class="wc_el_inv__tabs--item"><a class="%s" href="%s">%s</a></li>',
+                            $key === $active ? 'active' : '',
+                            "admin.php?page={$this->menuSlug}&tab={$key}",
+                            esc_html__($tab['header'], WC_EL_INV_FREE_TEXTDOMAIN)
+                        );
+                    }
                 }
             }
             $output .= '</ul>';
@@ -560,27 +592,31 @@ final class OptionPage extends OptionFields
     public function createPage()
     {
         $active = $this->checkPageTab($this->tabs);
-        $submit = isset($this->tabs[$active]['submit']) ? $this->tabs[$active]['submit'] : true; ?>
+        $submit = isset($this->tabs[$active]['submit']) ? $this->tabs[$active]['submit'] : true;
 
-        <?php
         /**
          * Before Settings Wrapper
          *
          * @since 1.0.0
          */
-        do_action('wc_el_inv-before_settings_wrapper');
+        do_action('wc_el_inv-before_settings_wrapper'); ?>
 
-        ?>
-
-        <div class="wc_el_inv-wrapper no-js">
+        <div class="wc_el_inv-wrapper no-js <?php echo "current-{$this->tabs[$active]['section_id']}"; ?>">
             <form class="wrap wc_el_inv-form" id="options_form" name="options_form" method="post" action="options.php">
                 <input name="tab" type="hidden" value="<?php echo esc_attr($active); ?>">
                 <header class="wc_el_inv__header">
                     <div id="icon-themes" class="icon32"></div>
-                    <h2>
-                        <?php echo esc_html__('Electronic Invoice - Settings', WC_EL_INV_FREE_TEXTDOMAIN); ?><br>
-                        <small class="version">v:<?php echo WC_EL_INV_FREE_VERSION; ?></small>
-                    </h2>
+                    <h1 class="title">
+                        <img class="woopop-logo" title="<?php echo strtoupper($this->menuTitle); ?>"
+                             src="<?php echo WC_EL_INV_FREE_URL . 'assets/images/woopop.png'; ?>">
+                        <small class="version">Free version: <?php echo WC_EL_INV_FREE_VERSION; ?></small>
+                    </h1>
+                    <?php if (phpversion() < 7.4) : ?>
+                        <p class="php_version">
+                            <?php _e('WooPOP 4.0.0 made some changes that require PHP 7.4. it is recommended to update the PHP version.',
+                                WC_EL_INV_FREE_TEXTDOMAIN) ?>
+                        </p>
+                    <?php endif; ?>
                 </header>
                 <?php $this->pageTab(); ?>
                 <?php
@@ -594,6 +630,13 @@ final class OptionPage extends OptionFields
                 // The slug name of the page whos settings sections you want to output.
                     $this->menuSlug
                 );
+
+                /**
+                 * Before closing Settings Form
+                 *
+                 * @since 3.2.4
+                 */
+                do_action('wc_el_inv-before_closing_settings_form');
 
                 if ($submit) {
                     // A submit button.
@@ -631,17 +674,17 @@ final class OptionPage extends OptionFields
     /**
      * Sanitize each setting field as needed
      *
-     * @since 1.0.0
-     *
      * @param $input
      *
      * @return array|bool|string
+     * @since 1.0.0
+     *
      */
     public function sanitizeOptions($input)
     {
         // Sanitize input
         $sanitizedValue = \WcElectronInvoiceFree\Functions\sanitize($input);
-        $tab            = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'tab', FILTER_SANITIZE_STRING);
+        $tab            = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'tab', FILTER_UNSAFE_RAW);
 
         // If is not options
         if (! $this->options) {
@@ -658,7 +701,11 @@ final class OptionPage extends OptionFields
             // Forced off value
             // !! Only invoice tab have checkbox !!
             if ('invoice' === $tab) {
-                if (null === $input[$key] && ! array_key_exists($key, $input) && 'on' === $this->options[$key]) {
+                if (! array_key_exists($key, $input) &&
+                    ! isset($input[$key]) &&
+                    null === $input[$key] &&
+                    'on' === $this->options[$key]
+                ) {
                     $this->options[$key] = 'off';
                 }
             }
@@ -687,36 +734,29 @@ final class OptionPage extends OptionFields
         $active = $this->checkPageTab($this->tabs);
 
         $args[$this->optionsName] = array(
-            'filter' => array(FILTER_SANITIZE_STRING),
+            'filter' => array(FILTER_UNSAFE_RAW),
             'flags'  => FILTER_FORCE_ARRAY,
         );
 
         // Key data saved
         $data = filter_var_array($_POST, $args);
-        $key  = $data[$this->optionsName][KeyField::$keyArgs['name']];
+        $key  = isset($data[$this->optionsName][KeyField::$keyArgs['name']]) ?
+            $data[$this->optionsName][KeyField::$keyArgs['name']] : null;
 
         $secretApiKey = null;
         if (isset($key) && '' !== $key) {
             $secretApiKey = base64_encode(md5($key));
-        }
-
-        if ('general' === $active && $data && array_key_exists('wc_el_inv-settings-key', $data[$this->optionsName])) {
-            update_option('wc_el_inv-secret-api-key', $secretApiKey);
-
-            // Delete license transient.
-            delete_transient('wc_el_inv-license_integration_check');
-            delete_transient('wc_el_inv-license_check');
         }
     }
 
     /**
      * Instance
      *
-     * @since 1.0.0
-     *
-     * @param  null
+     * @param null
      *
      * @return OptionPage|object The Class Instance
+     * @since 1.0.0
+     *
      */
     public static function init()
     {

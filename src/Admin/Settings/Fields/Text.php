@@ -79,7 +79,7 @@ class Text
     private $allowHtml = array();
 
     /**
-     * KeyField constructor.
+     * Text constructor.
      *
      * @since 1.0.0
      *
@@ -97,7 +97,7 @@ class Text
             'label'          => '',
             'description'    => '',
             'placeholder'    => '',
-            'filter'         => FILTER_SANITIZE_STRING,
+            'filter'         => FILTER_UNSAFE_RAW,
             'filter_options' => array(
                 'flags' => FILTER_FLAG_NO_ENCODE_QUOTES | FILTER_FLAG_ENCODE_AMP,
             ),
@@ -212,7 +212,7 @@ class Text
          * @since 1.0.0
          *
          * @param string $output The output of the input type.
-         * @param KeyField The instance class
+         * @param Text The instance class
          */
         $output = apply_filters('wc_el_inv-input_text_output', $output, $this);
 

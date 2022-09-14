@@ -35,9 +35,16 @@ $endPointApi   = new \WcElectronInvoiceFree\EndPoint\Endpoints();
 $resources     = new \WcElectronInvoiceFree\Resources();
 $optionPage    = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 $invoiceFields = new \WcElectronInvoiceFree\WooCommerce\Fields\InvoiceFields($fields, $optionPage);
-$pdf           = new \WcElectronInvoiceFree\Pdf\CreatePdf(new \Mpdf\Mpdf());
 
-return apply_filters('wc_el_inv-filters_front', array(
+//
+//  array(
+//      'filter'        => ''
+//      'callback'      => ''
+//      'priority'      => ''
+//      'accepted_args' => ''
+//  )
+//
+$filtersFront = array(
     'front' => array(
         'action' => array(
             /**
@@ -56,6 +63,18 @@ return apply_filters('wc_el_inv-filters_front', array(
             ),
 
             /**
+             * Add custom meta for check shipping to different address
+             *
+             * @since 1.0.0
+             */
+            array(
+                'filter'        => 'woocommerce_checkout_order_processed',
+                'callback'      => array($invoiceFields, 'haveShippingAddress'),
+                'priority'      => 20,
+                'accepted_args' => 3,
+            ),
+
+            /**
              * Enqueue @since 1.0.0
              */
             array(
@@ -67,33 +86,6 @@ return apply_filters('wc_el_inv-filters_front', array(
                 'filter'   => 'wp_enqueue_scripts',
                 'callback' => array($resources, 'localizeScript'),
                 'priority' => 30,
-            ),
-            array(
-                'filter'   => 'wc_el_inv-add_json_header',
-                'callback' => function () {
-                    /**
-                     * The origin parameter specifies a URI that may access the resource.
-                     * The browser must enforce this. For requests
-                     * without credentials, the server may specify "*" as a wildcard,
-                     * thereby allowing any origin to access the resource.
-                     */
-                    header('Access-Control-Allow-Origin: *');
-
-                    /**
-                     * The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing
-                     * the resource. This is used in response to a preflight request. The conditions under
-                     * which a request is preflighted are discussed above.
-                     */
-                    header('Access-Control-Allow-Methods: POST, GET');
-
-                    /**
-                     * The Access-Control-Allow-Credentials response header tells browsers whether to expose the
-                     * response to frontend JavaScript code when the request's
-                     * credentials mode (Request.credentials) is "include".
-                     */
-                    header('Access-Control-Allow-Credentials: true');
-                },
-                'priority' => 10,
             ),
 
             /**
@@ -131,25 +123,18 @@ return apply_filters('wc_el_inv-filters_front', array(
              * - WC auto completed and processing order @since 1.0.0
              */
             array(
-                'filter'        => array(
+                'filter'   => array(
+                    'woocommerce_payment_complete',
+                    'woocommerce_payment_complete_order_status_completed',
+                    'woocommerce_payment_complete_order_status_processing',
                     'woocommerce_order_status_completed',
                     'woocommerce_order_status_processing',
                 ),
-                'callback'      => 'WcElectronInvoiceFree\\Functions\\setInvoiceNumberOnOrderAutoCompleted',
-                'priority'      => 10,
-                'accepted_args' => 2,
+                'callback' => 'WcElectronInvoiceFree\\Functions\\setInvoiceNumberOnOrderAutoCompleted',
+                'priority' => 10,
             ),
         ),
         'filter' => array(
-            /**
-             * PDF Filter xml data for create PDF @since 1.0.0
-             */
-            array(
-                'filter'   => 'wc_el_inv-xml_data_filter',
-                'callback' => 'WcElectronInvoiceFree\\Pdf\\CreatePdf::create',
-                'priority' => 30,
-            ),
-
             /**
              * Filter Order Json Data
              */
@@ -166,9 +151,8 @@ return apply_filters('wc_el_inv-filters_front', array(
              * WooCommerce
              *
              * - my account formatted address      @since 1.0.0
-             * - billig fields                     @since 1.0.0
+             * - billing fields                     @since 1.0.0
              * - formatted address replacements    @since 1.0.0
-             * - localization address replacements @since 1.0.0
              * - my account order action           @since 1.0.0
              */
             array(
@@ -186,12 +170,18 @@ return apply_filters('wc_el_inv-filters_front', array(
             array(
                 'filter'        => 'woocommerce_billing_fields',
                 'callback'      => array($invoiceFields, 'billingAddressFields'),
-                'priority'      => 20,
+                'priority'      => PHP_INT_MAX,
                 'accepted_args' => 3,
             ),
             array(
                 'filter'        => 'woocommerce_formatted_address_replacements',
                 'callback'      => array($invoiceFields, 'formattedAddressReplacements'),
+                'priority'      => 20,
+                'accepted_args' => 2,
+            ),
+            array(
+                'filter'        => 'woocommerce_localisation_address_formats',
+                'callback'      => array($invoiceFields, 'localisationAddressFormat'),
                 'priority'      => 20,
                 'accepted_args' => 2,
             ),
@@ -212,4 +202,17 @@ return apply_filters('wc_el_inv-filters_front', array(
             ),
         ),
     ),
-));
+);
+
+if (class_exists('\Dompdf\Dompdf')) {
+    /**
+     * PDF Filter xml data for create PDF @since 1.0.0
+     */
+    $filtersFront['front']['filter'][] = array(
+        'filter'   => 'wc_el_inv-xml_data_filter',
+        'callback' => 'WcElectronInvoiceFree\\Pdf\\CreatePdf::create',
+        'priority' => 30,
+    );
+}
+
+return apply_filters('wc_el_inv-filters_front', $filtersFront);

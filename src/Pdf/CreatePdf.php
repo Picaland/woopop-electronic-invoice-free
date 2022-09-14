@@ -31,12 +31,13 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-use Mpdf\Mpdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use WcElectronInvoiceFree\Admin\Settings\OptionPage;
 use WcElectronInvoiceFree\Plugin;
 use WcElectronInvoiceFree\Utils\TimeZone;
 use WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields;
-use function WcElectronInvoiceFree\Functions\wcOrderClassName;
+use WcElectronInvoiceFree\WooCommerce\Fields\InvoiceFields;
 
 /**
  * Class CreatePdf
@@ -60,7 +61,7 @@ final class CreatePdf
      *
      * @var object \mPDF The mPDF object
      */
-    private $pdf;
+    public static $pdf;
 
     /**
      * Extra Italian SDI code
@@ -117,14 +118,20 @@ final class CreatePdf
     /**
      * CreatePdf constructor.
      *
-     * @param Mpdf $pdf
+     * @param Dompdf $pdf
      *
      * @since  1.0.0
-     *
      */
-    public function __construct(\Mpdf\Mpdf $pdf)
+    public function __construct(Dompdf $pdf)
     {
-        $this->pdf = $pdf;
+        self::$pdf = $pdf;
+
+        // Set Dompdf Options
+        $options = new Options();
+        $options->set('defaultFont', 'helvetica');
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        self::$pdf->setOptions($options);
     }
 
     /**
@@ -138,9 +145,10 @@ final class CreatePdf
      */
     private function invoiceNumber($order)
     {
-        $wcOrderClass       = wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = wcOrderClassName('\WC_Order_Refund');
         $order              = wc_get_order($order->id);
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+
         if (! $order instanceof $wcOrderClass && ! $order instanceof $wcOrderRefundClass) {
             return '';
         }
@@ -148,7 +156,7 @@ final class CreatePdf
         $options = OptionPage::init();
         $number  = $order->get_meta('order_number_invoice');
 
-        if ($order instanceof \WC_Order_Refund) {
+        if ($order instanceof $wcOrderRefundClass) {
             $number = $order->get_meta("refund_number_invoice-{$order->get_id()}");
         }
 
@@ -157,14 +165,32 @@ final class CreatePdf
         $digits = isset($digits) && '' !== $digits ? $digits : 2;
         // Prefix
         $prefix = $options->getOptions('prefix_invoice_number');
-        $prefix = isset($prefix) && '' !== $prefix ? $prefix : 'inv';
+        $prefix = isset($prefix) && '' !== $prefix ? "{$prefix}-" : 'inv-';
+
+        /**
+         * Invoice prefix filter
+         */
+        $prefix = apply_filters('wc_el_inv-prefix_invoice', $prefix, $order);
+
         // Suffix
-        $suffix = $options->getOptions('suffix_invoice_number');
-        $suffix = isset($suffix) && '' !== $suffix ? $suffix : '';
+        $suffix     = $options->getOptions('suffix_invoice_number');
+        $suffixYear = $options->getOptions('suffix_year_invoice_number');
+        if ('on' === $suffixYear) {
+            $created = $order->get_date_created();
+            $suffix  = "/" . $created->format('Y');
+        } else {
+            $suffix = isset($suffix) && '' !== $suffix ? $suffix : '';
+        }
+
+        /**
+         * Invoice suffix filter
+         */
+        $suffix = apply_filters('wc_el_inv-suffix_invoice', $suffix, $order);
+
         // Invoice number
         $invNumber = str_pad($number, $digits, '0', STR_PAD_LEFT);
 
-        return isset($number) && 0 !== $number && '' !== $number ? "{$prefix}-{$invNumber}{$suffix}" : $order->get_id();
+        return isset($number) && 0 !== $number && '' !== $number ? "{$prefix}{$invNumber}{$suffix}" : $order->get_id();
     }
 
     /**
@@ -199,7 +225,7 @@ final class CreatePdf
      */
     private function docType($order)
     {
-        if ('private' === $order->invoice_type || 'receipt' === $order->choice_type) {
+        if ('receipt' === $order->choice_type) {
             return esc_html__('Receipt', WC_EL_INV_FREE_TEXTDOMAIN);
         }
 
@@ -220,33 +246,22 @@ final class CreatePdf
      *
      * @param        $order
      * @param string $format
+     * @param bool   $parent
      *
      * @return string
      * @since 1.0.0
      *
      */
-    private function dateCompleted($order, $format = 'Y-m-d')
+    private function dateCompleted($order, $format = 'Y-m-d', $parent = false)
     {
-        if (isset($order->date_completed)) {
-            $dateOrder = $order->date_completed;
-        } elseif ($order->date_modified) {
-            $dateOrder = $order->date_modified;
-        } else {
-            $dateOrder = $order->date_created;
-        }
+        $dateOrder = $order->date_created;
 
         // Get parent order if current data is refund
-        if ('shop_order_refund' === $order->order_type) {
+        if ($parent && 'shop_order_refund' === $order->order_type) {
             $parentOrder = wc_get_order($order->parent_id);
 
-            if ($parentOrder->get_date_completed()) {
-                $dateOrder = $parentOrder->get_date_completed();
-            } elseif ($parentOrder->get_date_modified()) {
-                $dateOrder = $parentOrder->get_date_modified();
-            } else {
-                $dateOrder = $parentOrder->get_date_created();
-            }
-
+            // Parent order created
+            $dateOrder = $parentOrder->get_date_created();
             $dateOrder = $dateOrder->format('c');
         }
 
@@ -289,6 +304,35 @@ final class CreatePdf
     }
 
     /**
+     * Date invoice
+     *
+     * @param        $order
+     * @param string $format
+     *
+     * @return string
+     */
+    private function dateInvoice($order, $format = 'Y-m-d')
+    {
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+
+        $orderObj    = wc_get_order($order->id);
+        $dateInvoice = null;
+
+        if ($orderObj instanceof $wcOrderRefundClass) {
+            $dateInvoice = $orderObj->get_date_created();
+        } elseif ($orderObj instanceof $wcOrderClass) {
+            $dateInvoice = $orderObj->get_date_completed();
+        }
+
+        if ($dateInvoice) {
+            return $dateInvoice->date_i18n($format);
+        }
+
+        return $dateInvoice;
+    }
+
+    /**
      * Payment Method
      *
      * @param $order
@@ -310,9 +354,11 @@ final class CreatePdf
          * Payment method for refunded:
          */
         if ('shop_order_refund' === $order->order_type &&
-            isset($order->refunded['refunded_payment_method']) &&
-            '' !== $order->refunded['refunded_payment_method']
+            isset($order->refunded['refunded_payment_method'])
         ) {
+            if ('' === $order->refunded['refunded_payment_method']) {
+                return sprintf('MP01 - %s', esc_html__('Cash money', WC_EL_INV_FREE_TEXTDOMAIN));
+            }
             switch ($order->refunded['refunded_payment_method']) {
                 case 'MP01':
                     return sprintf('MP01 - %s', esc_html__('Cash money', WC_EL_INV_FREE_TEXTDOMAIN));
@@ -325,13 +371,15 @@ final class CreatePdf
                 case 'MP08':
                     return sprintf('MP08 - %s', esc_html__('Credit Card', WC_EL_INV_FREE_TEXTDOMAIN));
                 default:
-                    return '';
+                    return sprintf('MP01 - %s', esc_html__('Cash money', WC_EL_INV_FREE_TEXTDOMAIN));
                     break;
             }
         }
 
-        false !== strpos($order->payment_method, 'stripe') ? $order->payment_method = 'stripe' : '';
-        false !== strpos($order->payment_method, 'paypal') ? $order->payment_method = 'paypal' : '';
+        if (property_exists($order, 'payment_method')) {
+            false !== strpos($order->payment_method, 'stripe') ? $order->payment_method = 'stripe' : '';
+            false !== strpos($order->payment_method, 'paypal') ? $order->payment_method = 'paypal' : '';
+        }
 
         /**
          * Payment method for order:
@@ -350,17 +398,19 @@ final class CreatePdf
                 case 'cheque':
                     return esc_html('MP02 - ' . $methodTitle);
                 case 'paypal':
-                    return esc_html('MP08 - ' . $methodTitle);
                 case 'ppec_paypal':
-                    return esc_html('MP08 - ' . $methodTitle);
+                case 'ppcp-gateway':
                 case 'stripe':
+                case 'xpay':
+                case 'soisy':
                     return esc_html('MP08 - ' . $methodTitle);
                 case 'stripe_sepa':
                     return esc_html('MP19 - ' . $methodTitle);
-                    break;
                 default:
-                    return 'MP01';
-                    break;
+                    return apply_filters('wc_el_inv-default_payment_method_pdf_invoice',
+                        sprintf('MP01 - %s', esc_html__('Cash money', WC_EL_INV_FREE_TEXTDOMAIN)),
+                        $order->payment_method
+                    );
             }
         }
     }
@@ -383,24 +433,51 @@ final class CreatePdf
 
         $post = get_post(intval($item['product_id']));
 
-        $description = $post->post_title . ' - ' . $post->post_excerpt;
+        /**
+         * Filter - description excerpt + title or only title
+         */
+        if (apply_filters('wc_el_inv-product_excerpt_description_pdf_invoice', true) && $post->post_excerpt) {
+            $description = $post->post_excerpt;
+        } else {
+            $description = $post->post_title;
+        }
 
-        if (! $post->post_excerpt) {
-            $description = $post->post_title . ' - ' . $post->post_content;
+        /**
+         * Filter - force description only post title
+         */
+        if (true === apply_filters('wc_el_inv-product_title_description_pdf_invoice', false)) {
+            $description = $post->post_title;
+        }
 
-            if (! $post->post_content) {
-                $description = $post->post_title;
+        /**
+         * Filter - Product Meta data
+         */
+        if (true === apply_filters('wc_el_inv-product_meta_description_pdf_invoice', false)) {
+            $metaString = '';
+            if (! empty($item['meta_data'])) {
+                foreach ($item['meta_data'] as $index => $meta) {
+                    $sep        = $index === count($item['meta_data']) - 1 ? '' : ', ';
+                    $metaString = $metaString . "{$meta['key']}: {$meta['value']}{$sep}";
+                }
+
+                $description = "{$description} {$metaString}";
             }
         }
 
+        /**
+         * Filter - description for item
+         */
+        $description = apply_filters('wc_el_inv-product_description_pdf_invoice', $description, $item);
+
         if ('refund' === $type) {
-            $description = '';
-            $description = sprintf('%s %s', esc_html__('Refunded', WC_EL_INV_FREE_TEXTDOMAIN), "{$description}");
+            // Reset description content, view only title
+            // * the meta are managed in the pdf template details.
+            $description = $post->post_title;
         }
 
         $description = mb_strimwidth($description, 0, 500, '...');
 
-        return \WcElectronInvoiceFree\Functions\stripTags($description);
+        return \WcElectronInvoiceFree\Functions\stripTags($description, true);
     }
 
     /**
@@ -415,12 +492,35 @@ final class CreatePdf
      */
     private function taxRate($item, $get = 'rate')
     {
-        if (! isset($item['product_id'])) {
+        if (! isset($item['product_id']) && ! isset($item['variation_id'])) {
             return '';
         }
 
-        $product  = wc_get_product(intval($item['product_id']));
-        $taxRates = \WC_Tax::get_rates($product->get_tax_class());
+        $taxEnabled = get_option('woocommerce_calc_taxes');
+        if ('yes' !== $taxEnabled) {
+            return floatval(0);
+        }
+
+        $taxStatus = '';
+        $taxRates  = array();
+
+        $id      = isset($item['variation_id']) && 0 !== intval($item['variation_id']) ? intval($item['variation_id']) : intval($item['product_id']);
+        $product = wc_get_product($id);
+        if ($product instanceof \WC_Product) {
+            $taxRates  = \WC_Tax::get_rates($product->get_tax_class());
+            $taxStatus = $product->get_tax_status();
+
+            // Double check get rates by billing country
+            $order = wc_get_order($item['order_id']);
+            $taxes = \WC_Tax::get_rates_for_tax_class($product->get_tax_class());
+            foreach ($taxes as $tax) {
+                if ($tax->tax_rate_country === $order->get_billing_country()) {
+                    return $this->numberFormat($tax->tax_rate, 0);
+                    break;
+                }
+            }
+        }
+
         if (empty($taxRates)) {
             $taxRates = \WC_Tax::get_base_tax_rates();
         }
@@ -429,7 +529,7 @@ final class CreatePdf
 
         switch ($get) {
             case 'rate':
-                return $taxRate[$get];
+                return $taxStatus === 'taxable' && floatval(0) !== floatval($item['total_tax']) ? $taxRate[$get] : floatval(0);
             default:
                 return '';
                 break;
@@ -577,13 +677,14 @@ final class CreatePdf
     /**
      * Customer vat
      *
-     * @param $ordersData
+     * @param      $ordersData
+     * @param bool $onlyNumber
      *
      * @return string
      * @since 1.0.0
      *
      */
-    private function customerVatNumber($ordersData)
+    private function customerVatNumber($ordersData, $onlyNumber = false)
     {
         if (! property_exists($ordersData, 'vat_number')) {
             return '';
@@ -595,6 +696,10 @@ final class CreatePdf
 
         if (isset($ordersData->vat_number) && preg_match($this->regexVAT, $country . $ordersData->vat_number)) {
             $vatNumber = $country . $ordersData->vat_number;
+        }
+
+        if ($onlyNumber) {
+            $vatNumber = $ordersData->vat_number;
         }
 
         return $vatNumber;
@@ -615,10 +720,11 @@ final class CreatePdf
             return '';
         }
 
-        $order = wc_get_order($ordersData->id);
+        $order              = wc_get_order($ordersData->id);
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
 
         $number = $order->get_meta('order_number_invoice');
-        if ($order instanceof \WC_Order_Refund) {
+        if ($order instanceof $wcOrderRefundClass) {
             $number = $order->get_meta("refund_number_invoice-{$order->get_id()}");
         }
 
@@ -631,44 +737,98 @@ final class CreatePdf
     }
 
     /**
+     * Vies valid tax rate
+     *
+     * @param $ordersData
+     * @param $defaultVat
+     *
+     * @return int
+     */
+    private function viesValidTaxRate($ordersData, $defaultVat)
+    {
+        // UE valid VIES rate
+        if (InvoiceFields::viesCheck(
+                $this->customerVatNumber($ordersData, true),
+                $this->customerCountry($ordersData),
+                true
+            ) &&
+            in_array($this->customerCountry($ordersData), GeneralFields::getEuCountries(), true) &&
+            'IT' !== $this->customerCountry($ordersData)
+        ) {
+            return 0;
+        }
+
+        return $defaultVat;
+    }
+
+    /**
      * Calc Unit price from total and total tax
      *
-     * @param $item
+     * @param      $item
+     * @param null $ordersData
      *
      * @return float|int
      * @since 1.2
      */
-    public function calcUnitPrice($item)
+    public function calcUnitPrice($item, $ordersData = null, $format = true)
     {
         $total    = isset($item['total']) ? $item['total'] : 0;
+        $subtotal = isset($item['subtotal']) ? $item['subtotal'] : 0;
         $totalTax = isset($item['total_tax']) ? $item['total_tax'] : 0;
-        $quantity = isset($item['quantity']) ? $item['quantity'] : 0;
+        $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
 
-        $unitTaxedPrice = (($total + $totalTax) / $quantity);
+        if ($subtotal > $total) {
+            $unitTaxedPrice = (($subtotal) / $quantity);
+        } else {
+            $unitTaxedPrice = (($total + $totalTax) / $quantity);
+        }
+        //$unitTaxedPrice = $this->numberFormat($unitTaxedPrice, 6);
         // Vat
-        $vat = $this->numberFormat($this->taxRate($item));
+        $taxEnabled = get_option('woocommerce_calc_taxes');
+        $vat        = 0;
+        if ('yes' === $taxEnabled) {
+            $vat = $this->numberFormat($this->taxRate($item));
+            if ($ordersData) {
+                $vat = $this->viesValidTaxRate($ordersData, $vat);
+            }
+        }
 
-        return $unitTaxedPrice / (($vat / 100) + 1); // es: $unitTaxedPrice / 1,22 or 1.04
+        if ($subtotal > $total) {
+            $finalPrice = floatval($unitTaxedPrice);
+        } else {
+            $finalPrice = floatval($unitTaxedPrice) / (1 + (floatval($vat) / 100));
+        }
+
+        if (! $format) {
+            return $finalPrice;
+        }
+
+        return $this->numberFormat($finalPrice, 6); // es: $unitTaxedPrice / 1,22 or 1.04
     }
 
     /**
      * Number Format
      *
-     * @param int $number
-     * @param int $decimal
-     * @param bool $abs
+     * @param int    $number
+     * @param int    $decimal
+     * @param bool   $abs
+     * @param string $decSep
+     * @param string $thSep
      *
      * @return string
      * @since 1.0.0
      *
      */
-    private function numberFormat($number = 0, $decimal = 2, $abs = true)
+    private function numberFormat($number = 0, $decimal = 2, $abs = true, $decSep = '.', $thSep = '')
     {
         if ($abs) {
             $number = abs($number);
         }
 
-        return number_format($number, $decimal, '.', '');
+        $wctThousandSep = '' === $decSep ? get_option('woocommerce_price_thousand_sep') : $decSep;
+        $wcDecimalSep   = '' === $thSep ? get_option('woocommerce_price_decimal_sep') : $thSep;
+
+        return number_format($number, $decimal, $wcDecimalSep, $wctThousandSep);
     }
 
     /**
@@ -715,7 +875,15 @@ final class CreatePdf
     public function attachmentsPdfToEmail($attachments, $emailID, $order)
     {
         // Send attachments via email ?
-        $active = OptionPage::init()->getOptions('invoice_via_email');
+        $active       = OptionPage::init()->getOptions('invoice_via_email');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+
+        // Not send/create attachments for the bulk action
+        $actionBulkCheck = \WcElectronInvoiceFree\Functions\filterInput($_REQUEST, 'action', FILTER_UNSAFE_RAW);
+        if ('mark_completed' === $actionBulkCheck) {
+            return $attachments;
+        }
+
         if ('on' !== $active) {
             return $attachments;
         }
@@ -730,7 +898,7 @@ final class CreatePdf
             return $attachments;
         }
 
-        if (! $order instanceof \WC_Order) {
+        if (! $order instanceof $wcOrderClass) {
             return $attachments;
         }
 
@@ -751,30 +919,52 @@ final class CreatePdf
             return $attachments;
         }
 
-        if ('customer_completed_order' === $emailID) {
+        if ('customer_completed_order' === $emailID ||
+            'custom_email_completed_order_pdf_invoice' === $emailID ||
+            'custom_email_completed_order_pdf_receipt' === $emailID
+        ) {
             try {
-                $nonce       = wp_create_nonce('wc_el_inv_invoice_pdf');
-                $pdfArgs     = "?format=pdf&nonce={$nonce}";
-                $url         = site_url() . '/' . \WcElectronInvoiceFree\EndPoint\Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/' . $orderID . $pdfArgs;
-                $attachments = wp_remote_fopen(esc_url_raw($url));
-                $data        = new \stdClass();
-                $data->id    = $orderID;
+
+                // Pdf type conditions
+                switch ($emailID) {
+                    default :
+                    case 'custom_email_completed_order_pdf_invoice':
+                        $type = 'invoice';
+                        break;
+                    case 'custom_email_completed_order_pdf_receipt':
+                        $type = 'receipt';
+                        break;
+                }
+
+                // Set invoice number
+                $options           = OptionPage::init();
+                $nextInvoiceNumber = $options->getOptions('number_next_invoice');
+                $invoiceNumber     = $order->get_meta('order_number_invoice');
+                if ('' === $invoiceNumber) {
+                    update_post_meta($orderID, 'order_number_invoice', intval($nextInvoiceNumber));
+                }
+
+                $nonce     = wp_create_nonce('wc_el_inv_invoice_pdf');
+                $pdfArgs   = "?format=pdf&nonce={$nonce}&choice_type={$type}&html_to_pdf=true&v=" . time();
+                $url       = home_url() . '/' . \WcElectronInvoiceFree\EndPoint\Endpoints::ENDPOINT . '/' . self::LIST_TYPE . '/' . $orderID . $pdfArgs;
+                $pdfOutput = wp_remote_fopen(esc_url_raw($url));
+                $data      = new \stdClass();
+                $data->id  = $orderID;
 
                 // File name
                 $fileName = GeneralFields::getGeneralInvoiceOptionCountryState() .
                             GeneralFields::getGeneralInvoiceOptionVatNumber() . '_' .
                             $this->progressiveFileNumber($data) . '.pdf';
 
-                $attachments = $this->buildAttachment($order, $fileName, $attachments);
+                if (! $pdfOutput) {
+                    $message   = __('Error in generating the PDF, download it from your reserved area, or ask the seller for it',
+                        WC_EL_INV_FREE_TEXTDOMAIN);
+                    $pdfOutput = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/><title>{$fileName}</title></head><body><h1>{$message}</h1></body></html>";
+                }
 
-                return $attachments;
+                return $this->buildAttachment($order, $fileName, $pdfOutput);
             } catch (\Exception $e) {
-                print_r(
-                    esc_html__(
-                        'Error in completed order attachments - message:',
-                        WC_EL_INV_FREE_TEXTDOMAIN) . $e->getMessage()
-                );
-                die();
+                return '';
             }
         }
 
@@ -794,14 +984,23 @@ final class CreatePdf
      */
     public function buildAttachment($order, $fileName, $attachments)
     {
-        if (! $order instanceof \WC_Order) {
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+
+        if (! $order instanceof $wcOrderClass) {
             return $attachments;
         }
 
         // Get pdf data & store in temp file
         $pdfData = $attachments;
+
+        // Create PDF
+        self::$pdf->loadHtml($pdfData);
+        self::$pdf->setPaper('A4', 'portrait');
+        self::$pdf->render();
+        $pdf = self::$pdf->output();
+
         $pdfPath = Plugin::getPluginDirPath('/tempPdf/invoice.pdf');
-        file_put_contents($pdfPath, $pdfData);
+        file_put_contents($pdfPath, $pdf);
 
         // Initialize new attachments
         $attachments = array();
@@ -896,12 +1095,17 @@ final class CreatePdf
      */
     public function buildPdf($xmlData)
     {
-        $getFormat = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'format', FILTER_SANITIZE_STRING);
-        $getNonce  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'nonce', FILTER_SANITIZE_STRING);
+        $getFormat = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'format', FILTER_UNSAFE_RAW);
+        $getNonce  = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'nonce', FILTER_UNSAFE_RAW);
         $data      = ! empty($xmlData) && ! empty($xmlData[0]) ? (object)$xmlData[0] : null;
 
         // Override choice_type from $_GET['choice_type'] value
-        $choiceType = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'choice_type', FILTER_SANITIZE_STRING);
+        $choiceType = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'choice_type', FILTER_UNSAFE_RAW);
+
+        if (! $data) {
+            return $xmlData;
+        }
+
         // Default type choice.
         $data->choice_type = 'invoice';
         if ($choiceType) {
@@ -939,18 +1143,17 @@ final class CreatePdf
      * @param array $xmlData The args for create Pdf
      *
      * @return mixed
-     * @throws \Mpdf\MpdfException
-     * @since  1.0.0
-     *
      */
     public static function create($xmlData)
     {
-        $instance = new self(new Mpdf());
+        if (class_exists('\Dompdf\Dompdf')) {
+            $instance = new self(self::$pdf);
 
-        try {
-            return $instance->buildPdf($xmlData);
-        } catch (\Exception $e) {
-            echo 'Create Pdf Exception: ', $e->getMessage(), "\n";
+            try {
+                return $instance->buildPdf($xmlData);
+            } catch (\Exception $e) {
+                echo 'Create Pdf Exception: ', $e->getMessage(), "\n";
+            }
         }
     }
 }

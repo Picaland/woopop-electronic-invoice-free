@@ -2,7 +2,7 @@
 /**
  * order-totals.php
  *
- * @since      1.0.0
+ * @since      2.0.0
  * @package    ${NAMESPACE}
  * @author     alfiopiccione <alfio.piccione@gmail.com>
  * @copyright  Copyright (c) 2019, alfiopiccione
@@ -29,27 +29,28 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-global $orderTotals, $orderTaxTotals, $summaryRate, $freeRefund, $currency;
+global $orderTotals, $orderTaxTotals, $summaryRate, $freeRefund;
+$currency = apply_filters('wc_el_inv-pdf_currency_symbol', get_woocommerce_currency_symbol($data->currency));
 ?>
 <?php
 // Only for Invoice, Refund whit items or Shipping refund
 if (! $freeRefund) : ?>
-    <table class="order-details" width="100%">
+    <table style="width:100%;" class="order-details">
         <tr style="border-bottom:1px solid #ddd;">
-            <td width="72%"></td>
+            <td style="width:72%;"></td>
             <td style="background-color:#dddddd;border-bottom:1px solid #ddd;font-size:12px;padding:5px;">
                 <strong><?php esc_html_e('Totals:', WC_EL_INV_FREE_TEXTDOMAIN); ?></strong>
             </td>
         </tr>
         <tr style="border-bottom:1px solid #ddd;">
-            <td width="72%"></td>
+            <td style="width:72%;"></td>
             <td style="border-bottom:1px solid #ddd;font-size:12px;padding:5px 0;">
                 <?php esc_html_e('Total Tax:', WC_EL_INV_FREE_TEXTDOMAIN); ?>
-                <strong><?php echo esc_html($currency . $this->numberFormat(abs($orderTaxTotals))) ?></strong>
+                <strong><?php echo esc_html($currency . $this->numberFormat($orderTaxTotals)) ?></strong>
             </td>
         </tr>
         <tr style="border-bottom:1px solid #ddd;">
-            <td width="72%"></td>
+            <td style="width:72%;"></td>
             <td style="border-bottom:1px solid #ddd;font-size:12px;padding:5px 0;">
                 <?php esc_html_e('Total:', WC_EL_INV_FREE_TEXTDOMAIN); ?>
                 <strong><?php echo esc_html($currency . $this->numberFormat(abs($orderTotals))) ?></strong>

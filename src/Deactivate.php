@@ -42,9 +42,9 @@ class Deactivate
     /**
      * Plugin Deactivate
      *
+     * @return void
      * @since  1.0.0
      *
-     * @return void
      */
     public static function deactivate()
     {

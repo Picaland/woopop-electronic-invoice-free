@@ -40,6 +40,20 @@ if (! isset($orderType) &&
     return (object)array();
 }
 
+// Set meta data
+if (! empty($itemsRefundedData)) {
+    foreach ($itemsRefundedData as $index => $data) {
+        if (! empty($data['meta_data'])) {
+            $itemsRefundedData[$index]['meta_data'] = array();
+            foreach ($data['meta_data'] as $meta) {
+                if ($meta instanceof WC_Meta_Data) {
+                    $itemsRefundedData[$index]['meta_data'][] = $meta->get_data();
+                }
+            }
+        }
+    }
+}
+
 // Initialized data array
 $data = array(
     'order_type'       => $orderType,
@@ -74,6 +88,14 @@ if (! empty($itemsRefundedDataTax)) {
     $data['items_tax'] = $itemsRefundedDataTax;
 }
 
+if (! empty($itemsRefundedDataShipping)) {
+    $data['items_shipping'] = $itemsRefundedDataShipping;
+}
+
+if (! empty($itemsRefundedDataFee)) {
+    $data['items_fee'] = $itemsRefundedDataFee;
+}
+
 if (isset($invoiceNumber) && '' !== $invoiceNumber) {
     $data['invoice_number'] = $invoiceNumber;
 }
@@ -96,51 +118,65 @@ if (! empty($currentRefund)) {
 
 // Sanitize
 $args = array(
-    'order_type'       => FILTER_SANITIZE_STRING,
+    'order_type'       => FILTER_UNSAFE_RAW,
     'id'               => FILTER_VALIDATE_INT,
     'parent_id'        => FILTER_VALIDATE_INT,
-    'status'           => FILTER_SANITIZE_STRING,
-    'currency'         => FILTER_SANITIZE_STRING,
+    'status'           => FILTER_UNSAFE_RAW,
+    'currency'         => FILTER_UNSAFE_RAW,
     'date_created'     => array(
-        'data'          => FILTER_SANITIZE_STRING,
+        'data'          => FILTER_UNSAFE_RAW,
         'timezone_type' => FILTER_VALIDATE_INT,
-        'timezone'      => FILTER_SANITIZE_STRING,
+        'timezone'      => FILTER_UNSAFE_RAW,
     ),
     'date_modified'    => array(
-        'data'          => FILTER_SANITIZE_STRING,
+        'data'          => FILTER_UNSAFE_RAW,
         'timezone_type' => FILTER_VALIDATE_INT,
-        'timezone'      => FILTER_SANITIZE_STRING,
+        'timezone'      => FILTER_UNSAFE_RAW,
     ),
-    'discount_total'   => FILTER_SANITIZE_STRING,
-    'discount_tax'     => FILTER_SANITIZE_STRING,
+    'discount_total'   => FILTER_UNSAFE_RAW,
+    'discount_tax'     => FILTER_UNSAFE_RAW,
     'customer_id'      => FILTER_VALIDATE_INT,
     'billing'          => array(
-        'filter' => array(FILTER_SANITIZE_STRING),
+        'filter' => array(FILTER_UNSAFE_RAW),
         'flags'  => FILTER_FORCE_ARRAY,
     ),
-    'tax_code'         => FILTER_SANITIZE_STRING,
-    'vat_number'       => FILTER_SANITIZE_STRING,
-    'invoice_type'     => FILTER_SANITIZE_STRING,
-    'sdi_type'         => FILTER_SANITIZE_STRING,
-    'choice_type'      => FILTER_SANITIZE_STRING,
-    'shipping_total'   => FILTER_SANITIZE_STRING,
-    'shipping_tax'     => FILTER_SANITIZE_STRING,
-    'cart_tax'         => FILTER_SANITIZE_STRING,
-    'total'            => FILTER_SANITIZE_STRING,
-    'total_tax'        => FILTER_SANITIZE_STRING,
-    'amount'           => FILTER_SANITIZE_STRING,
-    'reason'           => FILTER_SANITIZE_STRING,
-    'refunded_by'      => FILTER_SANITIZE_STRING,
-    'refunded_payment' => FILTER_SANITIZE_STRING,
+    'tax_code'         => FILTER_UNSAFE_RAW,
+    'vat_number'       => FILTER_UNSAFE_RAW,
+    'invoice_type'     => FILTER_UNSAFE_RAW,
+    'sdi_type'         => FILTER_UNSAFE_RAW,
+    'choice_type'      => FILTER_UNSAFE_RAW,
+    'shipping_total'   => FILTER_UNSAFE_RAW,
+    'shipping_tax'     => FILTER_UNSAFE_RAW,
+    'cart_tax'         => FILTER_UNSAFE_RAW,
+    'total'            => FILTER_UNSAFE_RAW,
+    'total_tax'        => FILTER_UNSAFE_RAW,
+    'amount'           => FILTER_UNSAFE_RAW,
+    'reason'           => FILTER_UNSAFE_RAW,
+    'refunded_by'      => FILTER_UNSAFE_RAW,
+    'refunded_payment' => FILTER_UNSAFE_RAW,
     'items'            => array(
-        'filter' => array(FILTER_SANITIZE_STRING),
+        'filter' => array(FILTER_UNSAFE_RAW),
         'flags'  => FILTER_FORCE_ARRAY,
     ),
 );
 
 if (! empty($itemsRefundedDataTax)) {
     $args['items_tax'] = array(
-        'filter' => array(FILTER_SANITIZE_STRING),
+        'filter' => array(FILTER_UNSAFE_RAW),
+        'flags'  => FILTER_FORCE_ARRAY,
+    );
+}
+
+if (! empty($itemsRefundedDataShipping)) {
+    $args['items_shipping'] = array(
+        'filter' => array(FILTER_UNSAFE_RAW),
+        'flags'  => FILTER_FORCE_ARRAY,
+    );
+}
+
+if (! empty($itemsRefundedDataFee)) {
+    $args['items_fee'] = array(
+        'filter' => array(FILTER_UNSAFE_RAW),
         'flags'  => FILTER_FORCE_ARRAY,
     );
 }
@@ -150,26 +186,26 @@ if (isset($invoiceNumber) && '' !== $invoiceNumber) {
 }
 
 if (isset($invoiceSent) && '' !== $invoiceSent) {
-    $args['invoice_sent'] = FILTER_SANITIZE_STRING;
+    $args['invoice_sent'] = FILTER_UNSAFE_RAW;
 }
 
 if (! empty($refundedData)) {
     $args['refunded'] = array(
-        'filter' => array(FILTER_SANITIZE_STRING),
+        'filter' => array(FILTER_UNSAFE_RAW),
         'flags'  => FILTER_FORCE_ARRAY,
     );
 }
 
 if (! empty($refundedItem)) {
     $args['items_refunded'] = array(
-        'filter' => array(FILTER_SANITIZE_STRING),
+        'filter' => array(FILTER_UNSAFE_RAW),
         'flags'  => FILTER_FORCE_ARRAY,
     );
 }
 
 if (! empty($currentRefund)) {
     $args['current_refund_items'] = array(
-        'filter' => array(FILTER_SANITIZE_STRING),
+        'filter' => array(FILTER_UNSAFE_RAW),
         'flags'  => FILTER_FORCE_ARRAY,
     );
 }

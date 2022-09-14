@@ -27,6 +27,10 @@ svg.ok {
   height:              24px;
 }
 
+#toplevel_page_wc_el_inv-options-page ul.wp-submenu li.wp-first-item {
+  display: none !important;
+}
+
 #wp-admin-bar-wc_el_inv_options.active > a.ab-item,
 #wp-admin-bar-wc_el_inv_options.active {
   background: #46b450 !important;
@@ -39,18 +43,189 @@ svg.ok {
   color:      #fff !important;
 }
 
+/* admin pages */
+body.toplevel_page_wc_el_inv-options-page {
+  background: #fff !important;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .button#save_invoice_next_number,
+body.toplevel_page_wc_el_inv-options-page form .button#submit,
+body.toplevel_page_wc_el_inv-options-page form .filter-line .button,
+body.toplevel_page_wc_el_inv-options-page form .filter-line .button-primary,
+body.toplevel_page_wc_el_inv-options-page form .filter-line .button-secondary,
+body.toplevel_page_wc_el_inv-options-page form .form-table .button,
+body.toplevel_page_wc_el_inv-options-page form .form-table .button-primary,
+body.toplevel_page_wc_el_inv-options-page form .form-table .button-secondary,
+body.toplevel_page_wc_el_inv-options-page form .utility .button,
+body.toplevel_page_wc_el_inv-options-page form .utility .button-primary,
+body.toplevel_page_wc_el_inv-options-page form .utility .button-secondary {
+  height:         40px;
+  line-height:    37px;
+  font-size:      1rem;
+  text-transform: uppercase;
+  border:         1px solid #007cba;
+  transition:     all 350ms ease-in-out;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .button#save_invoice_next_number {
+  background: #fff;
+}
+
+.toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions .button {
+  transition: all 350ms ease-in-out;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .button.button-primary,
+body.toplevel_page_wc_el_inv-options-page form .button-primary {
+  background: #007cba;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .button.button-secondary,
+body.toplevel_page_wc_el_inv-options-page form .button-secondary {
+  background: #fff;
+  border:     1px solid #007cba;
+  color:      #007cba;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .button#save_invoice_next_number:hover,
+body.toplevel_page_wc_el_inv-options-page form .button.button-secondary:hover {
+  background: #007cba;
+  border:     1px solid #007cba;
+  color:      #fff;
+  box-shadow: 0 2px 0 #023e5d;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .button#submit:hover,
+body.toplevel_page_wc_el_inv-options-page form .button-primary:hover {
+  background: #fff;
+  border:     1px solid #007cba;
+  color:      #007cba;
+  box-shadow: 0 2px 0 #023e5d;
+}
+
+.wc_el_inv__general-order input[type="text"],
+.wc_el_inv__general-order input[type="number"],
+.wc_el_inv__general-order input[type="date"],
+.wc_el_inv__general-order input[type="url"],
+.wc_el_inv__general-order input[type="search"],
+.wc_el_inv__general-order select,
+.wc_el_inv__general-order textarea,
+.wc_el_inv__refund-invoice input[type="text"],
+.wc_el_inv__refund-invoice input[type="number"],
+.wc_el_inv__refund-invoice input[type="date"],
+.wc_el_inv__refund-invoice input[type="url"],
+.wc_el_inv__refund-invoice input[type="search"],
+.wc_el_inv__refund-invoice select,
+.wc_el_inv__refund-invoice textarea,
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="text"],
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="date"],
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="url"],
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="search"],
+body.toplevel_page_wc_el_inv-options-page form .form-table select,
+body.toplevel_page_wc_el_inv-options-page form .form-table textarea,
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="text"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="date"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="url"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="search"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line select,
+body.toplevel_page_wc_el_inv-options-page form .filter-line textarea,
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="text"],
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="date"],
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="url"],
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="search"],
+body.toplevel_page_wc_el_inv-options-page form .utility select,
+body.toplevel_page_wc_el_inv-options-page form .utility textarea,
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="text"],
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="date"],
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="url"],
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="search"],
+body.toplevel_page_wc_el_inv-options-page form .addon select,
+body.toplevel_page_wc_el_inv-options-page form .addon textarea {
+  background:    #fff;
+  border:        1px solid #007cba;
+  border-radius: 0;
+  height:        38px;
+  width:         100%;
+  max-width:     350px;
+}
+
+.wc_el_inv__general-order input[type="number"],
+.wc_el_inv__general-order select,
+.wc_el_inv__refund-invoice input[type="number"],
+.wc_el_inv__refund-invoice select,
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .form-table select,
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line select,
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .addon select,
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="number"],
+body.toplevel_page_wc_el_inv-options-page form .utility select {
+  appearance: auto;
+}
+
+body.toplevel_page_wc_el_inv-options-page form .form-table textarea,
+body.toplevel_page_wc_el_inv-options-page form .filter-line textarea,
+body.toplevel_page_wc_el_inv-options-page form .addon textarea,
+body.toplevel_page_wc_el_inv-options-page form .utility textarea {
+  max-width: 500px !important;
+}
+
+.wc_el_inv__general-order input[type="checkbox"],
+.wc_el_inv__refund-invoice input[type="checkbox"],
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="checkbox"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="checkbox"],
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="checkbox"],
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="checkbox"] {
+  background:    #fff;
+  border:        1px solid #007cba;
+  border-radius: 0;
+}
+
+.doc-type-wrap input[type="radio"],
+.wc_el_inv__refund-invoice input[type="radio"],
+.wc_el_inv__general-order input[type="radio"],
+body.toplevel_page_wc_el_inv-options-page form .form-table input[type="radio"],
+body.toplevel_page_wc_el_inv-options-page form .filter-line input[type="radio"],
+body.toplevel_page_wc_el_inv-options-page form .addon input[type="radio"],
+body.toplevel_page_wc_el_inv-options-page form .utility input[type="radio"] {
+  background: #fff;
+  border:     1px solid #007cba;
+}
+
 /* Settings Tabs */
-.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header h2 {
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header .title {
+  display:     flex !important;
+  align-items: center !important;
   line-height: 0.8;
 }
 
-.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header h2 .version {
-  font-size: 12px;
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header .title .version {
+  font-size:      1rem;
+  padding:        0.5rem;
+  display:        inline-block;
+  background:     #46b450;
+  color:          #fff;
+  font-weight:    700;
+  margin-top:     0.4em;
+  vertical-align: text-bottom;
+}
+
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper form .wc_el_inv__header .php_version {
+  background:  #007cba;
+  color:       #fff;
+  padding:     0.5rem;
+  font-weight: 700;
+  font-size:   0.9rem;
 }
 
 .toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs {
   display:        flex;
-  border-bottom:  1px solid #ccc;
+  border-bottom:  1px solid #007cba;
   margin:         1.5em 0 1em;
   padding-top:    9px;
   padding-bottom: 0;
@@ -61,27 +236,34 @@ svg.ok {
   margin: 0;
 }
 
-.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a {
-  border:              1px solid #ccc;
-  border-bottom-color: rgb(204, 204, 204);
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  border-bottom:       none;
-  margin-left:         0.5em;
-  padding:             5px 12px;
-  font-size:           14px;
-  line-height:         24px;
-  font-weight:         600;
-  background:          #e5e5e5;
-  color:               #555;
-  text-decoration:     none;
-  white-space:         nowrap;
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a .dashicons {
+  font-size:    16px;
+  line-height:  25px;
+  margin-right: 4px;
 }
 
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a {
+  transition:      all 350ms ease-in-out;
+  display:         block;
+  border:          1px solid #007cba;
+  border-bottom:   none;
+  margin-left:     0.5em;
+  padding:         5px 12px;
+  font-size:       14px;
+  line-height:     24px;
+  font-weight:     600;
+  background:      #fff;
+  color:           #007cba;
+  text-decoration: none;
+  white-space:     nowrap;
+  margin-bottom:   -1px;
+}
+
+.toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a:hover,
 .toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs .wc_el_inv__tabs--item a.active {
-  border-bottom: 1px solid #f1f1f1;
-  background:    #f1f1f1;
-  color:         #000;
+  border-bottom: 1px solid #007cba;
+  background:    #007cba;
+  color:         #fff;
 }
 
 /* WooCommerce Tabs */
@@ -205,6 +387,16 @@ svg.ok {
   color: #dc3232;
 }
 
+.notice-info .dashicons,
+.wc_el_inv-form .notice-info .dashicons {
+  color: #00a0d2;
+}
+
+.notice-warning .dashicons,
+.wc_el_inv-form .notice-warning .dashicons {
+  color: #ffb900;
+}
+
 .notice-success .dashicons,
 .wc_el_inv-form .notice-success .dashicons {
   color: #46b450;
@@ -248,16 +440,25 @@ svg.ok {
   width:          70%;
   float:          left;
   border-top:     1px solid #ccc;
-  padding-top:    1rem;
+  padding-top:    0.5rem;
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .summary-data {
   background:  #fff;
   border:      1px solid #ccc;
   padding:     1.8%;
-  width:       21%;
-  float:       left;
-  margin-left: 5.2%;
+  width:       20%;
+  float:       right;
+  margin-left: 5%;
+}
+
+.toplevel_page_wc_el_inv-options-page .wrap .summary-data .last-download {
+  display:         inline-block;
+  padding:         3px 6px;
+  background:      #85c95b;
+  color:           #fff;
+  border-radius:   3px;
+  text-decoration: none;
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .summary-data h3 {
@@ -273,7 +474,12 @@ svg.ok {
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line label {
-  font-weight: 700;
+  font-weight:  700;
+  margin-right: 15px;
+}
+
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label small {
+  font-weight: 400;
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line select {
@@ -285,6 +491,7 @@ svg.ok {
   border-bottom:  1px solid #ccc;
   padding-bottom: 1rem;
   width:          100%;
+  margin-top:     0.8em;
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions span {
@@ -294,12 +501,8 @@ svg.ok {
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions span.actions-button a.filter {
-  padding:      0 10px 1px 5px;
+  padding:      0 10px;
   margin-right: 20px;
-}
-
-.toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions input {
-  height: 28px;
 }
 
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions .bulk-actions-label {
@@ -309,22 +512,34 @@ svg.ok {
 
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions a {
   margin-left: 2px;
-  padding:     0 5px 1px;
-  line-height: 25px;
-  height:      25px;
   display:     inline-table;
 }
 
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .search label input#wc_el_inv_order_search {
+  margin-right: 8px;
+}
+
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label#wc_el_inv_order_search_label a span.dashicons,
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line .bulk-actions a span.dashicons {
   vertical-align: middle;
   font-size:      1rem;
   margin:         0;
 }
 
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label#wc_el_inv_order_search_label a.wc_el_inv_order_search_trigger {
+  font-weight: 400;
+}
+
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line label,
 .toplevel_page_wc_el_inv-options-page .wrap .filter-line label select {
   display:   inline-block;
   max-width: 120px;
+  width:     100%;
+}
+
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line .search,
+.toplevel_page_wc_el_inv-options-page .wrap .filter-line label#wc_el_inv_order_search_label {
+  max-width: 470px;
   width:     100%;
 }
 
@@ -358,14 +573,15 @@ svg.ok {
   width: 160px;
 }
 
-.toplevel_page_wc_el_inv-options-page .wp-list-table .column-id {
+/* Only xml table*/
+.toplevel_page_wc_el_inv-options-page .current-setting_section_xml .wp-list-table .column-id {
   width: 15%;
 }
 
 .toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions {
   width:      18%;
   text-align: right;
-  background: #e6e6e6;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions a {
@@ -427,7 +643,7 @@ svg.ok {
 #edit_invoice_next_number {
   display:         inline-block;
   text-decoration: none;
-  color:           #666;
+  color:           #007cba;
 }
 
 #save_invoice_next_number {
@@ -550,11 +766,7 @@ svg.ok {
 }
 
 /* Option page */
-label[for="wc_el_inv-settings-invoice_disable_cf"],
-label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] {
-  color: #b73312 !important;
-}
-
+label[for="wc_el_inv-settings-invoice_active_js_cf_check"] + br + small,
 label[for="wc_el_inv-settings-invoice_disable_cf"] + br + small,
 label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   color:       #b73312 !important;
@@ -564,6 +776,7 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
 /* button color */
 .mark_as_sent,
 .button-save {
+  transition:      all 350ms ease-in-out;
   background:      #87ca5f !important;
   border-color:    #5ea136 #71ba3c #71ba3c !important;
   box-shadow:      0 1px 0 #71ba3c !important;
@@ -572,7 +785,27 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   text-shadow:     0 -1px 1px #71ba3c, 1px 0 1px #71ba3c, 0 1px 1px #71ba3c, -1px 0 1px #71ba3c !important;
 }
 
+.button-save:hover,
+.mark_as_sent:hover {
+  box-shadow: 0 2px 0 #3e7714 !important;
+}
+
+.button-csv {
+  transition:      all 350ms ease-in-out;
+  background:      #d28937 !important;
+  border-color:    #a56231 #d28937 #a56231 !important;
+  box-shadow:      0 1px 0 #d28937 !important;
+  color:           #fff !important;
+  text-decoration: none !important;
+  text-shadow:     0 -1px 1px #d28937, 1px 0 1px #d28937, 0 1px 1px #d28937, -1px 0 1px #d28937 !important;
+}
+
+.button-csv:hover {
+  box-shadow: 0 2px 0 #794b17 !important;
+}
+
 .button-pdf {
+  transition:      all 350ms ease-in-out;
   background:      #b73312 !important;
   border-color:    #ca3a14 #bb3112 #bb3112 !important;
   box-shadow:      0 1px 0 #bb3112 !important;
@@ -581,7 +814,12 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   text-shadow:     0 -1px 1px #bb3112, 1px 0 1px #bb3112, 0 1px 1px #bb3112, -1px 0 1px #bb3112 !important;
 }
 
+.button-pdf:hover {
+  box-shadow: 0 2px 0 #831f09 !important;
+}
+
 .mark_undo {
+  transition:      all 350ms ease-in-out;
   background:      #e2c03e !important;
   border-color:    #ccab39 #e1bf3b #e1bf3b !important;
   box-shadow:      0 1px 0 #a08428 !important;
@@ -590,7 +828,15 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   text-shadow:     0 -1px 1px #f1cf3d, 1px 0 1px #f1cf3d, 0 1px 1px #f1cf3d, -1px 0 1px #f1cf3d !important;
 }
 
+.mark_undo:hover {
+  box-shadow: 0 2px 0 #705a12 !important;
+}
+
 /* Order data */
+.order_data_column_container .order_data_column p.hide {
+  display: none;
+}
+
 .order_data_column_container .order_data_column #_billing_sdi_type,
 .order_data_column_container .order_data_column #_billing_tax_code {
   text-transform: uppercase !important;
@@ -606,6 +852,274 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   color:       red;
 }
 
+/* renumber */
+.utility_renumber_wrap_field {
+  display:        flex;
+  flex-direction: row;
+  flex-wrap:      wrap;
+  align-items:    end;
+}
+
+.utility_renumber_wrap_field #renumber_invoice_submit,
+.utility_renumber_wrap_field .renumber_field {
+  margin-bottom: 13px !important;
+  margin-right:  13px !important;
+}
+
+.utility_renumber_wrap_field .renumber_field label {
+  display:        flex;
+  flex-direction: column;
+}
+
+/* product fields */
+#woocommerce-product-data ul.wc-tabs li.wc_el_inv-product_options a::before {
+  display: none;
+}
+
+#woocommerce-product-data ul.wc-tabs li.wc_el_inv-product_options a {
+  background: #0085ba;
+  color:      #fff;
+}
+
+#woocommerce-product-data ul.wc-tabs li.wc_el_inv-product_options:hover a,
+#woocommerce-product-data ul.wc-tabs li.wc_el_inv-product_options.active a {
+  background: #008ec2;
+}
+
+#woocommerce-product-data ul.wc-tabs li.wc_el_inv-product_options a span {
+  display:        inline-block;
+  vertical-align: middle;
+}
+
+#woocommerce-product-data ul.wc-tabs li.wc_el_inv-product_options a::after {
+  background:      url('../images/invoice.svg') no-repeat center center;
+  background-size: 100%;
+  content:         '';
+  display:         inline-block;
+  position:        relative;
+  width:           22px;
+  height:          22px;
+  vertical-align:  middle;
+  float:           left;
+}
+
+#wpbody-content .inline-edit-row fieldset.inline-edit-reverse_charge {
+  overflow: hidden;
+}
+
+#wpbody-content .inline-edit-row fieldset .inline-edit-col.column-edit-reverse_charge .label-edit-reverse_charge {
+  width:      100%;
+  background: #ddd;
+  padding:    4px 8px;
+}
+
+#wpbody-content .inline-edit-row fieldset .inline-edit-col.column-edit-reverse_charge {
+  padding: 0;
+}
+
+#wpbody-content .inline-edit-row fieldset .inline-edit-col.column-edit-reverse_charge h4 {
+  margin:     0;
+  background: #0085ba;
+  color:      #fff;
+  padding:    4px 8px;
+}
+
+#reverse_charge-product-data .panel_title {
+  padding:    0.7rem;
+  background: #0085ba;
+  color:      #fff;
+  margin:     0;
+}
+
+.wp-list-table #reverse_charge {
+  width: 25px;
+}
+
+.wp-list-table #reverse_charge .wc-reverse_charge {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           100%;
+  text-align:      center;
+  margin:          0 auto;
+}
+
+.wp-list-table #the-list .column-reverse_charge {
+  display:    block;
+  text-align: center;
+}
+
+.wp-list-table #the-list .column-reverse_charge img {
+  width: 20px;
+}
+
+.wp-list-table #reverse_charge .wc-reverse_charge img {
+  width:  12px;
+  filter: invert(0) saturate(0) brightness(0);
+}
+
+#store_invoice_transmitter-description + table.form-table,
+#store_invoice-description + table.form-table,
+#reverse_charge_invoice-description + table.form-table {
+  max-width:  760px;
+  background: #fff;
+}
+
+#store_invoice_transmitter-description p,
+#store_invoice-description p,
+#reverse_charge_invoice-description p {
+  margin: 0;
+}
+
+#store_invoice_transmitter-description,
+#store_invoice-description,
+#reverse_charge_invoice-description,
+#reverse_charge_invoice_info-description,
+#reverse_charge_invoice_info-description + table.form-table {
+  max-width:  728px;
+  background: #fff;
+}
+
+#store_invoice_transmitter-description,
+#store_invoice-description,
+#reverse_charge_invoice-description,
+#reverse_charge_invoice_info-description {
+  padding: 1rem;
+}
+
+.store_invoice_transmitter_title,
+.store_invoice_title,
+.reverse_charge_invoice_title,
+.reverse_charge_info_trigger {
+  max-width:        728px;
+  background-color: #007cba;
+  color:            #fff;
+  margin:           0;
+  padding:          1rem;
+}
+
+.reverse_charge_info_trigger span.dashicons {
+  transition:  transform 400ms ease-in-out;
+  margin-left: 0.3em;
+}
+
+.reverse_charge_info_trigger.open span.dashicons {
+  transition: transform 400ms ease-in-out;
+  transform:  rotate(90deg);
+}
+
+#store_invoice_transmitter-description + table.form-table th,
+#store_invoice-description + table.form-table th,
+#reverse_charge_invoice-description + table.form-table th {
+  padding: 1.2rem 1rem;
+}
+
+#reverse_charge_invoice-description + table.form-table tr:nth-child(2),
+#reverse_charge_invoice-description + table.form-table tr:nth-child(4),
+#reverse_charge_invoice-description + table.form-table tr:nth-child(8),
+#reverse_charge_invoice-description + table.form-table tr:nth-child(10) {
+  border-bottom: 1px solid #ccc;
+}
+
+#reverse_charge_invoice_info-description {
+  display: none;
+}
+
+.reverse_charge_info_trigger {
+  cursor: pointer;
+}
+
+.mark_bulk_trigger.disabled,
+.last-download.disabled,
+.action-endpoint:disabled,
+.action-endpoint[disabled="disabled"],
+.action-endpoint.disabled {
+  pointer-events: unset !important;
+  opacity:        0.5;
+  cursor:         not-allowed !important;
+}
+
+/* banner premium */
+.banner-premium {
+  background:     #fff;
+  margin:         10px 20px 0 2px;
+  display:        flex;
+  flex-direction: row;
+  align-content:  center;
+  align-items:    center;
+  border:         2px dashed #f59325;
+  font-size:      90%;
+}
+
+.banner-premium h1 {
+  color:       #21485c;
+  line-height: 1.1;
+}
+
+.banner-premium h1 span {
+  color: #f59325;
+}
+
+.banner-premium .banner-logo {
+  padding:    1.5rem 0.5rem;
+  text-align: center;
+}
+
+.banner-premium .banner-logo img {
+  max-width: 90%;
+}
+
+.banner-premium .banner-text {
+  background: #fff;
+  padding:    0 10px;
+}
+
+.banner-premium ul.banner-premium--list {
+  line-height: 1.1 !important;
+}
+
+.banner-premium .button {
+  background:   #f59325;
+  border-color: #f59325;
+  color:        #fff;
+}
+
+.wc_el_inv__description--general {
+  padding:    10px;
+  background: #e5fbfb;
+  border:     1px solid #007cba;
+}
+
+.wc_el_inv__description--general .dashicons {
+  color: #007cba;
+}
+
+.wc_el_inv__description--general ol {
+  margin:              0;
+  list-style-position: inside;
+}
+
+.wc_el_inv__description--general ol li .dashicons-yes-alt {
+  color:       #46b450 !important;
+  font-size:   16px;
+  line-height: 1.4;
+}
+
+.wc_el_inv__description--general ol li .dashicons-dismiss {
+  color:       #dc3232 !important;
+  font-size:   16px;
+  line-height: 1.4;
+}
+
+@media screen and (max-width: 768px ) {
+  .banner-premium {
+    flex-direction: column;
+  }
+
+  .banner-premium::after {
+    display: none !important;
+  }
+}
 
 /* Media query */
 @media screen and (min-width: 782px ) and (max-width: 1180px) {
@@ -670,10 +1184,34 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   }
 }
 
+@media screen and (max-width: 900px ) {
+  .utility_renumber_wrap_field {
+    flex-direction: column;
+    align-items:    flex-start;
+  }
+}
+
 @media screen and (max-width: 782px ) {
 
-  .toplevel_page_wc_el_inv-options-page .wp-list-table .column-id {
-    width: 100%;
+  .wp-list-table #the-list .column-reverse_charge,
+  .toplevel_page_wc_el_inv-options-page .wp-list-table tr th.check-column {
+    display: none;
+  }
+
+  .toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions a {
+    line-height: 35px;
+  }
+
+  .toplevel_page_wc_el_inv-options-page .current-setting_section_xml .wp-list-table .column-cb {
+    width: 100% !important;
+  }
+
+  .toplevel_page_wc_el_inv-options-page .current-setting_section_xml .wp-list-table thead tr th.column-id {
+    display: none;
+  }
+
+  .toplevel_page_wc_el_inv-options-page .wp-list-table #the-list tr:not(.is-expanded) .column-reverse_charge {
+    display: none;
   }
 
   .toplevel_page_wc_el_inv-options-page .wp-list-table .column-actions {
@@ -692,8 +1230,8 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   }
 
   .toplevel_page_wc_el_inv-options-page .wc_el_inv-wrapper .wc_el_inv__tabs li a {
-    border: 1px solid #ccc !important;
-    margin: 2px;
+    border: 1px solid #007cba !important;
+    margin: 5px;
   }
 }
 
@@ -712,56 +1250,4 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
   .wc_el_inv__actions .wc_el_inv__actions--view {
     float: left;
   }
-}
-
-/* banner premium */
-.banner-premium {
-  background:     #fff;
-  margin:         10px 20px 0 2px;
-  display:        flex;
-  flex-direction: row;
-  align-content:  center;
-  align-items:    center;
-  border:         2px dashed #f59325;
-  font-size:      90%;
-  overflow:       hidden;
-  position:       relative;
-  z-index:        10;
-}
-.banner-premium::after {
-  background: #fff url("../images/img-banner.jpg") no-repeat scroll center 30px;
-  content:    "";
-  position:   absolute;
-  width:      460px;
-  display:    block;
-  right:      0;
-  height:     251px;
-  z-index:    -1;
-}
-.banner-premium h1 {
-  color:       #21485c;
-  line-height: 1.1;
-}
-.banner-premium h1 span {
-  color: #f59325;
-}
-.banner-premium .banner-logo {
-  padding:    1.5rem 0.5rem;
-  text-align: center;
-}
-.banner-premium .banner-logo img {
-  max-width: 90%;
-}
-.banner-premium .banner-text {
-  background: #fff;
-  padding:    0 10px;
-}
-
-.banner-premium ul.banner-premium--list {
-  line-height: 1.1 !important;
-}
-.banner-premium .button {
-  background:   #f59325;
-  border-color: #f59325;
-  color:        #fff;
 }

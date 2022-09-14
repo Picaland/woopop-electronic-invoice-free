@@ -1,3 +1,52 @@
+== 3.0.3 - 14/09/2022 ==
+Add: support for WooCommerce 6.9.x
+Add: information and controls for the main options to configure
+
+== 3.0.2 - 24/07/2022 ==
+Fix: create xml query bug
+Add: support for WooCommerce 6.7.x
+
+== 3.0.1 - 15/07/2022 ==
+Fix: create pdf
+Fix: create pdf generate limit
+
+== 3.0.0 - 24/06/2022 ==
+Add: support for WordPress 6.0.x
+Add: support for WooCommerce 6.6.x
+Add: Download of XML invoices for the last 5 orders
+Fix: various style fix
+
+== 2.0.4 - 25/05/2022 ==
+Fix: list order XmlOrderListTable (unset order) if Invoice order not sent and order total is equal total refunded or order total is zero
+Add: support payment_method soisy
+Add: payment method info in the invoice table
+
+== 2.0.3 - 24/05/2022 ==
+Fix: filter_var support for PHP >= 8.1
+
+== 2.0.2 - 22/05/2022 ==
+Fix: optimization code
+Fix: filterInput filter for PHP >= 8.1
+
+== 2.0.1 - 21/05/2022 ==
+Fix: Error due to missing file vendor
+
+== 2.0.0 - 20/05/2022 ==
+Dev: autoload psr-4
+Update: admin style
+Add: support for WooCommerce 6.5.x
+Add: support for WordPress 5.9.x
+Add: Dompdf for create pdf file and remove Mpdf library.
+
+== 1.3.3 - 17/11/2021 ==
+Fix: minor fix.
+Add: support for WooCommerce 5.9.x
+Add: support for WordPress 5.8.x
+
+== 1.3.2 - 01/09/2021 ==
+Add: support for WooCommerce 5.6.x
+Add: support for WordPress 5.8.x
+
 == 1.3.1 - 12/05/2021 ==
 Fix: minor fix and update description.
 

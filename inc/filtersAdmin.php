@@ -36,9 +36,15 @@ $resources         = new \WcElectronInvoiceFree\Resources();
 $optionPage        = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 $invoiceFields     = new \WcElectronInvoiceFree\WooCommerce\Fields\InvoiceFields($billingFields, $optionPage);
 $generalShopFields = new \WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields($generalFields);
-$pdf               = new \WcElectronInvoiceFree\Pdf\CreatePdf(new \Mpdf\Mpdf());
-
-return apply_filters('wc_el_inv-filters_admin', array(
+//
+//  array(
+//      'filter'        => ''
+//      'callback'      => ''
+//      'priority'      => ''
+//      'accepted_args' => ''
+//  )
+//
+$filtersAdmin = array(
     'admin' => array(
         'action' => array(
             /**
@@ -49,17 +55,12 @@ return apply_filters('wc_el_inv-filters_admin', array(
              */
             array(
                 'filter'   => 'admin_menu',
-                'callback' => array($optionsPage, 'addPluginPage'),
+                'callback' => array($optionPage, 'addPluginPage'),
                 'priority' => 10,
             ),
             array(
                 'filter'   => 'admin_init',
-                'callback' => array($optionsPage, 'pageOptionsInit'),
-                'priority' => 10,
-            ),
-            array(
-                'filter'   => 'admin_init',
-                'callback' => array($generalShopFields, 'wcGeneralRedirect'),
+                'callback' => array($optionPage, 'pageOptionsInit'),
                 'priority' => 10,
             ),
 
@@ -120,10 +121,28 @@ return apply_filters('wc_el_inv-filters_admin', array(
                 'callback' => array($invoiceFields, 'saveRefundMetaBox'),
                 'priority' => 20,
             ),
+
+            /**
+             * Cache Object @since 1.0.0
+             */
             array(
-                'filter'   => 'phpmailer_init',
-                'callback' => array($pdf, 'removeSentInvoice'),
-                'priority' => 10,
+                'filter'   => array(
+                    'save_post_shop_order',
+                    'before_delete_post',
+                ),
+                'callback' => function ($postID) {
+                    $cacher = new \WcElectronInvoiceFree\Cache\CacheTransient();
+                    $type   = get_post_type($postID);
+                    switch ($type) {
+                        case 'shop_order':
+                            $cacher->delete('shop_order');
+                            $cacher->delete("shop_order-{$postID}");
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                'priority' => 20,
             ),
 
             /**
@@ -173,7 +192,6 @@ return apply_filters('wc_el_inv-filters_admin', array(
              * - general setting invoice fields   @since 1.0.0
              * - general setting invoice sanitize @since 1.0.0
              * - wc general notice                @since 1.0.0
-             * - wc mail completed attachments    @since 1.0.0
              */
             array(
                 'filter'   => 'woocommerce_customer_meta_fields',
@@ -207,12 +225,8 @@ return apply_filters('wc_el_inv-filters_admin', array(
                 'callback' => array($generalShopFields, 'notice'),
                 'priority' => 20,
             ),
-            array(
-                'filter'        => 'woocommerce_email_attachments',
-                'callback'      => array($pdf, 'attachmentsPdfToEmail'),
-                'priority'      => 99,
-                'accepted_args' => 3,
-            ),
         ),
     ),
-));
+);
+
+return apply_filters('wc_el_inv-filters_admin', $filtersAdmin);

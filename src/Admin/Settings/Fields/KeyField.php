@@ -52,15 +52,6 @@ final class KeyField extends Text
     public static $keyArgs;
 
     /**
-     * Key option
-     *
-     * @since 1.0.0
-     *
-     * @var
-     */
-    private static $keyOptions;
-
-    /**
      * KeyField constructor.
      *
      * @since 1.0.0
@@ -72,32 +63,7 @@ final class KeyField extends Text
     public function __construct($args, OptionFields $fields, OptionPage $page)
     {
         self::$keyArgs    = $args;
-        self::$keyOptions = $fields;
 
         parent::__construct($args, $fields, $page);
-    }
-
-    /**
-     * Secret Key
-     *
-     * @since 1.0.0
-     */
-    public static function secretKey()
-    {
-        $output       = '';
-        $secretApiKey = get_option('wc_el_inv-secret-api-key');
-
-        if ($secretApiKey &&
-            isset(self::$keyOptions->options['wc_el_inv-settings-key']) &&
-            '' !== self::$keyOptions->options['wc_el_inv-settings-key']
-        ) {
-            $value = $secretApiKey;
-        } else {
-            $value = esc_html__('No key');
-        }
-
-        $output .= sprintf('<code>%s</code>', $value);
-
-        echo $output;
     }
 }

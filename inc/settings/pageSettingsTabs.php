@@ -28,36 +28,43 @@
 if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
-
-return apply_filters('wc_el_inv-page_settings_tab', array(
+$tabs = array(
+    // General tab.
+    'general'     => array(
+        'header'     => array(
+            '<i class="dashicons dashicons-admin-settings"></i>',
+            esc_html__('General', WC_EL_INV_FREE_TEXTDOMAIN),
+        ),
+        'section_id' => 'setting_section_general',
+        'submit'     => false,
+    ),
     // WooCommerce Integration.
-    'wc-checkout'     => array(
-        'header'     => esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
+    'wc-checkout' => array(
+        'header'     => array(
+            '<i class="dashicons dashicons-admin-plugins"></i>',
+            esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
+        ),
         'section_id' => 'setting_section_wc-checkout',
         'submit'     => true,
     ),
     // Invoice.
     'invoice'     => array(
-        'header'     => esc_html__('Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+        'header'     => array(
+            '<i class="dashicons dashicons-media-text"></i>',
+            esc_html__('Invoice options', WC_EL_INV_FREE_TEXTDOMAIN),
+        ),
         'section_id' => 'setting_section_invoice',
         'submit'     => true,
     ),
-    // Json tab.
-    'json-order'            => array(
-        'header'     => esc_html__('Json Order', WC_EL_INV_FREE_TEXTDOMAIN),
-        'section_id' => 'setting_section_json_order',
-        'submit'     => false,
-    ),
-    // Json tab.
-    'json-product'            => array(
-        'header'     => esc_html__('Json Product', WC_EL_INV_FREE_TEXTDOMAIN),
-        'section_id' => 'setting_section_json_product',
-        'submit'     => false,
-    ),
     // Xml tab.
-    'xml'             => array(
-        'header'     => esc_html__('Xml Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+    'xml'         => array(
+        'header'     => array(
+            '<i class="dashicons dashicons-media-code"></i>',
+            esc_html__('Invoices', WC_EL_INV_FREE_TEXTDOMAIN),
+        ),
         'section_id' => 'setting_section_xml',
         'submit'     => false,
     ),
-));
+);
+
+return apply_filters('wc_el_inv-page_settings_tab', $tabs);

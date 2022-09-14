@@ -153,7 +153,7 @@ class TextArea extends Text
          * @since 1.0.0
          *
          * @param string $output The output of the input type.
-         * @param KeyField The instance class
+         * @param TextArea The instance class
          */
         $output = apply_filters('wc_el_inv-input_textarea_output', $output, $this);
 

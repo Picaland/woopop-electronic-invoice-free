@@ -40,6 +40,34 @@ if (! defined('ABSPATH')) {
 final class Resources
 {
     /**
+     * Get file
+     *
+     * @since 1.0.0
+     *
+     * @param $args
+     * @param $ext
+     *
+     * @return string
+     */
+    private function getFile($args, $ext)
+    {
+        $pathInfo  = pathinfo($args['file']);
+        $extension = isset($pathInfo['extension']) ? $pathInfo['extension'] : $ext;
+
+        if('dev' === WC_EL_INV_ENV) {
+            return $args['file'];
+        }
+
+        if (file_exists(Plugin::getPluginDirPath("/assets/{$ext}") . '/' . $pathInfo['filename'] . '.min.' . $extension)) {
+            $file = Plugin::getPluginDirUrl("/assets/{$ext}") . '/' . $pathInfo['filename'] . '.min.' . $pathInfo['extension'];
+        } else {
+            $file = $args['file'];
+        }
+
+        return $file;
+    }
+
+    /**
      * Register
      *
      * @since 1.0.0
@@ -55,7 +83,7 @@ final class Resources
                 if (isset($style['register']) && true === $style['register']) {
                     wp_register_style(
                         $style['handle'],
-                        $style['file'],
+                        $this->getFile($style, 'css'),
                         $style['deps'],
                         $style['ver'],
                         $style['media']
@@ -73,7 +101,7 @@ final class Resources
                 if (isset($script['register']) && true === $script['register']) {
                     wp_register_script(
                         $script['handle'],
-                        $script['file'],
+                        $this->getFile($script, 'js'),
                         $script['deps'],
                         $script['ver'],
                         $script['in_footer']
@@ -98,7 +126,7 @@ final class Resources
                 if (isset($style['enqueue']) && true === $style['enqueue']) {
                     wp_enqueue_style(
                         $style['handle'],
-                        $style['file'],
+                        $this->getFile($style, 'css'),
                         $style['deps'],
                         $style['ver'],
                         $style['media']
@@ -106,7 +134,7 @@ final class Resources
                 } elseif (! isset($style['enqueue']) && ! isset($style['register'])) {
                     wp_enqueue_style(
                         $style['handle'],
-                        $style['file'],
+                        $this->getFile($style, 'css'),
                         $style['deps'],
                         $style['ver'],
                         $style['media']
@@ -123,7 +151,7 @@ final class Resources
                 if (isset($script['enqueue']) && true === $script['enqueue']) {
                     wp_enqueue_script(
                         $script['handle'],
-                        $script['file'],
+                        $this->getFile($script, 'js'),
                         $script['deps'],
                         $script['ver'],
                         $script['in_footer']
@@ -131,7 +159,7 @@ final class Resources
                 } elseif (! isset($script['enqueue']) && ! isset($script['register'])) {
                     wp_enqueue_script(
                         $script['handle'],
-                        $script['file'],
+                        $this->getFile($script, 'js'),
                         $script['deps'],
                         $script['ver'],
                         $script['in_footer']

@@ -64,8 +64,6 @@ final class Text implements Sanitize
      *
      * @since 1.0.0
      *
-     * @param $input
-     *
      * @return string The string sanitized
      * @throws \Exception
      */
