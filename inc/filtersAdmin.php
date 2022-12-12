@@ -86,11 +86,11 @@ $filtersAdmin = array(
                 'callback' => 'WcElectronInvoiceFree\\Functions\\setInvoiceNumberOnOrderRefund',
                 'priority' => 20,
             ),
-            array(
-                'filter'   => 'init',
-                'callback' => 'WcElectronInvoiceFree\\Functions\\setInitInvoiceNumber',
-                'priority' => 20,
-            ),
+//            array(
+//                'filter'   => 'init',
+//                'callback' => 'WcElectronInvoiceFree\\Functions\\setInitInvoiceNumber',
+//                'priority' => 20,
+//            ),
             array(
                 'filter'   => 'woocommerce_admin_order_data_after_billing_address',
                 'callback' => array($invoiceFields, 'viewBillingFieldsFilter'),

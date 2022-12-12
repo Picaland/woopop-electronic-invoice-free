@@ -55,23 +55,35 @@ class Helpers
             }
         }
 
+        // Initialized tag
+        $tag   = '';
+        $idTag = '';
+
+        // Anomaly - 404 set fallback params
+        if (isset($wpQuery->query['error']) && 404 === (int)$wpQuery->query['error']) {
+            $wpQuery->set('wc-elc-inv', 'yes');
+            $wpQuery->set('post_type', 'shop_order');
+            $buildClass->postType = 'shop_order';
+            $tag = 'shop_order';
+            $idTag = 'shop_order_id';
+        }
+
         // Return, if wc-elc-inv is don't in query
-        if (! isset($wpQuery->query['wc-elc-inv'])) {
+        if (! isset($wpQuery->query['wc-elc-inv']) && ! isset($wpQuery->query_vars['wc-elc-inv'])) {
             return null;
         }
 
-        if (! isset($wpQuery->query['shop_order'])) {
+        if (! isset($wpQuery->query['shop_order']) && ! isset($wpQuery->query_vars['post_type'])) {
             return null;
         }
 
         // Return, if post is null or in query
-        if (null === $wpQuery->post && 1 < $wpQuery->post_count) {
+        if ((null === $wpQuery->post && 1 < $wpQuery->post_count) &&
+            ! isset($wpQuery->query_vars['wc-elc-inv']) &&
+            ! isset($wpQuery->query_vars['post_type'])
+        ) {
             return null;
         }
-
-        // Initialized tag
-        $tag   = '';
-        $idTag = '';
 
         // Get tag and reset unnecessary param from the query
         if (is_array($buildClass->postType) && sizeof($buildClass->postType) >= 0) {
@@ -91,10 +103,14 @@ class Helpers
                 }
             }
         } else {
-            // Post type tag
-            $tag = $wpQuery->get($buildClass->postType);
-            // Post ID tag
-            $idTag = $wpQuery->get($buildClass->postType . '_id');
+            if('' === $tag) {
+                // Post type tag
+                $tag = $wpQuery->get($buildClass->postType);
+            }
+            if('' === $idTag) {
+                // Post ID tag
+                $idTag = $wpQuery->get($buildClass->postType . '_id');
+            }
         }
 
         // Esc if not $tag
@@ -114,6 +130,17 @@ class Helpers
             // Set post type
             $wpQuery->set('post_type', $postType);
             $wpQuery->query['post_type'] = $postType;
+        }
+
+        // Anomaly - 404 set fallback params
+        if (isset($wpQuery->query['error']) && 404 === (int)$wpQuery->query['error']) {
+            $uri = $_SERVER['REQUEST_URI'];
+            $uriParse = parse_url($uri);
+            $path = $uriParse['path'];
+            $pathArray = explode('/', $path);
+            $pathArray = array_filter($pathArray);
+            $shopOrderID = end($pathArray);
+            $idTag = $shopOrderID;
         }
 
         return (object)array(
@@ -212,8 +239,8 @@ class Helpers
     public static function setCacheQuery($query, $args)
     {
         $cache              = new CacheTransient();
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($query, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($query, '\WC_Order_Refund');
 
         switch ($query) {
             case $query instanceof \WC_Order_Query :

@@ -29,9 +29,6 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-$wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-$wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
-
 $invoiceTypeID                  = esc_html__('Refund ID:', WC_EL_INV_FREE_TEXTDOMAIN);
 $invoiceNumberLabel             = esc_html__('Number:', WC_EL_INV_FREE_TEXTDOMAIN);
 $invoiceDateLabel               = esc_html__('Date:', WC_EL_INV_FREE_TEXTDOMAIN);

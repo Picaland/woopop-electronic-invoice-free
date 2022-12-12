@@ -39,89 +39,89 @@ use WcElectronInvoiceFree\Utils\TimeZone;
  *
  * @since 1.0.0
  */
-function setInitInvoiceNumber()
-{
-    $control = get_option('invoice_number_initial_setting');
-
-    if (1 === intval($control)) {
-        remove_action('init', 'WcElectronInvoiceFree\\Functions\\setInitInvoiceNumber', 20);
-
-        return;
-    }
-
-    $args  = array(
-        'status'  => array('processing', 'completed', 'refunded'),
-        'limit'   => -1,
-        'orderby' => 'date',
-        'order'   => 'ASC',
-    );
-    $query = new \WC_Order_Query($args);
-
-    try {
-        $orders = $query->get_orders();
-
-        $options            = OptionPage::init();
-        $invoiceNumber      = $options->getOptions('number_next_invoice');
-        $invoiceNumber      = false !== $invoiceNumber && '' !== $invoiceNumber ? intval($invoiceNumber) : 1;
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
-
-        if (! empty($orders)) {
-            foreach ($orders as $order) {
-                if ($order instanceof $wcOrderClass || $order instanceof $wcOrderRefundClass) {
-
-                    // Disable invoice order whit total zero
-                    if (disableInvoiceOnOrderTotalZero($order)) {
-                        continue;
-                    }
-
-                    $invoiceNumberOrder = $order->get_meta('order_number_invoice');
-                    $invoiceNumber      = isset($invoiceNumberOrder) && '' !== $invoiceNumberOrder ? intval($invoiceNumberOrder) : $invoiceNumber;
-                    /**
-                     * Filter invoice number for order.
-                     *
-                     * @param int    $invoiceNumber The progressive invoice number
-                     * @param object $order         The |WC_Order or |WC_Order_Refund object
-                     *
-                     * @since 1.0.0
-                     */
-                    $invoiceNumber = apply_filters(
-                        'wc_el_inv-order_number_invoice_filter',
-                        intval($invoiceNumber),
-                        $order
-                    );
-
-                    if (is_int($invoiceNumber)) {
-                        update_post_meta($order->get_id(), 'order_number_invoice', intval($invoiceNumber));
-
-                        try {
-                            $timeZone = new TimeZone();
-                            $timeZone = new \DateTimeZone($timeZone->getTimeZone()->getName());
-                            $date     = new \DateTime('now');
-                            $date->setTimezone($timeZone);
-
-                            // Set invoice sent data
-                            update_post_meta($order->get_id(), '_invoice_sent', 'no_sent');
-                            update_post_meta($order->get_id(), '_invoice_sent_timestamp', $date->getTimestamp());
-                        } catch (\Exception $e) {
-
-                        }
-                    }
-
-                    if (is_int($invoiceNumber)) {
-                        $options->setOption('number_next_invoice', intval($invoiceNumber));
-                    }
-
-                    $invoiceNumber++;
-                }
-            }
-        }
-    } catch (\Exception $e) {
-        echo 'dev' === WC_EL_INV_ENV ? esc_html("No Order for set invoice number {$e->getMessage()}") : '';
-    }
-
-    update_option('invoice_number_initial_setting', 1);
-}
+//function setInitInvoiceNumber()
+//{
+//    $control = get_option('invoice_number_initial_setting');
+//
+//    if (1 === intval($control)) {
+//        remove_action('init', 'WcElectronInvoiceFree\\Functions\\setInitInvoiceNumber', 20);
+//
+//        return;
+//    }
+//
+//    $args  = array(
+//        'status'  => array('processing', 'completed', 'refunded'),
+//        'limit'   => -1,
+//        'orderby' => 'date',
+//        'order'   => 'ASC',
+//    );
+//    $query = new \WC_Order_Query($args);
+//
+//    try {
+//        $orders = $query->get_orders();
+//
+//        $options            = OptionPage::init();
+//        $invoiceNumber      = $options->getOptions('number_next_invoice');
+//        $invoiceNumber      = false !== $invoiceNumber && '' !== $invoiceNumber ? intval($invoiceNumber) : 1;
+//        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+//        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+//
+//        if (! empty($orders)) {
+//            foreach ($orders as $order) {
+//                if ($order instanceof $wcOrderClass || $order instanceof $wcOrderRefundClass) {
+//
+//                    // Disable invoice order whit total zero
+//                    if (disableInvoiceOnOrderTotalZero($order)) {
+//                        continue;
+//                    }
+//
+//                    $invoiceNumberOrder = $order->get_meta('order_number_invoice');
+//                    $invoiceNumber      = isset($invoiceNumberOrder) && '' !== $invoiceNumberOrder ? intval($invoiceNumberOrder) : $invoiceNumber;
+//                    /**
+//                     * Filter invoice number for order.
+//                     *
+//                     * @param int    $invoiceNumber The progressive invoice number
+//                     * @param object $order         The |WC_Order or |WC_Order_Refund object
+//                     *
+//                     * @since 1.0.0
+//                     */
+//                    $invoiceNumber = apply_filters(
+//                        'wc_el_inv-order_number_invoice_filter',
+//                        intval($invoiceNumber),
+//                        $order
+//                    );
+//
+//                    if (is_int($invoiceNumber)) {
+//                        update_post_meta($order->get_id(), 'order_number_invoice', intval($invoiceNumber));
+//
+//                        try {
+//                            $timeZone = new TimeZone();
+//                            $timeZone = new \DateTimeZone($timeZone->getTimeZone()->getName());
+//                            $date     = new \DateTime('now');
+//                            $date->setTimezone($timeZone);
+//
+//                            // Set invoice sent data
+//                            update_post_meta($order->get_id(), '_invoice_sent', 'no_sent');
+//                            update_post_meta($order->get_id(), '_invoice_sent_timestamp', $date->getTimestamp());
+//                        } catch (\Exception $e) {
+//
+//                        }
+//                    }
+//
+//                    if (is_int($invoiceNumber)) {
+//                        $options->setOption('number_next_invoice', intval($invoiceNumber));
+//                    }
+//
+//                    $invoiceNumber++;
+//                }
+//            }
+//        }
+//    } catch (\Exception $e) {
+//        echo 'dev' === WC_EL_INV_ENV ? esc_html("No Order for set invoice number {$e->getMessage()}") : '';
+//    }
+//
+//    update_option('invoice_number_initial_setting', 1);
+//}
 
 /**
  * Set invoice number on order completed
@@ -136,8 +136,8 @@ function setInitInvoiceNumber()
 function setInvoiceNumberOnOrderCompleted($orderID, $from, $to)
 {
     // Check if order exist.
-    $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
     $order        = wc_get_order($orderID);
+    $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
     if (! $order instanceof $wcOrderClass) {
         return;
     }
@@ -206,8 +206,8 @@ function setInvoiceNumberOnOrderCompleted($orderID, $from, $to)
  */
 function setInvoiceNumberOnOrderAutoCompleted($id)
 {
-    $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
     $order        = wc_get_order($id);
+    $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
     // Check if order exist.
     if (! $order instanceof $wcOrderClass) {
         return;
@@ -285,7 +285,7 @@ function setInvoiceNumberOnOrderRefund($refundID)
     }
 
     $checkOrderSent     = get_post_meta($order->get_id(), '_invoice_sent', true);
-    $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+    $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($refund, '\WC_Order_Refund');
 
     if ($refund instanceof $wcOrderRefundClass) {
         // Get next invoice number option.
@@ -327,7 +327,7 @@ function disableInvoiceOnOrderTotalZero($order)
 {
     $options              = OptionPage::init();
     $disableInvoiceNumber = $options->getOptions('disable_invoice_number_order_zero');
-    $wcOrderClass         = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+    $wcOrderClass         = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
     if ('on' === $disableInvoiceNumber && $order instanceof $wcOrderClass) {
         $total = (int)$order->get_total();

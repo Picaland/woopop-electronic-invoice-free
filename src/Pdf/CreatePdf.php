@@ -146,8 +146,8 @@ final class CreatePdf
     private function invoiceNumber($order)
     {
         $order              = wc_get_order($order->id);
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
 
         if (! $order instanceof $wcOrderClass && ! $order instanceof $wcOrderRefundClass) {
             return '';
@@ -313,10 +313,9 @@ final class CreatePdf
      */
     private function dateInvoice($order, $format = 'Y-m-d')
     {
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
-
         $orderObj    = wc_get_order($order->id);
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($orderObj, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($orderObj, '\WC_Order_Refund');
         $dateInvoice = null;
 
         if ($orderObj instanceof $wcOrderRefundClass) {
@@ -403,6 +402,7 @@ final class CreatePdf
                 case 'stripe':
                 case 'xpay':
                 case 'soisy':
+                case 'igfs':
                     return esc_html('MP08 - ' . $methodTitle);
                 case 'stripe_sepa':
                     return esc_html('MP19 - ' . $methodTitle);
@@ -721,7 +721,7 @@ final class CreatePdf
         }
 
         $order              = wc_get_order($ordersData->id);
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
 
         $number = $order->get_meta('order_number_invoice');
         if ($order instanceof $wcOrderRefundClass) {
@@ -734,31 +734,6 @@ final class CreatePdf
 
             return strtoupper($number);
         }
-    }
-
-    /**
-     * Vies valid tax rate
-     *
-     * @param $ordersData
-     * @param $defaultVat
-     *
-     * @return int
-     */
-    private function viesValidTaxRate($ordersData, $defaultVat)
-    {
-        // UE valid VIES rate
-        if (InvoiceFields::viesCheck(
-                $this->customerVatNumber($ordersData, true),
-                $this->customerCountry($ordersData),
-                true
-            ) &&
-            in_array($this->customerCountry($ordersData), GeneralFields::getEuCountries(), true) &&
-            'IT' !== $this->customerCountry($ordersData)
-        ) {
-            return 0;
-        }
-
-        return $defaultVat;
     }
 
     /**
@@ -788,9 +763,6 @@ final class CreatePdf
         $vat        = 0;
         if ('yes' === $taxEnabled) {
             $vat = $this->numberFormat($this->taxRate($item));
-            if ($ordersData) {
-                $vat = $this->viesValidTaxRate($ordersData, $vat);
-            }
         }
 
         if ($subtotal > $total) {
@@ -876,7 +848,7 @@ final class CreatePdf
     {
         // Send attachments via email ?
         $active       = OptionPage::init()->getOptions('invoice_via_email');
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         // Not send/create attachments for the bulk action
         $actionBulkCheck = \WcElectronInvoiceFree\Functions\filterInput($_REQUEST, 'action', FILTER_UNSAFE_RAW);
@@ -984,7 +956,7 @@ final class CreatePdf
      */
     public function buildAttachment($order, $fileName, $attachments)
     {
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         if (! $order instanceof $wcOrderClass) {
             return $attachments;

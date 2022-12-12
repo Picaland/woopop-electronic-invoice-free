@@ -71,12 +71,17 @@ class BuildXml extends BuildQuery
             return false;
         }
 
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($query, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($query, '\WC_Order_Refund');
 
         switch ($query) {
             // Single order
             case $query instanceof $wcOrderClass:
                 $this->singleOrder($query, $wcOrderClass);
+                break;
+            // Single order refund
+            case $query instanceof $wcOrderRefundClass:
+                $this->singleOrderRefund($query, $wcOrderRefundClass);
                 break;
             default:
                 // No Xml
@@ -134,8 +139,8 @@ class BuildXml extends BuildQuery
         }
 
         try {
-            $timeZone = new TimeZone();
-            $timeZone = new \DateTimeZone($timeZone->getTimeZone()->getName());
+            $timeZone     = new TimeZone();
+            $timeZone     = new \DateTimeZone($timeZone->getTimeZone()->getName());
             $itemDateTime = new \DateTime($xmlData[0]->date_created);
             $itemDateTime->setTimezone($timeZone);
         } catch (\Exception $e) {
@@ -160,7 +165,7 @@ class BuildXml extends BuildQuery
         // Date condition
         $dateCondition = ($itemDateTime instanceof \DateTime && $itemDateTime->format('Ym') !== date('Ym', time()));
 
-        if('xml' === $getFormat && ! $itemN || $itemN > 5 || count($ordersIds) >= 5 || ($dateCondition)) {
+        if ('xml' === $getFormat && ! $itemN || $itemN > 5 || count($ordersIds) >= 5 || ($dateCondition)) {
             print_r(
                 esc_html__(
                     'You cannot generate this invoice, you have exceeded the limit of 5', WC_EL_INV_FREE_TEXTDOMAIN)
@@ -260,8 +265,8 @@ class BuildXml extends BuildQuery
 
         if (! empty($orders)) {
             foreach ($orders as $order) {
-                $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-                $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+                $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+                $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
                 switch ($order) {
                     // Shop Order
                     case $order instanceof $wcOrderClass:
@@ -1109,8 +1114,8 @@ class BuildXml extends BuildQuery
      */
     private function typeXmlCondition($query)
     {
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($query, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($query, '\WC_Order_Refund');
 
         return $query instanceof \WC_Order_Query ||
                $query instanceof $wcOrderClass ||

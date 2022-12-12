@@ -531,27 +531,35 @@ function disablePlugin()
 /**
  * Helper for get Wc Order class name
  *
+ * @param $obj
  * @param $classname
  *
  * @return string
  *
- * @since 2.2
- * - Support for WC Admin package
- *
  */
-function wcOrderClassName($classname)
+function wcOrderClassName($obj, $classname)
 {
     if (isWooCommerceActive() && \WC()->version >= '4.0.1') {
         if ('\WC_Order' === $classname) {
-            return '\Automattic\WooCommerce\Admin\Overrides\Order';
+            if ($obj instanceof \WC_Order) {
+                return '\WC_Order';
+            } elseif ($obj instanceof \Automattic\WooCommerce\Admin\Overrides\Order) {
+                return '\Automattic\WooCommerce\Admin\Overrides\Order';
+            }
         } elseif ('\WC_Order_Refund' === $classname) {
-            return '\Automattic\WooCommerce\Admin\Overrides\OrderRefund';
+            if ($obj instanceof \WC_Order_Refund) {
+                return '\WC_Order_Refund';
+            } elseif ($obj instanceof \Automattic\WooCommerce\Admin\Overrides\OrderRefund) {
+                return '\Automattic\WooCommerce\Admin\Overrides\OrderRefund';
+            }
         } else {
             return $classname;
         }
     } else {
         return $classname;
     }
+
+    return $classname;
 }
 
 /**
@@ -702,6 +710,7 @@ function paymentMethodCode($order)
             case 'stripe':
             case 'xpay':
             case 'soisy':
+            case 'igfs':
                 return sprintf('<b style="color:#007cba;">MP08</b> - %s', $methodTitle);
             case 'stripe_sepa':
                 return sprintf('<b style="color:#007cba;">MP19</b> - %s', $methodTitle);

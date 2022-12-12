@@ -250,8 +250,8 @@ final class CreateXml
      */
     private function dateInvoice($order)
     {
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
 
         $orderObj    = wc_get_order($order->id);
         $dateInvoice = null;
@@ -721,6 +721,7 @@ final class CreateXml
                 case 'ppcp-gateway':
                 case 'stripe':
                 case 'soisy':
+                case 'igfs':
                     return 'MP08';
                 case 'stripe_sepa':
                     return 'MP19';
@@ -889,30 +890,6 @@ final class CreateXml
     }
 
     /**
-     * Vies valid or Extra UE TAX rate
-     *
-     * @param $ordersData
-     * @param $defaultVat
-     * @param $vies
-     *
-     * @return int
-     */
-    private function viesValidTaxRate($ordersData, $defaultVat, $vies)
-    {
-        // UE valid VIES rate or Extra UE
-        if ($vies &&
-            in_array($this->customerCountry($ordersData), GeneralFields::getEuCountries(), true) &&
-            'IT' !== $this->customerCountry($ordersData)
-        ) {
-            return 0;
-        } elseif (! in_array($this->customerCountry($ordersData), GeneralFields::getEuCountries(), true)) {
-            return 0;
-        }
-
-        return $defaultVat;
-    }
-
-    /**
      * Shipping Rate
      *
      * @return string
@@ -945,8 +922,8 @@ final class CreateXml
      */
     private function invoiceNumber($order)
     {
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
 
         if ($order instanceof $wcOrderClass ||
             $order instanceof $wcOrderRefundClass
@@ -1017,7 +994,7 @@ final class CreateXml
         }
 
         $order              = wc_get_order($ordersData[0]->id);
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
 
         $number = $order->get_meta('order_number_invoice');
 
@@ -1222,7 +1199,7 @@ final class CreateXml
         if ('yes' === $taxEnabled) {
             $vat = $this->numberFormat($this->taxRate($item));
             if ($ordersData && $vies) {
-                $vat = $this->viesValidTaxRate($ordersData, $vat, $vies);
+                // PRO -> viesValidTaxRate
             }
         }
 
@@ -1511,6 +1488,7 @@ final class CreateXml
                 // Disabled
                 $nature  = null;
                 $refNorm = null;
+                $vies    = null;
 
                 // #2
                 $body = $this->xml->addChild('FatturaElettronicaBody');
@@ -1575,23 +1553,6 @@ final class CreateXml
                 // ************************************************************************************************** //
                 // Start Detail product line
                 // ************************************************************************************************** //
-
-                /**
-                 * Get Vies data for check
-                 */
-                $invoiceViesCheck = OptionPage::init()->getOptions('invoice_vies_check');
-                $vies             = false;
-                if ('on' === $invoiceViesCheck) {
-                    $vies = InvoiceFields::viesCheck(
-                        $this->customerVatNumber($ordersData),
-                        $this->customerCountry($ordersData), true
-                    );
-
-                    // Exception
-                    if (! empty($vies) && is_array($vies) && isset($vies['code'])) {
-                        $vies = false;
-                    }
-                }
 
                 // #2.2
                 $dataProduct = $body->addChild('DatiBeniServizi');

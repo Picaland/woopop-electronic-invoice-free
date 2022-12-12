@@ -740,7 +740,9 @@ final class OptionPage extends OptionFields
 
         // Key data saved
         $data = filter_var_array($_POST, $args);
-        $key  = isset($data[$this->optionsName][KeyField::$keyArgs['name']]) ?
+        $key  = isset($data[$this->optionsName]) &&
+                ! empty($data[$this->optionsName]) &&
+                isset($data[$this->optionsName][KeyField::$keyArgs['name']]) ?
             $data[$this->optionsName][KeyField::$keyArgs['name']] : null;
 
         $secretApiKey = null;

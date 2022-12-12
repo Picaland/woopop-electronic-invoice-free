@@ -509,8 +509,8 @@ class XmlOrderListTable extends \WP_List_Table
         $options = OptionPage::init();
 
         $order              = wc_get_order($item['id']);
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
 
         if (! $order instanceof $wcOrderClass && ! $order instanceof $wcOrderRefundClass) {
             return '';
@@ -1132,8 +1132,6 @@ class XmlOrderListTable extends \WP_List_Table
 
         // Order Class
         $ordersData         = array();
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
 
         // @codingStandardsIgnoreLine
         $customer      = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'customer_id', FILTER_UNSAFE_RAW);
@@ -1173,6 +1171,9 @@ class XmlOrderListTable extends \WP_List_Table
         // Get single order to search
         if ($orderToSearch) {
             $order = wc_get_order($orderToSearch);
+            $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+            $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
+
             if ($order instanceof $wcOrderClass || $order instanceof $wcOrderRefundClass) {
                 switch ($order) {
                     // Shop Order
@@ -1219,6 +1220,9 @@ class XmlOrderListTable extends \WP_List_Table
             $incrementRefund = 0;
             foreach ($orders as $index => $orderID) {
                 $order = wc_get_order($orderID);
+                $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
+                $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order_Refund');
+
                 if ($order instanceof $wcOrderClass) {
                     $data      = $order->get_data();
                     $checkSent = get_post_meta($order->get_id(), '_invoice_sent', true);

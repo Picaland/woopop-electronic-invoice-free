@@ -1,3 +1,22 @@
+== 3.1.3 - 28/11/2022 ==
+Fix: sprintf() arguments
+
+== 3.1.2 - 27/11/2022 ==
+Fix: minor fix
+Add: support for WordPress 6.1.x
+Add: support for WooCommerce 7.1.x
+
+== 3.1.1 - 28/10/2022 ==
+Add: support for WooCommerce 7.x.x
+
+== 3.1.0 - 20/10/2022 ==
+Fix: wcOrderClassName class name check
+Add: support payment_method igfs Credit Card (PagOnline Imprese)
+
+== 3.0.4 - 10/10/2022 ==
+Fix: billing_company required if customer type is "company"
+Dev: Add filter hook invoice Field args "billing_invoice_field_args"
+
 == 3.0.3 - 14/09/2022 ==
 Add: support for WooCommerce 6.9.x
 Add: information and controls for the main options to configure

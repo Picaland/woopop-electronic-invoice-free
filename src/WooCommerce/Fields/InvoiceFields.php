@@ -241,6 +241,11 @@ final class InvoiceFields
 
                 $invoiceFields[$key]             = $field;
                 $invoiceFields[$key]['priority'] = $priority++;
+
+                /**
+                 * Filter Invoice Field position
+                 */
+                $invoiceFields = apply_filters("billing_invoice_field_args", $invoiceFields, $key);
             }
         }
 
@@ -395,7 +400,8 @@ final class InvoiceFields
         $orderType = wc_get_order($id)->get_type();
         $output    .= '<div class="actions">';
 
-        $output .= sprintf('<strong>%s</strong>', esc_html__('Type of document to be created', WC_EL_INV_FREE_TEXTDOMAIN));
+        $output .= sprintf('<strong>%s</strong>',
+            esc_html__('Type of document to be created', WC_EL_INV_FREE_TEXTDOMAIN));
 
         $choiceType = $order->get_meta('_billing_choice_type');
         $output     .= sprintf('<p class="doc-type-wrap">' .
@@ -549,7 +555,7 @@ final class InvoiceFields
      */
     public function editGeneralFieldsFilter($order)
     {
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         if (! is_a($order, $wcOrderClass)) {
             return;
@@ -667,8 +673,7 @@ final class InvoiceFields
             return;
         }
 
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         if (is_a($order, $wcOrderClass)) {
 
@@ -683,6 +688,7 @@ final class InvoiceFields
             if (! empty($refunds)) {
                 foreach ($refunds as $index => $refund) {
                     // Order refund
+                    $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($refund, '\WC_Order_Refund');
                     if (! $refund instanceof $wcOrderRefundClass) {
                         return;
                     }
@@ -705,6 +711,7 @@ final class InvoiceFields
                     // Check Refund sent.
                     $refundSent = get_post_meta($refund->get_id(), '_invoice_sent', true);
                     if (count($refunds) > 1) {
+                        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($refunds[$index - 1], '\WC_Order_Refund');
                         if ('no_sent' === $refundSent && isset($refunds[$index - 1]) && $refunds[$index - 1] instanceof $wcOrderRefundClass) {
                             continue;
                         }
@@ -815,7 +822,7 @@ final class InvoiceFields
             return;
         }
 
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
         if (is_a($order, $wcOrderClass)) {
             // Get Refunds
             $refunds = $order->get_refunds();
@@ -861,24 +868,7 @@ final class InvoiceFields
     public function viewBillingFieldsFilter($order)
     {
         $orderData = $order->get_data();
-        $output    = $type = $viesMsg = '';
-
-        $nature = $order->get_meta('nature_rc');
-        $ref    = $order->get_meta('ref_norm_rc');
-
-        if ($nature) {
-            $output .= sprintf('<p><strong>%s:</strong><br>%s</p>',
-                esc_html__('Nature operations', WC_EL_INV_FREE_TEXTDOMAIN),
-                $nature
-            );
-        }
-
-        if ($ref) {
-            $output .= sprintf('<p><strong>%s:</strong><br>%s</p>',
-                esc_html__('Ref. Normative', WC_EL_INV_FREE_TEXTDOMAIN),
-                $ref
-            );
-        }
+        $output    = $type = '';
 
         if (! empty($this->fields)) {
             foreach ($this->fields as $key => $field) {
@@ -900,30 +890,6 @@ final class InvoiceFields
                     if (! in_array($orderData['billing']['country'], self::$euVatCountry, true)) {
                         $meta = 'XXXXXXX';
                     }
-                }
-
-                // Vies check message.
-                if (in_array($orderData['billing']['country'], self::$euVatCountry, true) &&
-                    'IT' !== $orderData['billing']['country'] && 'vat_number' === $key
-                ) {
-                    $invoiceType = $this->getMeta($order, 'invoice_type');
-                    $vatNumber   = $this->getMeta($order, 'vat_number');
-                    if ('company' === $invoiceType || 'freelance' === $invoiceType) {
-                        $check = $this->viesCheck($vatNumber, $orderData['billing']['country']);
-                        if (false === $check) {
-                            $viesMsg = sprintf('<span style="color:red;"> %s <a target="_blank" href="%s">%s</a></span>',
-                                esc_html__('VIES control: The VAT is not valid', WC_EL_INV_FREE_TEXTDOMAIN),
-                                esc_url('http://ec.europa.eu/taxation_customs/vies/vatRequest.html'),
-                                esc_html__('(see VIES)', WC_EL_INV_FREE_TEXTDOMAIN)
-                            );
-                        } elseif (true === $check) {
-                            $viesMsg = sprintf('<span style="color:green;"> %s </span>',
-                                esc_html__('VIES control: VAT is valid', WC_EL_INV_FREE_TEXTDOMAIN)
-                            );
-                        }
-                    }
-                } else {
-                    $viesMsg = '';
                 }
 
                 switch ($meta) {
@@ -962,9 +928,8 @@ final class InvoiceFields
                     $field['label'] = esc_html__('Type of document', WC_EL_INV_FREE_TEXTDOMAIN);
                 }
 
-                $output .= sprintf('<p><strong>%s:%s</strong><br>%s</p>',
+                $output .= sprintf('<p><strong>%s:</strong><br>%s</p>',
                     $field['label'],
-                    $viesMsg,
                     strtoupper($meta)
                 );
             }
@@ -1170,476 +1135,6 @@ final class InvoiceFields
     }
 
     /**
-     * Check VIES VAT
-     *
-     * @param      $vatCode
-     * @param      $country
-     * @param bool $otherCheck
-     *
-     * @return array|bool|null
-     */
-    public static function viesCheck($vatCode, $country, $otherCheck = false)
-    {
-        // If soap not exist return true
-        if (! class_exists('SoapClient')) {
-            return true;
-        }
-
-        // Vies check options
-        $invoiceViesCheck = OptionPage::init()->getOptions('invoice_vies_check');
-        // If disable default check is null
-        if (false === $otherCheck &&
-            (is_checkout() || is_account_page()) &&
-            ('off' === $invoiceViesCheck || false === $invoiceViesCheck)
-        ) {
-            return null;
-        }
-
-        try {
-            $client = new \SoapClient("https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl");
-            $check  = $client->checkVat(array(
-                'countryCode' => $country,
-                'vatNumber'   => $vatCode,
-            ));
-
-            if (is_object($check) && $check instanceof \stdClass) {
-                if ($check->valid) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        } catch (\Exception $e) {
-            // To avoid blocking the process I exclude the control or in case of error
-            return array(
-                'code'    => $e->getCode(),
-                'message' => $e->getMessage(),
-                'trace'   => $e->getTraceAsString(),
-            );
-        }
-    }
-
-    /**
-     * Reverse Charge actions
-     * Allowed RC
-     *
-     * @return bool
-     */
-    public static function allowedCheckoutReverseCharge()
-    {
-        $allowedReverseCharge = true;
-        $cart                 = WC()->cart;
-        $contents             = $cart->get_cart_contents();
-        if (! empty($contents)) {
-            foreach ($contents as $key => $content) {
-                $id            = $content['product_id'];
-                $reverseCharge = \WcElectronInvoiceFree\Functions\getPostMeta(
-                    '_active_reverse_charge',
-                    '',
-                    $id
-                );
-
-                if ('' === $reverseCharge || 'no' === $reverseCharge) {
-                    $allowedReverseCharge = false;
-                    break;
-                }
-            }
-        }
-
-        return $allowedReverseCharge;
-    }
-
-    /**
-     * Reverse Charge actions
-     * RC tax class
-     *
-     * @return object
-     */
-    public static function rcTaxClass()
-    {
-        $taxClassName = TaxFields::getReverseChargeTaxClass();
-        $taxClass     = \WC_Tax::get_rates_for_tax_class($taxClassName);
-        if (is_array($taxClass) && ! empty($taxClass)) {
-            return (object)array(
-                'taxClass'     => $taxClass,
-                'taxClassName' => $taxClassName,
-                'haveTax'      => true,
-            );
-        } else {
-            return (object)array(
-                'taxClass'     => array(),
-                'taxClassName' => '',
-                'haveTax'      => false,
-            );
-        }
-    }
-
-    /**
-     * Reverse Charge actions
-     * Add meta for reverse charge
-     *
-     * @param $item
-     * @param $cartItemKey
-     * @param $values
-     * @param $order
-     */
-    public static function addMetaCartItemLine($item, $cartItemKey, $values, $order)
-    {
-        // Active vies control
-        $invoiceViesCheck = OptionPage::init()->getOptions('invoice_vies_check');
-        if ('off' === $invoiceViesCheck || false === $invoiceViesCheck) {
-            return;
-        }
-
-        if (! $item instanceof \WC_Order_Item_Product) {
-            return;
-        }
-
-        /**
-         * Return id not Allowed reverse charge
-         */
-        if (! self::allowedCheckoutReverseCharge()) {
-            return;
-        }
-
-        // Reverse charge (product)
-        $reverseCharge = \WcElectronInvoiceFree\Functions\getPostMeta(
-            '_active_reverse_charge',
-            '',
-            $item->get_product_id()
-        );
-
-        // Reverse charge (global disable)
-        $reverseChargeGlobalDisable = TaxFields::getReverseChargeDisable();
-
-        $checkout = new \WC_Checkout();
-        $postData = $checkout->get_posted_data();
-
-        // Customer type, vat number and country
-        $customerVatNumber   = ! empty($postData['billing_vat_number']) ? $postData['billing_vat_number'] : null;
-        $customerInvoiceType = ! empty($postData['billing_invoice_type']) ? $postData['billing_invoice_type'] : null;
-        $customerCountry     = ! empty($postData['billing_country']) ? $postData['billing_country'] : null;
-
-        // Country IT return
-        if ('IT' === $customerCountry) {
-            return;
-        }
-
-        // Set prefix type used for retrieved nature or ref normative value
-        $prefix = null;
-        if (in_array($customerCountry, GeneralFields::getEuCountries()) && 'IT' !== $customerCountry) {
-            $prefix = 'ue_';
-        } elseif (! in_array($customerCountry, GeneralFields::getEuCountries())) {
-            $prefix = 'extra_ue_';
-        }
-
-        // Set type
-        switch ($customerInvoiceType) {
-            case 'company':
-            case 'freelance':
-                $type = 'company';
-                break;
-            case 'private':
-                $type = 'private';
-                break;
-            default:
-                $type = null;
-                break;
-        }
-
-        if (! $prefix || ! $type) {
-            return;
-        }
-
-        // No vies check
-        // Used for company and Ref. N7
-        if ($customerVatNumber) {
-            $vies = self::viesCheck($customerVatNumber, $customerCountry, true);
-            if (false === $vies && ('company' === $customerInvoiceType || 'freelance' === $customerInvoiceType)) {
-                $type = "{$type}_no_vies";
-            }
-        }
-
-        $nature            = TaxFields::getReverseChargeNature("{$prefix}{$type}");
-        $refNormative      = TaxFields::getReverseChargeRefNormative("{$prefix}{$type}");
-        $refNormativeValue = esc_html($refNormative);
-
-        // Add custom meta to line item
-        if ('yes' === $reverseCharge && 'no' === $reverseChargeGlobalDisable && $order instanceof \WC_Order) {
-            if ('' !== $nature && '' !== $refNormativeValue) {
-                $order->add_meta_data('nature_rc', $nature);
-                $order->add_meta_data('ref_norm_rc', $refNormativeValue);
-            }
-        }
-    }
-
-    /**
-     * Reverse Charge actions
-     * Vies Calc totals on checkout process.
-     *
-     * - If Vies control is ok remove tax on update checkout
-     */
-    private static function viesCalcTotals()
-    {
-        // Active vies control
-        $invoiceViesCheck = OptionPage::init()->getOptions('invoice_vies_check');
-        if ('off' === $invoiceViesCheck || false === $invoiceViesCheck) {
-            return;
-        }
-
-        // Reverse charge (global disable)
-        $reverseChargeGlobalDisable = TaxFields::getReverseChargeDisable();
-        if ('yes' === $reverseChargeGlobalDisable) {
-            return;
-        }
-
-        $rcTaxClass = self::rcTaxClass();
-        if (! $rcTaxClass->haveTax) {
-            return;
-        }
-
-        /**
-         * Allowed reverse charge
-         */
-        if (self::allowedCheckoutReverseCharge()) {
-            // Tax object
-            $taxObj       = end($rcTaxClass->taxClass);
-            $taxClassName = $rcTaxClass->taxClassName;
-
-            // Remove shipping
-            add_action('woocommerce_package_rates',
-                function ($rates, $package) use ($taxObj) {
-                    foreach ($rates as $rate) {
-                        $rateTax = array();
-                        $cost    = $rate->cost;
-                        foreach ($rate->taxes as $key => $tax) {
-                            $vat           = (($taxObj->tax_rate * 1));
-                            $taxCost       = (floatval($cost) * $vat / 100);
-                            $rateTax[$key] = $taxCost;
-                        }
-                        $rate->taxes = $rateTax;
-                    }
-
-                    return $rates;
-                }, 2, PHP_INT_MAX
-            );
-
-            // Remove fee
-            add_action('woocommerce_cart_totals_get_fees_from_cart_taxes',
-                function ($feeTaxes, $fee, $instance) use ($taxObj) {
-                    $feeTaxes = array();
-
-                    $amount     = floatval($fee->object->amount);
-                    $vat        = (($taxObj->tax_rate * 1));
-                    $taxCost    = (floatval($amount) * $vat);
-                    $feeTaxes[] = floatval($taxCost);
-
-                    return $feeTaxes;
-                }, 3, PHP_INT_MAX
-            );
-
-            // Set product tax based on Reverse Charge
-            add_filter('woocommerce_product_get_tax_class',
-                function ($taxClass, $product) use ($taxClassName) {
-
-                    // Reverse charge (product)
-                    $reverseCharge = \WcElectronInvoiceFree\Functions\getPostMeta(
-                        '_active_reverse_charge',
-                        '',
-                        $product->get_id()
-                    );
-
-                    if ('yes' === $reverseCharge) {
-                        $taxClass = $taxClassName;
-                    }
-
-                    return $taxClass;
-                }, 2, PHP_INT_MAX
-            );
-
-            // Set product variation tax based on Reverse Charge
-            add_filter('woocommerce_product_variation_get_tax_class',
-                function ($taxClass, $product) use ($taxClassName) {
-
-                    // Reverse charge (product)
-                    $reverseCharge = \WcElectronInvoiceFree\Functions\getPostMeta(
-                        '_active_reverse_charge',
-                        '',
-                        $product->get_id()
-                    );
-
-                    if ('yes' === $reverseCharge) {
-                        $taxClass = $taxClassName;
-                    }
-
-                    return $taxClass;
-                }, 2, PHP_INT_MAX
-            );
-        }
-    }
-
-    /**
-     * Reverse Charge actions
-     * Remove tax from order on update checkout
-     *
-     * @param $postData
-     *
-     * @since 3.0.0
-     */
-    public static function removeTaxFromOrder($postData)
-    {
-        // Active vies control
-        $invoiceViesCheck = OptionPage::init()->getOptions('invoice_vies_check');
-        if ('off' === $invoiceViesCheck || false === $invoiceViesCheck) {
-            return;
-        }
-
-        // Reverse charge (global disable)
-        $reverseChargeGlobalDisable = TaxFields::getReverseChargeDisable();
-        if ('yes' === $reverseChargeGlobalDisable) {
-            return;
-        }
-
-        $data = array();
-        parse_str($postData, $data);
-
-        $taxCode      = isset($data['billing_tax_code']) && '' !== $data['billing_tax_code'] ? $data['billing_tax_code'] : null;
-        $vatNumber    = isset($data['billing_vat_number']) && '' !== $data['billing_vat_number'] ? $data['billing_vat_number'] : null;
-        $country      = isset($data['billing_country']) && '' !== $data['billing_country'] ? $data['billing_country'] : null;
-        $customerType = isset($data['billing_invoice_type']) && '' !== $data['billing_invoice_type'] ? $data['billing_invoice_type'] : null;
-
-        // Company or Private
-        if ($vatNumber || $taxCode || $customerType) {
-
-            $viesCheck = false;
-
-            // Vies check
-            if ($vatNumber) {
-                $viesCheck = self::viesCheck($vatNumber, $country);
-            }
-
-            // Remove if vies check or extra UE
-            // 1. private and company extra UE
-            // 2. company UE vies ok
-            if (! in_array($country, self::$euVatCountry) xor
-                ('IT' !== $country &&
-                 in_array($country, self::$euVatCountry) &&
-                 true === $viesCheck &&
-                 'private' !== $customerType
-                )
-            ) {
-
-                $rcTaxClass = self::rcTaxClass();
-                if (! $rcTaxClass->haveTax) {
-                    return;
-                }
-
-                /**
-                 * Allowed reverse charge
-                 */
-                if (self::allowedCheckoutReverseCharge()) {
-                    // Tax object
-                    $taxObj       = end($rcTaxClass->taxClass);
-                    $taxClassName = $rcTaxClass->taxClassName;
-
-                    // Remove shipping
-                    add_action('woocommerce_package_rates',
-                        function ($rates, $package) use ($taxObj) {
-                            foreach ($rates as $rate) {
-                                $rateTax = array();
-                                $cost    = $rate->cost;
-                                foreach ($rate->taxes as $key => $tax) {
-                                    $vat           = (($taxObj->tax_rate * 1));
-                                    $taxCost       = (floatval($cost) * $vat / 100);
-                                    $rateTax[$key] = $taxCost;
-                                }
-                                $rate->taxes = $rateTax;
-                            }
-
-                            return $rates;
-                        }, 2, PHP_INT_MAX
-                    );
-
-                    // Remove fee
-                    add_action('woocommerce_cart_totals_get_fees_from_cart_taxes',
-                        function ($feeTaxes, $fee, $instance) use ($taxObj) {
-                            $feeTaxes   = array();
-                            $cost       = floatval($fee->object->amount);
-                            $vat        = (($taxObj->tax_rate * 1));
-                            $taxCost    = (floatval($cost) * $vat);
-                            $feeTaxes[] = floatval($taxCost);
-
-                            return $feeTaxes;
-                        }, 3, PHP_INT_MAX
-                    );
-
-                    // Set product tax based on Reverse Charge
-                    add_filter('woocommerce_product_get_tax_class',
-                        function ($taxClass, $product) use ($taxClassName) {
-
-                            // Reverse charge (product)
-                            $reverseCharge = \WcElectronInvoiceFree\Functions\getPostMeta(
-                                '_active_reverse_charge',
-                                '',
-                                $product->get_id()
-                            );
-
-                            if ('yes' === $reverseCharge) {
-                                $taxClass = $taxClassName;
-                            }
-
-                            return $taxClass;
-                        }, 2, PHP_INT_MAX
-                    );
-
-                    // Set product variation tax based on Reverse Charge
-                    add_filter('woocommerce_product_variation_get_tax_class',
-                        function ($taxClass, $product) use ($taxClassName) {
-
-                            // Reverse charge (product)
-                            $reverseCharge = \WcElectronInvoiceFree\Functions\getPostMeta(
-                                '_active_reverse_charge',
-                                '',
-                                $product->get_id()
-                            );
-
-                            if ('yes' === $reverseCharge) {
-                                $taxClass = $taxClassName;
-                            }
-
-                            return $taxClass;
-                        }, 2, PHP_INT_MAX
-                    );
-                }
-
-                // Set totals and add trigger element for view vies message
-                add_filter('woocommerce_calculated_total',
-                    function ($total, $instance) use ($viesCheck) {
-
-                        // Cart total html
-                        add_filter('woocommerce_cart_totals_order_total_html',
-                            function ($value) use ($viesCheck) {
-                                // Set class used from js script
-                                if (true === $viesCheck) {
-                                    $code = 'vies_tax';
-                                } else {
-                                    $code = is_array($viesCheck) ? strtolower($viesCheck['message']) : 'not_valid';
-                                }
-
-                                $abbr = 'vies_tax' === $code ? sprintf("<abbr style='color:green;' title='%s'>(*)</abbr>",
-                                    esc_html__('Reverse Charge vat', WC_EL_INV_FREE_TEXTDOMAIN)) : '';
-
-                                return $value . "<span id='wc_el_inv_vies_trigger' class='{$code}'> {$abbr} </span>";
-                            }, PHP_INT_MAX);
-
-                        return $total;
-                    }, PHP_INT_MAX, 2
-                );
-            }
-        }
-    }
-
-    /**
      * Set custom order meta for check shipping to different address
      *
      * @param $orderID
@@ -1652,7 +1147,7 @@ final class InvoiceFields
      */
     public function haveShippingAddress($orderID, $postedData, $order)
     {
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         if ($order instanceof $wcOrderClass) {
             update_post_meta(
@@ -1728,7 +1223,7 @@ final class InvoiceFields
                 FILTER_UNSAFE_RAW
             );
 
-            if ('IT' === $country && 'company' === $invoiceType && '' === $company) {
+            if ('company' === $invoiceType && '' === $company) {
                 wc_add_notice(sprintf('<strong>%s</strong> %s', __('Name of the company', WC_EL_INV_FREE_TEXTDOMAIN),
                     __('it is a required field.', WC_EL_INV_FREE_TEXTDOMAIN)), 'error');
             }
@@ -1931,7 +1426,17 @@ final class InvoiceFields
 
             // No UE check
             if (! in_array($country, self::$euVatCountry)) {
-                if ('required' === $required) {
+                // Unset SDI
+                if (is_checkout()) {
+                    add_filter('woocommerce_checkout_posted_data', function ($data) {
+                        unset($data['billing_sdi_type']);
+
+                        return $data;
+                    });
+                }
+
+                // Required and show fields for no UE
+                if ('required' === $required && 'hide' !== $hideOutUe) {
                     if ('company' === $invoiceType || 'freelance' === $invoiceType) {
                         if ('on' !== $disableTaxCode) {
                             if (empty($taxCode)) {
@@ -1949,60 +1454,6 @@ final class InvoiceFields
                     }
                 }
             }
-
-            // -- Reverse Charge Company vies check or extra ue -- //
-            // 1. private and company extra UE
-            // 1. company UE vies ok
-            if (! in_array($country, self::$euVatCountry) xor
-                ('IT' !== $country &&
-                 in_array($country, self::$euVatCountry) &&
-                 $this->viesCheck($vatCode, $country) &&
-                 'private' !== $invoiceType
-                )
-            ) {
-                self::viesCalcTotals();
-            }
-            // -- Reverse Charge Company vies check or extra ue -- //
-
-            // Check all key
-            foreach ($this->keys as $key) {
-                // @codingStandardsIgnoreLine
-                $value = \WcElectronInvoiceFree\Functions\filterInput(
-                    $_POST,
-                    $key,
-                    FILTER_UNSAFE_RAW
-                );
-
-                $string = '';
-
-                switch ($key) {
-                    case 'billing_invoice_type':
-                        $string = esc_html__('CUSTOMER TYPE', WC_EL_INV_FREE_TEXTDOMAIN);
-                        break;
-                    case 'billing_sdi_type':
-                        $string = esc_html__('SDI OR PEC TYPE', WC_EL_INV_FREE_TEXTDOMAIN);
-                        break;
-                    case 'billing_vat_number':
-                        $string = esc_html__('VAT NUMBER', WC_EL_INV_FREE_TEXTDOMAIN);
-                        break;
-                    case 'billing_tax_code':
-                        $string = esc_html__('TAX CODE', WC_EL_INV_FREE_TEXTDOMAIN);
-                        break;
-                    default:
-                        break;
-                }
-
-                if (! isset($value) || '' === $value) {
-                    if ($country !== 'IT' && 'billing_sdi_type' === $key) {
-                        continue;
-                    }
-                    wc_add_notice(
-                        sprintf(
-                            esc_html__('Please enter "%1$s" value.', WC_EL_INV_FREE_TEXTDOMAIN), 'error'),
-                        $string
-                    );
-                }
-            }
         }
     }
 
@@ -2017,14 +1468,15 @@ final class InvoiceFields
     public function saveOrderMetaBox($orderID)
     {
         $order        = wc_get_order($orderID);
-        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         if (! $order instanceof $wcOrderClass) {
             return;
         }
 
         // @codingStandardsIgnoreLine
-        $number  = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'order_number_invoice', FILTER_SANITIZE_NUMBER_INT);
+        $number  = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'order_number_invoice',
+            FILTER_SANITIZE_NUMBER_INT);
         $date    = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'order_date_invoice', FILTER_UNSAFE_RAW);
         $hour    = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'order_hours_invoice', FILTER_UNSAFE_RAW);
         $minute  = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'order_minutes_invoice', FILTER_UNSAFE_RAW);
@@ -2057,9 +1509,8 @@ final class InvoiceFields
      */
     public function saveRefundMetaBox($orderID)
     {
-        $order              = wc_get_order($orderID);
-        $wcOrderClass       = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order');
-        $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName('\WC_Order_Refund');
+        $order        = wc_get_order($orderID);
+        $wcOrderClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($order, '\WC_Order');
 
         if (! $order instanceof $wcOrderClass) {
             return;
@@ -2070,6 +1521,7 @@ final class InvoiceFields
         if (! empty($refunds)) {
             foreach ($refunds as $refund) {
                 // Order refund
+                $wcOrderRefundClass = \WcElectronInvoiceFree\Functions\wcOrderClassName($refund, '\WC_Order_Refund');
                 if (! $refund instanceof $wcOrderRefundClass) {
                     return;
                 }
@@ -2119,7 +1571,8 @@ final class InvoiceFields
                     FILTER_UNSAFE_RAW);
 
                 if (! empty($_POST[self::$metaKey . $key]) && $value) {
-                    update_post_meta($orderID, self::$metaKey . $key, \WcElectronInvoiceFree\Functions\sanitize($value));
+                    update_post_meta($orderID, self::$metaKey . $key,
+                        \WcElectronInvoiceFree\Functions\sanitize($value));
                 }
             }
         }
