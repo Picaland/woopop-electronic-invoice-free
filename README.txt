@@ -2,8 +2,8 @@
 Contributors: Picaland
 Tags: fatturazione elettronica, fattura pdf, fattura elettronica, fattura xml
 Requires at least: 4.6
-Tested up to: 6.0
-Stable tag: 3.0.3
+Tested up to: 6.1
+Stable tag: 3.1.3
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ Con il plugin WooPOP generi la fattura elettronica in formato XML direttamente d
 = VERSIONE PREMIUM E ADD-ON: =
 * <a href="https://woopop.it/?ref=1&wp_free_plugin">woopop.it</a>
 * <a href="https://woopop.it/woocommerce-fattureincloud-plugin/?ref=1&wp_free_plugin">Fatture in Cloud Plugin</a>
-* <a href="https://woopop.it/woocommerce-fatture-aruba-plugin//?ref=1&wp_free_plugin">Fatture Aruba Premium Plugin</a>
+* <a href="https://woopop.it/woocommerce-fatture-aruba-plugin//?ref=1&wp_free_plugin">Fatture Aruba Premium Plugin</a> (solo per account <a href="https://business.aruba.it/fatturazione-elettronica/account-premium.aspx">Aruba Premium</a>)
 
 = OPZIONI FATTURA: =
 * Prefisso per il numero di fattura.
@@ -32,6 +32,14 @@ Con il plugin WooPOP generi la fattura elettronica in formato XML direttamente d
 * Attiva l'invio della fattura PDF via mail ad ordine completato
 * Visualizzazione fattura in HTML
 
+= Codici Metodi di pagamento suportati per la fattura: =
+
+* MP01 (Contanti) - payment method: default
+* MP05 (Bonifico) - payment method: bacs
+* MP02 (Assegno) - payment method: cheque
+* MP08 (Carte di pagamento) - payment method: paypal, ppec_paypal, ppcp-gateway, stripe, xpay, soisy, igfs
+* MP19 (SEPA Direct Debit) - payment method: stripe_sepa
+
 = FUNZIONALITÀ PREVISTE NELLA VERSIONE PREMIUM =
 1. Scaricare le fatture in formato XML senza alcun limite.
 2. Generare la fattura elettronica nella sezione "Fatture XML" e in ogni singolo ordine.
@@ -40,7 +48,7 @@ Con il plugin WooPOP generi la fattura elettronica in formato XML direttamente d
 5. Inviare le fatture allo SDI direttamente da WooCommerce tramite add-on per Fatture in cloud
 
 = TESTED UP TO/TESTATO FINO ALLE VERSIONI: =
-* WooCommerce v. 6.9.x
+* WooCommerce v. 7.1.x
 
 == Installation ==
 
@@ -57,6 +65,25 @@ Php: >= 5.6
 WordPress: >= 4.6
 
 == Changelog ==
+
+= 3.1.3 - 28/11/2022 =
+* Fix: sprintf() arguments
+
+= 3.1.2 - 27/11/2022 =
+* Fix: minor fix
+* Add: support for WordPress 6.1.x
+* Add: support for WooCommerce 7.1.x
+
+= 3.1.1 - 28/10/2022 =
+* Add: support for WooCommerce 7.x.x
+
+= 3.1.0 - 20/10/2022 =
+* Fix: wcOrderClassName class name check
+* Add: support payment_method igfs Credit Card (PagOnline Imprese)
+
+= 3.0.4 - 10/10/2022 =
+* Fix: billing_company required if customer type is "company"
+* Dev: Add filter hook invoice Field args "billing_invoice_field_args"
 
 = 3.0.3 - 14/09/2022 =
 * Add: support for WooCommerce 6.9.x
