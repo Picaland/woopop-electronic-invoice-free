@@ -629,7 +629,7 @@ function premiumBanner()
                 <li><strong>5.</strong> Inviare le fatture allo SDI direttamente da WooCommerce tramite add-on per <strong>Fatture in cloud</strong></li>
                 <li><strong>e molto altro ancora...</strong></li>
             </ul>
-            <p><a target="_blank" class="button" href="https://woopop.it/?ref=1&free_banner">Passa a WooPOP Premium</a></p>
+            <p><a target="_blank" class="button" href="https://woopop.it/woopop-acquista-ora/?ref=1&free_banner">Passa a WooPOP Premium</a></p>
         </div>
     </div>
 

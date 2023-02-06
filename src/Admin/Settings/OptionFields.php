@@ -113,16 +113,13 @@ abstract class OptionFields
      */
     public function sectionSettingsGeneralDescription()
     {
-        echo sprintf('<div class="wc_el_inv__description wc_el_inv__description--general"><p><span class="dashicons dashicons-info"></span> %1$s</p><ol><li><a href="%2$s">%3$s</a> %4$s</li><li><a href="%5$s">%6$s</a> %7$s</li><li><a href="%8$s">%9$s</a> %10$s</li></ol></div>',
+        echo sprintf('<div class="wc_el_inv__description wc_el_inv__description--general"><p><span class="dashicons dashicons-info"></span> %1$s</p><ol><li><a href="%2$s">%3$s</a> %4$s</li><li><a href="%5$s">%6$s</a> %7$s</li></ol></div>',
             esc_html__('After activating your license, set up the general options for e-invoice and the invoice and checkout options',
                 WC_EL_INV_FREE_TEXTDOMAIN),
-            esc_url(admin_url('admin.php?page=wc-settings')),
-            esc_html__('General Options Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
-            checkOptions('general') ? '<span class="dashicons dashicons-yes-alt"></span>' : '<span class="dashicons dashicons-dismiss"></span>',
             esc_url(admin_url('admin.php?page=wc_el_inv-options-page&tab=invoice')),
             esc_html__('Invoice settings', WC_EL_INV_FREE_TEXTDOMAIN),
             checkOptions('invoice') ? '<span class="dashicons dashicons-yes-alt"></span>' : '<span class="dashicons dashicons-dismiss"></span>',
-            esc_url(admin_url('admin.php?page=wc_el_inv-options-page&tab=wc-checkout')),
+            esc_url(admin_url('admin.php?page=wc_el_inv-options-page&tab=wc-integration')),
             esc_html__('General WooCommerce integration settings', WC_EL_INV_FREE_TEXTDOMAIN),
             checkOptions('checkout') ? '<span class="dashicons dashicons-yes-alt"></span>' : '<span class="dashicons dashicons-dismiss"></span>',
         );

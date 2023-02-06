@@ -351,7 +351,7 @@
 
             // Add date params
             if (dateIN.value || dateOUT.value) {
-                var IN = dateIN.value + ' 23:59';
+                var IN = dateIN.value + ' 00:00';
                 var OUT = dateOUT.value + ' 23:59';
 
                 IN = IN.split(" - ").map(function (date) {
@@ -412,67 +412,6 @@
 
             select.addEventListener('change', function () {
                 window.location = window.location.href + '&type=' + this.value;
-            });
-        }
-
-        /**
-         * Bulk Mark actions
-         */
-        function bulkMarkActions()
-        {
-            var triggers = document.querySelectorAll('.mark_bulk_trigger');
-            var form = document.getElementById('wp-list-table-invoice-form');
-            if (!triggers) {
-                return;
-            }
-
-            _.forEach(triggers, function (trigger) {
-                trigger.addEventListener('click', function (evt) {
-                    evt.preventDefault();
-                    evt.stopImmediatePropagation();
-
-                    var inputAction = document.getElementById('bulk-sent');
-                    if (inputAction) {
-                        inputAction.remove();
-                    }
-
-                    var cbs = document.querySelectorAll('input[name="woopop-invoice[]"]');
-                    var cbChecked = false;
-                    _.forEach(cbs, function (cb) {
-                        if (true === cb.checked) {
-                            cbChecked = cb.checked;
-                        }
-                    });
-
-                    if (!cbChecked) {
-                        alert(wc_el_inv_admin.bulk_invoice_cb);
-                        return;
-                    }
-
-                    var confirm = false;
-
-                    if (this.classList.contains('mark_as_sent')) {
-                        if (window.confirm(wc_el_inv_admin.invoice_sent_confirm)) {
-                            confirm = true;
-                        }
-                    } else if (this.classList.contains('mark_undo')) {
-                        if (window.confirm(wc_el_inv_admin.invoice_undo_confirm)) {
-                            confirm = true;
-                        }
-                    }
-
-                    if (!confirm) {
-                        return;
-                    }
-
-                    var action = document.createElement("input");
-                    action.setAttribute('type', 'hidden');
-                    action.setAttribute('id', 'bulk-sent');
-                    action.setAttribute('name', 'bulk-sent');
-                    action.setAttribute('value', trigger.value);
-                    form.appendChild(action);
-                    form.submit();
-                })
             });
         }
 
@@ -688,78 +627,6 @@
             }
         }
 
-        /**
-         * Renumber invoice utility function
-         */
-        function renumberUtility()
-        {
-            var initialNumber = document.getElementById('renumber_order_initial');
-            var finalNumber = document.getElementById('renumber_order_final');
-            var renumberFrom = document.getElementById('renumber_invoice_from');
-            var submit = document.getElementById('renumber_invoice_submit');
-            var baseUrl = document.getElementById('renumber_base_url');
-            var target = null;
-
-            if (submit) {
-                submit.addEventListener('click', function (evt) {
-                    baseUrl = baseUrl.value;
-                    if ('' !== initialNumber.value && '' !== finalNumber.value && '' !== renumberFrom.value) {
-                        target = baseUrl + '&renumber_invoice=' + renumberFrom.value +
-                                 '&initial=' + initialNumber.value +
-                                 '&final=' + finalNumber.value;
-                    } else if ('' !== initialNumber.value && '' === finalNumber.value && '' !== renumberFrom.value) {
-                        target = baseUrl + '&renumber_invoice=' + renumberFrom.value +
-                                 '&initial=' + initialNumber.value;
-                    } else if ('' === initialNumber.value && '' === finalNumber.value && '' !== renumberFrom.value) {
-                        target = baseUrl + '&renumber_invoice=' + renumberFrom.value;
-                    }
-
-                    if (target) {
-                        window.location = target;
-                    } else {
-                        alert(wc_el_inv_admin.renumber_not_data);
-                    }
-                });
-            }
-        }
-
-        /**
-         * Reverse charge quick edit
-         */
-        function reverseChargeEdit()
-        {
-            // Gift QuickEdit
-            // we create a copy of the WP inline edit post function
-            if (typeof inlineEditPost === "undefined") {
-                return;
-            }
-
-            var wpInlineEdit = inlineEditPost.edit;
-            // and then we overwrite the function with our own code
-
-            inlineEditPost.edit = function (id) {
-                // "call" the original WP edit function
-                // we don't want to leave WordPress hanging
-                wpInlineEdit.apply(this, arguments);
-
-                // get the post ID
-                var postID = 0;
-                if ('object' === typeof (id)) {
-                    postID = parseInt(this.getId(id));
-                }
-
-                if (postID > 0) {
-                    // define the edit row
-                    var editRow = $('#edit-' + postID);
-                    var postRow = $('#post-' + postID);
-
-                    // get the data
-                    var reverseCharge = !!$('.column-reverse_charge > *', postRow).prop('checked');
-                    $(':input[name="active_reverse_charge"]', editRow).prop('checked', reverseCharge);
-                }
-            };
-        }
-
         function searchOrderByID()
         {
             var searchInput = document.getElementById('wc_el_inv_order_search');
@@ -828,11 +695,8 @@
             refundItemControl();
             invoiceItemControl();
             searchOrderByID();
-            bulkMarkActions();
             choiceType();
             endPointActions();
-            renumberUtility();
-            reverseChargeEdit();
 
             // Remove refund ajax complete action
             $(document).ajaxComplete(function () {

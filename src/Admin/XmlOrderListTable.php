@@ -436,7 +436,7 @@ class XmlOrderListTable extends \WP_List_Table
                 get_woocommerce_currency_symbol($currency),
                 esc_html__('Linked order', WC_EL_INV_FREE_TEXTDOMAIN),
                 $editOrderLink,
-                $item['order_id']
+                isset($item['order_id']) ? $item['order_id'] : 'NaN'
             );
         } elseif (! empty($item['refunded']) && 'shop_order' === $item['order_type']) {
 
@@ -1108,8 +1108,11 @@ class XmlOrderListTable extends \WP_List_Table
      */
     public function getOrders($onlyCount = false)
     {
+        $status    = array('processing', 'completed', 'refunded');
+        $paramData = 'date_created';
+
         $args = array(
-            'status'  => array('processing', 'completed', 'refunded'),
+            'status'  => $status,
             'limit'   => -1,
             'orderby' => 'date',
             'order'   => 'DESC',
@@ -1138,8 +1141,7 @@ class XmlOrderListTable extends \WP_List_Table
         $type          = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'type', FILTER_UNSAFE_RAW);
         $dateIN        = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'date_in', FILTER_UNSAFE_RAW);
         $dateOUT       = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'date_out', FILTER_UNSAFE_RAW);
-        $orderToSearch = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'order_search',
-            FILTER_SANITIZE_NUMBER_INT);
+        $orderToSearch = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'order_search', FILTER_SANITIZE_NUMBER_INT);
 
         if ($customer && isset($customer) && '' !== $customer) {
             $args['customer_id'] = intval($customer);
@@ -1150,17 +1152,29 @@ class XmlOrderListTable extends \WP_List_Table
         }
 
         if ($dateIN || $dateOUT) {
-            if (isset($dateIN) && '' !== $dateIN && ! $dateOUT) {
-                $args['date_created'] = ">{$dateIN}";
-            } elseif (! $dateIN && isset($dateOUT) && '' !== $dateOUT) {
-                $args['date_created'] = "<{$dateOUT}";
-            } elseif (isset($dateIN) && '' !== $dateIN && isset($dateOUT) && '' !== $dateOUT) {
-                $args['date_created'] = "{$dateIN}...{$dateOUT}";
+            $timeZone = new TimeZone();
+            $timeZone = new \DateTimeZone($timeZone->getTimeZone()->getName());
+            $nowIn    = new \DateTime('now');
+            $nowOut   = new \DateTime('now');
+            $nowIn->setTimezone($timeZone);
+            $nowOut->setTimezone($timeZone);
+            $dateIN  = $nowIn->setTimestamp($dateIN);
+            $dateOUT = $nowOut->setTimestamp($dateOUT);
+
+            $dateINTime  = $dateIN->getTimestamp() ?: 0;
+            $dateOUTTime = $dateOUT->getTimestamp() ?: 0;
+
+            if (isset($dateINTime) && 0 !== $dateINTime && ! $dateOUTTime) {
+                $args[$paramData] = ">{$dateINTime}";
+            } elseif (! $dateINTime && isset($dateOUTTime) && 0 !== $dateOUTTime) {
+                $args[$paramData] = "<{$dateOUTTime}";
+            } elseif (isset($dateINTime) && 0 !== $dateINTime && isset($dateOUTTime) && 0 !== $dateOUTTime) {
+                $args[$paramData] = "{$dateINTime}...{$dateOUTTime}";
             }
 
             // Equal date
-            if ($dateIN === $dateOUT) {
-                $date                 = date('Y-m-d', intval($dateIN));
+            if ($dateINTime === $dateOUTTime) {
+                $date                 = date('Y-m-d', intval($dateINTime));
                 $args['date_created'] = "{$date}";
             }
         }

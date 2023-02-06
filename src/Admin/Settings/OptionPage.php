@@ -206,13 +206,13 @@ final class OptionPage extends OptionFields
                 'page_title'  => esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
                 'menuTitle'   => esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
                 'capability'  => 'manage_options',
-                'menuSlug'    => 'admin.php?page=' . $this->menuSlug . '&tab=wc-checkout',
+                'menuSlug'    => 'admin.php?page=' . $this->menuSlug . '&tab=wc-integration',
                 'function'    => null,
             ),
             array(
                 'parent_slug' => $this->menuSlug,
                 'page_title'  => esc_html__('Invoice options', WC_EL_INV_FREE_TEXTDOMAIN),
-                'menuTitle'   => esc_html__('Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+                'menuTitle'   => esc_html__('Invoice options', WC_EL_INV_FREE_TEXTDOMAIN),
                 'capability'  => 'manage_options',
                 'menuSlug'    => 'admin.php?page=' . $this->menuSlug . '&tab=invoice',
                 'function'    => null,
@@ -254,7 +254,7 @@ final class OptionPage extends OptionFields
         $adminBar->add_menu(array(
             'id'    => $this->optionsName,
             'title' => esc_html__($this->menuTitle, WC_EL_INV_FREE_TEXTDOMAIN),
-            'href'  => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=wc-checkout')),
+            'href'  => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=wc-integration')),
             'meta'  => array(
                 'class' => 'active',
             ),
@@ -263,9 +263,9 @@ final class OptionPage extends OptionFields
         // Sum menu link
         $adminBar->add_menu(array(
             'parent' => $this->optionsName,
-            'id'     => $this->optionsName . '-wc-checkout',
+            'id'     => $this->optionsName . '-wc-integration',
             'title'  => esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
-            'href'   => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=wc-checkout')),
+            'href'   => esc_url(admin_url('admin.php?page=' . $this->menuSlug . '&tab=wc-integration')),
         ));
         $adminBar->add_menu(array(
             'parent' => $this->optionsName,
@@ -489,7 +489,7 @@ final class OptionPage extends OptionFields
             if (is_array($sectionFields['section'][$key]['section_title'])) {
                 $titleString  = $sectionFields['section'][$key]['section_title'][1] ?? '';
                 $sectionTitle = sprintf(
-                    $sectionFields['section'][$key]['section_title'][0],
+                    $sectionFields['section'][$key]['section_title'][0] ?? '',
                     __($titleString, WC_EL_INV_FREE_TEXTDOMAIN)
                 );
             } else {
@@ -526,7 +526,7 @@ final class OptionPage extends OptionFields
     }
 
     /**
-     * Check Actiore tab.
+     * Check Action tab.
      *
      * @param $tabs
      *
@@ -538,7 +538,7 @@ final class OptionPage extends OptionFields
     {
         $tab = \WcElectronInvoiceFree\Functions\filterInput($_GET, 'tab', FILTER_UNSAFE_RAW);
         // Default active tab
-        $activeTab = 'wc-checkout';
+        $activeTab = 'wc-integration';
         if ($tab && is_array($tabs)) {
             if (array_key_exists($tab, $tabs)) {
                 $activeTab = $tab;
@@ -682,6 +682,8 @@ final class OptionPage extends OptionFields
      */
     public function sanitizeOptions($input)
     {
+        $this->sanitizeWCIntegrationOptions($_POST);
+
         // Sanitize input
         $sanitizedValue = \WcElectronInvoiceFree\Functions\sanitize($input);
         $tab            = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'tab', FILTER_UNSAFE_RAW);
@@ -722,6 +724,51 @@ final class OptionPage extends OptionFields
         $this->saveExtraData();
 
         return $sanitizedValue;
+    }
+
+    /**
+     * sanitizeWCIntegrationOptions
+     *
+     * @param $postData
+     *
+     * @return void
+     */
+    public function sanitizeWCIntegrationOptions($postData)
+    {
+        $sanitizedValue = \WcElectronInvoiceFree\Functions\sanitize($postData);
+        $tab            = \WcElectronInvoiceFree\Functions\filterInput($_POST, 'tab', FILTER_UNSAFE_RAW);
+        if ('wc-integration' === $tab) {
+            // WC integration default options key
+            $optionsKeyDefault = array(
+                // General store
+                'wc_el_inv-general_store_your_name',
+                'wc_el_inv-general_store_your_surname',
+                'wc_el_inv-general_store_company_name',
+                'wc_el_inv-general_store_vat_number',
+                'wc_el_inv-general_store_tax_regime',
+                'wc_el_inv-province_business_register_office',
+                'wc_el_inv-rea_registration_number',
+                'wc_el_inv-liquidation_status',
+                'wc_el_inv-general_store_phone',
+                'wc_el_inv-general_store_email',
+                // Reverse charge - PRO version
+            );
+
+            /**
+             * Filter default options key
+             */
+            $optionsKey = apply_filters('wc_el_inv-wc-integration-fields-key', $optionsKeyDefault);
+            if (empty($optionsKey)) {
+                $optionsKey = $optionsKeyDefault;
+            }
+
+            if (! empty($optionsKey)) {
+                foreach ($optionsKey as $key) {
+                    $value = \WcElectronInvoiceFree\Functions\filterInput($sanitizedValue, $key, FILTER_UNSAFE_RAW);
+                    update_option($key, $value);
+                }
+            }
+        }
     }
 
     /**

@@ -341,11 +341,137 @@ switch ($section) {
         }
         break;
     // WC Checkout
-    case 'setting_section_wc-checkout':
+    case 'setting_section_wc-integration':
         $this->sectionArgs['wc_el_inv_settings'] = array(
-            'section_id'       => 'setting_section_wc-checkout',
-            'section_title'    => esc_html__('General WooCommerce integration settings', WC_EL_INV_FREE_TEXTDOMAIN),
-            'section_callback' => '',
+            'section_id'       => 'setting_section_wc-integration',
+            'section_title'    => '', //esc_html__('General WooCommerce integration settings', WC_EL_INV_FREE_TEXTDOMAIN),
+            'section_callback' => function () {
+                echo '<div id="wc_output_fields" class="general_shop_options reverse_charge_options">';
+                // General invoice data
+                if (class_exists('WC_Admin_Settings') && method_exists('WC_Admin_Settings', 'output_fields')) {
+                    $taxRegime         = include \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/wc/taxRegime.php');
+                    $generalShopFields = apply_filters('wc_el_inv-general_shop_fields', array(
+                        // Invoice data
+                        array(
+                            'title' => esc_html__('General Options Invoice', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'type'  => 'title',
+                            'desc'  => esc_html__(
+                                'This data will be used in the XML and PDF invoices',
+                                WC_EL_INV_FREE_TEXTDOMAIN
+                            ),
+                            'id'    => 'store_invoice',
+                        ),
+                        array(
+                            'id'          => 'wc_el_inv-general_store_your_name',
+                            'type'        => 'text',
+                            'title'       => esc_html__('Name:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'        => '',
+                            'placeholder' => esc_html__('Your Name', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'     => '',
+                        ),
+                        array(
+                            'id'          => 'wc_el_inv-general_store_your_surname',
+                            'type'        => 'text',
+                            'title'       => esc_html__('Surname:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'        => '',
+                            'placeholder' => esc_html__('Your Surname', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'     => '',
+                        ),
+                        array(
+                            'id'                => 'wc_el_inv-general_store_company_name',
+                            'type'              => 'text',
+                            'title'             => esc_html__('(*) Company Name:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'              => esc_html__('Please enter your company name', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'placeholder'       => esc_html__('Your Company Name', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'           => '',
+                            'custom_attributes' => array(
+                                'required' => 'required',
+                            ),
+                        ),
+                        array(
+                            'id'                => 'wc_el_inv-general_store_vat_number',
+                            'type'              => 'text',
+                            'title'             => esc_html__('(*) VAT number:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'              => esc_html__('Please enter your vat code (numbers only)', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'placeholder'       => esc_html__('Your vat number', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'           => '',
+                            'custom_attributes' => array(
+                                'required' => 'required',
+                            ),
+                        ),
+                        array(
+                            'id'                => 'wc_el_inv-general_store_tax_regime',
+                            'type'              => 'select',
+                            'title'             => esc_html__('(*) Tax Regine:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'              => esc_html__('Please select your tax regime', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'options'           => ! empty($taxRegime['IT']) ? $taxRegime['IT'] : array(),
+                            'class'             => 'wc-enhanced-select',
+                            'default'           => '',
+                            'custom_attributes' => array(
+                                'required' => 'required',
+                            ),
+                        ),
+                        array(
+                            'id'                => 'wc_el_inv-province_business_register_office',
+                            'type'              => 'text',
+                            'title'             => esc_html__('Province business register office:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'              => esc_html__('Abbreviation of the province of the Register of Companies with which the company is registered eg: [MI], [RM], ...',
+                                WC_EL_INV_FREE_TEXTDOMAIN),
+                            'placeholder'       => esc_html__('Enter Province business register office', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'           => '',
+                            'custom_attributes' => array(
+                                'maxlength' => 2,
+                            ),
+                        ),
+                        array(
+                            'id'                => 'wc_el_inv-rea_registration_number',
+                            'type'              => 'text',
+                            'title'             => esc_html__('REA number:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'              => esc_html__('Company registration number', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'placeholder'       => esc_html__('Enter Company registration number', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'           => '',
+                            'custom_attributes' => array(
+                                'maxlength' => 20,
+                            ),
+                        ),
+                        array(
+                            'id'                => 'wc_el_inv-liquidation_status',
+                            'type'              => 'text',
+                            'title'             => esc_html__('Liquidation status:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'              => esc_html__('Indicates whether the Company is in liquidation or not [LS] = in liquidation, [LN] = not in liquidation',
+                                WC_EL_INV_FREE_TEXTDOMAIN),
+                            'placeholder'       => esc_html__('Enter liquidation status', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'           => '',
+                            'custom_attributes' => array(
+                                'maxlength' => 2,
+                            ),
+                        ),
+                        array(
+                            'id'          => 'wc_el_inv-general_store_phone',
+                            'type'        => 'text',
+                            'title'       => esc_html__('Phone number:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'        => '',
+                            'placeholder' => esc_html__('Your phone number', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'     => '',
+                        ),
+                        array(
+                            'id'          => 'wc_el_inv-general_store_email',
+                            'type'        => 'text',
+                            'title'       => esc_html__('Email address:', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'desc'        => '',
+                            'placeholder' => esc_html__('Your email', WC_EL_INV_FREE_TEXTDOMAIN),
+                            'default'     => '',
+                        ),
+                        array(
+                            'type' => 'sectionend',
+                            'id'   => 'store_invoice',
+                        ),
+                    ));
+                    \WC_Admin_Settings::output_fields((array)$generalShopFields);
+                    echo '<hr>';
+                }
+                echo '</div>';
+            },
             'section_page'     => 'wc_el_inv-options-page',
         );
         $this->fieldsArgs[]                      = array(
@@ -366,14 +492,14 @@ switch ($section) {
                 'field',
             ),
             'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_wc-checkout',
+            'field_section'  => 'setting_section_wc-integration',
         );
         $this->fieldsArgs[]                      = array(
             'field_id'       => '',
             'field_title'    => '',
             'field_callback' => array($page, 'fieldsVatRules'),
             'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_wc-checkout',
+            'field_section'  => 'setting_section_wc-integration',
         );
         $this->fieldsArgs[]                      = array(
             'field_id'       => 'hide_outside_ue_options_fields',
@@ -394,7 +520,7 @@ switch ($section) {
                 'field',
             ),
             'field_page'     => $this->sectionArgs['wc_el_inv_settings']['section_page'],
-            'field_section'  => 'setting_section_wc-checkout',
+            'field_section'  => 'setting_section_wc-integration',
         );
         break;
     // Xml Invoice Tab
@@ -403,7 +529,7 @@ switch ($section) {
             'section_id'       => 'setting_section_xml',
             'section_title'    => array(
                 //$icon . '%1$s' . $mode,
-                esc_html__('Invoice table', WC_EL_INV_FREE_TEXTDOMAIN),
+                //esc_html__('Invoice table', WC_EL_INV_FREE_TEXTDOMAIN),
             ),
             // After option form
             'section_callback' => function () {

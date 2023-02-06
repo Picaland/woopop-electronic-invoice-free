@@ -39,12 +39,12 @@ $tabs = array(
         'submit'     => false,
     ),
     // WooCommerce Integration.
-    'wc-checkout' => array(
+    'wc-integration' => array(
         'header'     => array(
             '<i class="dashicons dashicons-admin-plugins"></i>',
             esc_html__('WooCommerce Integration', WC_EL_INV_FREE_TEXTDOMAIN),
         ),
-        'section_id' => 'setting_section_wc-checkout',
+        'section_id' => 'setting_section_wc-integration',
         'submit'     => true,
     ),
     // Invoice.

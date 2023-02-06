@@ -3,7 +3,7 @@
 * **Tags:** fatturazione elettronica, fattura pdf, fattura elettronica, fattura xml
 * **Requires at least:** 4.6
 * **Tested up to:** 6.1
-* **Stable tag:** 3.1.3
+* **Stable tag:** 3.2.0
 * **Requires PHP:** 5.6
 * **License:** GPLv2 or later
 * **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@ Con il plugin WooPOP generi la fattura elettronica in formato XML direttamente d
 * Guarda la lista dei file XML generati (fino a 5 nella versione gratuita).
 
 ### VERSIONE PREMIUM E ADD-ON:
-* <a href="https://woopop.it/?ref=1&wp_free_plugin">woopop.it</a>
+* <a href="https://woopop.it/woopop-acquista-ora/?ref=1&wp_free_plugin">woopop.it</a>
 * <a href="https://woopop.it/woocommerce-fattureincloud-plugin/?ref=1&wp_free_plugin">Fatture in Cloud Plugin</a>
 * <a href="https://woopop.it/woocommerce-fatture-aruba-plugin//?ref=1&wp_free_plugin">Fatture Aruba Premium Plugin</a> (solo per account <a href="https://business.aruba.it/fatturazione-elettronica/account-premium.aspx">Aruba Premium</a>)
 
@@ -48,7 +48,7 @@ Con il plugin WooPOP generi la fattura elettronica in formato XML direttamente d
 5. Inviare le fatture allo SDI direttamente da WooCommerce tramite add-on per Fatture in cloud
 
 ### TESTED UP TO/TESTATO FINO ALLE VERSIONI:
-* WooCommerce v. 7.1.x
+* WooCommerce v. 7.2.x
 
 ## Installation
 
@@ -63,6 +63,11 @@ Questa sezione descrive come installare il plugin e farlo funzionare.
 * **WordPress** >= 4.6
 
 ## Changelog
+
+= 3.2.0 - 02/01/2023 =
+* Fix: minor fix
+* Add: support for WooCommerce 7.2.x
+* Improve: moved general invoice options
 
 = 3.1.3 - 28/11/2022 =
 * Fix: sprintf() arguments

@@ -134,13 +134,17 @@ class Helpers
 
         // Anomaly - 404 set fallback params
         if (isset($wpQuery->query['error']) && 404 === (int)$wpQuery->query['error']) {
-            $uri = $_SERVER['REQUEST_URI'];
-            $uriParse = parse_url($uri);
-            $path = $uriParse['path'];
-            $pathArray = explode('/', $path);
-            $pathArray = array_filter($pathArray);
-            $shopOrderID = end($pathArray);
-            $idTag = $shopOrderID;
+            $uri = ! empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
+            if ($uri) {
+                $uriParse    = parse_url($uri);
+                $path        = $uriParse['path'];
+                $pathArray   = explode('/', $path);
+                $pathArray   = array_filter($pathArray);
+                $shopOrderID = end($pathArray);
+                $idTag       = $shopOrderID;
+            } else {
+                $idTag = null;
+            }
         }
 
         return (object)array(

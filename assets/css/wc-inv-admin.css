@@ -961,8 +961,8 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
 #store_invoice_transmitter-description + table.form-table,
 #store_invoice-description + table.form-table,
 #reverse_charge_invoice-description + table.form-table {
-  max-width:  760px;
-  background: #fff;
+  /*max-width:  760px;*/
+  /*background: #fff;*/
 }
 
 #store_invoice_transmitter-description p,
@@ -976,22 +976,28 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
 #reverse_charge_invoice-description,
 #reverse_charge_invoice_info-description,
 #reverse_charge_invoice_info-description + table.form-table {
-  max-width:  728px;
-  background: #fff;
+  /*max-width:  728px;*/
+  /*background: #fff;*/
 }
 
 #store_invoice_transmitter-description,
 #store_invoice-description,
 #reverse_charge_invoice-description,
 #reverse_charge_invoice_info-description {
-  padding: 1rem;
+  /*padding: 1rem;*/
 }
 
 .store_invoice_transmitter_title,
 .store_invoice_title,
-.reverse_charge_invoice_title,
+.reverse_charge_invoice_title {
+  /*max-width:        728px;*/
+  /*background-color: #007cba;*/
+  /*color:            #fff;*/
+  margin:           0;
+  padding:          1rem 0;
+}
+
 .reverse_charge_info_trigger {
-  max-width:        728px;
   background-color: #007cba;
   color:            #fff;
   margin:           0;
@@ -1011,7 +1017,7 @@ label[for="wc_el_inv-settings-invoice_disable_pec_sdi"] + br + small {
 #store_invoice_transmitter-description + table.form-table th,
 #store_invoice-description + table.form-table th,
 #reverse_charge_invoice-description + table.form-table th {
-  padding: 1.2rem 1rem;
+  /*padding: 1.2rem 1rem;*/
 }
 
 #reverse_charge_invoice-description + table.form-table tr:nth-child(2),

@@ -30,12 +30,12 @@ if (! defined('ABSPATH')) {
 }
 
 $billingFields = include_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/wc/billingFields.php');
-$generalFields = include_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/wc/generalInvoiceFields.php');
+//$generalFields = include_once \WcElectronInvoiceFree\Plugin::getPluginDirPath('/inc/wc/generalInvoiceFields.php');
 
 $resources         = new \WcElectronInvoiceFree\Resources();
 $optionPage        = \WcElectronInvoiceFree\Admin\Settings\OptionPage::init();
 $invoiceFields     = new \WcElectronInvoiceFree\WooCommerce\Fields\InvoiceFields($billingFields, $optionPage);
-$generalShopFields = new \WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields($generalFields);
+//$generalShopFields = new \WcElectronInvoiceFree\WooCommerce\Fields\GeneralFields($generalFields);
 //
 //  array(
 //      'filter'        => ''
@@ -209,22 +209,25 @@ $filtersAdmin = array(
                 'priority'      => 20,
                 'accepted_args' => 3,
             ),
-            array(
-                'filter'   => 'woocommerce_general_settings',
-                'callback' => array($generalShopFields, 'generalInvoiceFields'),
-                'priority' => 20,
-            ),
-            array(
-                'filter'        => 'woocommerce_admin_settings_sanitize_option',
-                'callback'      => array($generalShopFields, 'sanitize'),
-                'priority'      => 20,
-                'accepted_args' => 3,
-            ),
-            array(
-                'filter'   => 'admin_notices',
-                'callback' => array($generalShopFields, 'notice'),
-                'priority' => 20,
-            ),
+            /**
+             * MOVE options to WooPOP options, TAB: wc-integration
+             */
+//            array(
+//                'filter'   => 'woocommerce_general_settings',
+//                'callback' => array($generalShopFields, 'generalInvoiceFields'),
+//                'priority' => 20,
+//            ),
+//            array(
+//                'filter'        => 'woocommerce_admin_settings_sanitize_option',
+//                'callback'      => array($generalShopFields, 'sanitize'),
+//                'priority'      => 20,
+//                'accepted_args' => 3,
+//            ),
+//            array(
+//                'filter'   => 'admin_notices',
+//                'callback' => array($generalShopFields, 'notice'),
+//                'priority' => 20,
+//            ),
         ),
     ),
 );
